@@ -1,6 +1,6 @@
 # events.sarawak.news: design
 
-Status: **live** at https://events.sarawak.news. Cloudflare Pages project `events-sarawak-news`, production branch `main`. Pages are indexable (`index,follow`). Canonical URLs and the sitemap use `https://events.sarawak.news`. Not linked from the sarawak.news hub.
+Status: **live** at https://events.sarawak.news. Hosted on GitHub Pages (custom domain `events.sarawak.news`, HTTPS). Pages are indexable (`index,follow`). Canonical URLs and the sitemap use `https://events.sarawak.news`. Not linked from the sarawak.news hub.
 
 ## Shell
 Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sarawak.news (`nazirulhafiy/bantuan-sarawak`):
@@ -22,11 +22,11 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - `python3 scripts/build.py` → `dist/` (index.html, about.html, 404.html, assets). Standard library only.
 - Data: `data/events.json` in the standard schema (`docs/schema.md`). Only `published` records render, and internal fields (`source_url`, `source_name`, `discovered_at`, `status`, `review_note`) never do. Discovery and publishing: `docs/automation.md`, with the Maintainer Bot runbook in `docs/runbook.md`.
 - Tests: `python3 -m unittest discover -s tests`.
-- CI: `.github/workflows/build.yml` and `.github/workflows/discover.yml`. `build.yml` runs the tests, builds, and uploads a Pages artifact. It has no deploy job. GitHub Pages for nazirulhafiy resolves to hafiy.my/events-sarawak-news/, so production is the existing Cloudflare Pages project, not GitHub Pages.
+- CI: `.github/workflows/build.yml` and `.github/workflows/discover.yml`. `build.yml` runs tests, `scripts/validate.py`, `scripts/build.py`, uploads `dist/` as a Pages artifact, and on push to `main` deploys via `actions/deploy-pages@v4` to the `github-pages` environment.
 - Production origin: `https://events.sarawak.news`. The build writes `robots.txt` (`Allow: /` and `Sitemap: https://events.sarawak.news/sitemap.xml`) and `sitemap.xml` for the home page and `about.html`. Every HTML page has `<meta name="robots" content="index,follow">` and a `<link rel="canonical">` on that origin (`/`, `/about.html`, `/404.html`). `404.html` is not in the sitemap.
 
 ## Hosting
-Cloudflare Pages project `events-sarawak-news` (`events-sarawak-news.pages.dev`), production branch `main`, custom domain `events.sarawak.news` only. Do not attach any other domain. A hub link still needs Nazirul's explicit approval.
+GitHub Pages from `nazirulhafiy/events-sarawak-news` (`main`), deployed by `.github/workflows/build.yml`. Custom domain `events.sarawak.news` with HTTPS (GitHub-managed certificate). `scripts/build.py` writes `dist/CNAME` from the repo root `CNAME` file. Do not attach any other domain. A hub link still needs Nazirul's explicit approval.
 
 ## Analytics
 - Cloudflare Web Analytics beacon, token `092a061973fc4d899cd2e4b52952af89` (zone sarawak.news, shared sarawak.news site). The beacon is on every page.

@@ -336,6 +336,7 @@ def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:
     (out / "404.html").write_text(render_about(events, now, page="404"), encoding="utf-8")
     (out / "robots.txt").write_text(render_robots(), encoding="utf-8")
     (out / "sitemap.xml").write_text(render_sitemap(now), encoding="utf-8")
+    (out / "CNAME").write_text((ROOT / "CNAME").read_text(encoding="utf-8"), encoding="utf-8")
     return out
 
 

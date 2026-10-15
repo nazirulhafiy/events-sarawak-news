@@ -5,7 +5,7 @@ way it does for ai.sarawak.news. Authoritative rules are in `docs/automation.md`
 and the record format is in `docs/schema.md`.
 
 **Current state: live** at https://events.sarawak.news
-(Cloudflare Pages project `events-sarawak-news`, production branch `main`).
+(GitHub Pages from `nazirulhafiy/events-sarawak-news`, custom domain with HTTPS).
 Do not attach any other domain, and do not add a hub link, without Nazirul's explicit yes.
 
 ## Cadence
@@ -23,7 +23,7 @@ Do not attach any other domain, and do not add a hub link, without Nazirul's exp
 3. **Wait** for the terminal result (`published`, `no_update` or `blocked`).
 4. **Confirm** the remote branch or PR state and the SHA yourself. Do not trust the agent's report alone.
 5. **Ledger.** Write one record per screened URL: URL, canonical URL, first seen, last screened, run ID, outcome (`published`, `queued`, `duplicate`, `rejected`, `inaccessible`, `monitor`), one-line reason, agent run ID. The ledger is private and stays outside the repo.
-6. **Redeploy the preview** after anything reaches `main` (below).
+6. **Deploy** happens automatically when changes reach `main` (below). On `published`, confirm the live site after the `build` workflow finishes.
 7. **Report** to Nazirul only on `PR-ready`, `published` or `blocked`. Stay quiet on `no_update`. Include **Needs manual check** items.
 
 ## Commands (what the Cloud Agent runs)
@@ -42,17 +42,16 @@ python3 scripts/build.py
 
 Postponed: edit dates in `data/events.json` and add a `review_note`. Cancelled: set `status` to `cancelled`; it stops rendering.
 
-## Redeploying the preview
+## Production deploy (GitHub Pages)
 
-The GitHub `build` workflow has no deploy job. Deploy `dist/` to the existing
-Cloudflare Pages project `events-sarawak-news` (production branch `main`).
-The custom domain stays `events.sarawak.news`. Do not create a new Pages project
-and do not attach any other domain. Either:
+The `.github/workflows/build.yml` workflow runs on every push to `main` and on pull requests:
 
-- `npx wrangler pages deploy dist --project-name events-sarawak-news --branch main` (needs a Cloudflare API token with Pages:Edit), or
-- what the preview currently uses: bundle `dist/` into one `_worker.js` that serves the files inline, and POST it as a multipart deployment (`manifest={}`, `branch=main`, `_worker.js`) to `/accounts/{id}/pages/projects/events-sarawak-news/deployments` through the Cloudflare API connector. The direct asset-upload endpoint returned "Authorization failed" from the connector.
+1. **test-build** — unit tests, `scripts/validate.py`, `scripts/build.py`, then uploads `dist/` as a GitHub Pages artifact (including `dist/CNAME` for `events.sarawak.news`).
+2. **deploy** (push to `main` only) — publishes that artifact to the `github-pages` environment via `actions/deploy-pages@v4`.
 
-After deploying, check that `https://events.sarawak.news/` returns 200 and the new event shows under its month.
+Repository **Settings → Pages** should use **GitHub Actions** as the source. The custom domain `events.sarawak.news` is declared in the built `CNAME` file; DNS must point at GitHub Pages. HTTPS is enforced by GitHub once the domain is verified.
+
+After a merge to `main`, open the latest `build` workflow run and confirm **deploy** succeeded, then check that `https://events.sarawak.news/` returns 200 and the new event shows under its month.
 
 ## Hard stops
 
