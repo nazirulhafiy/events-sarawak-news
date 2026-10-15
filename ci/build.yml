@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Build static site
+        run: python scripts/build.py
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  # Preview phase: no deploy job. GitHub Pages for this account resolves to
+  # hafiy.my/events-sarawak-news/, so deploy-pages stays off until launch.
+  # To launch, copy the deploy job from sarawak-ai-news and add pages/id-token permissions.
