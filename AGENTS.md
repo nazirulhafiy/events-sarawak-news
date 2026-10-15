@@ -12,7 +12,7 @@ No DNS, custom domain or hub link without Nazirul's explicit approval.
 - `scripts/discover.py`, `scripts/queue.py`, `scripts/publish.py`, `scripts/validate.py`: the pipeline (`docs/automation.md`).
 - `scripts/build.py`: renders `dist/`.
 - `site/`: shared sarawak.news shell assets plus `events.css`/`events.js`.
-- `ci/`: workflows (not in `.github/workflows/`, because the token lacks `workflow` scope).
+- `.github/workflows/`: GitHub Actions workflows (`build.yml`, `discover.yml`).
 
 ## Rules
 - No phone numbers, emails or organiser contact lines anywhere: not in the data, not on cards.

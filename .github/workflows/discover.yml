@@ -1,8 +1,7 @@
 name: discover
 
 # Scheduled candidate-URL discovery (internal review material only).
-# Kept under ci/ because the box token lacks `workflow` scope; move to
-# .github/workflows/ to enable. It never edits data/ or publishes.
+# Lives in .github/workflows/. It never edits data/ or publishes.
 on:
   schedule:
     - cron: '0 23 * * *'   # 07:00 Asia/Kuching

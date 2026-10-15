@@ -78,4 +78,4 @@ Report: status (`published`, `no_update`, `blocked`), start SHA, discovery run I
 
 ## CI
 
-Workflows live under `ci/` (`build.yml`, `discover.yml`) because the GitHub token on the box lacks `workflow` scope. Move them to `.github/workflows/` with a token that has that scope to enable them. `build.yml` tests, validates and builds, with no Pages deploy (GitHub Pages for this account would serve under hafiy.my). `discover.yml` runs discovery daily at 07:00 MYT and uploads `candidate-urls.json` as an artifact.
+Workflows live under `.github/workflows/` (`build.yml`, `discover.yml`). `build.yml` tests, validates and builds, with no Pages deploy (GitHub Pages for this account would serve under hafiy.my). `discover.yml` runs discovery daily at 07:00 MYT and uploads `candidate-urls.json` as an artifact.
