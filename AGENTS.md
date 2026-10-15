@@ -2,8 +2,9 @@
 
 ## Project
 Events.Sarawak.News is a dependency-free static site listing events across
-Sarawak by month. **Preview only**: https://events-sarawak-news.pages.dev/.
-No DNS, custom domain or hub link without Nazirul's explicit approval.
+Sarawak by month. **Live**: https://events.sarawak.news
+(Cloudflare Pages project `events-sarawak-news`; `*.pages.dev` remains the project subdomain).
+No further DNS, custom domain or hub link without Nazirul's explicit approval.
 
 - `data/events.json`: published events (schema: `docs/schema.md`).
 - `data/review-queue.json`: candidates awaiting review.

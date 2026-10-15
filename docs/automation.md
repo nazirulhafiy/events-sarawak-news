@@ -13,7 +13,7 @@ Maintainer Bot must not search sources, write event copy, merge or push in place
 
 ## Authority and boundaries
 
-- The site is **preview only** until Nazirul approves launch: no DNS, no custom domain, no link from the sarawak.news hub. A run never changes hosting, DNS or analytics.
+- The site is **live** at https://events.sarawak.news. A content run never changes hosting, DNS or analytics, and does not add a hub link.
 - `publication_mode` is `pull_request` until one supervised run passes. Only after that may Maintainer Bot set `direct_main`.
 - During Stage B the Cloud Agent may modify, stage, commit and push only:
   - `data/events.json`

@@ -1,6 +1,6 @@
 # events-sarawak-news
 
-Preview of **events.sarawak.news**: events across Sarawak, month by month. Not live and no custom domain. Preview: https://events-sarawak-news.pages.dev/
+**events.sarawak.news**: events across Sarawak, month by month. Live: https://events.sarawak.news. Cloudflare Pages project `events-sarawak-news`.
 
 Published events: 114 (content audit 2026-10-15).
 

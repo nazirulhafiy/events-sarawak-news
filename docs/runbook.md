@@ -4,9 +4,9 @@ Maintainer Bot runs discovery and publishing for events.sarawak.news the same
 way it does for ai.sarawak.news. Authoritative rules are in `docs/automation.md`,
 and the record format is in `docs/schema.md`.
 
-**Current state: preview only.** Live preview: https://events-sarawak-news.pages.dev/
-(Cloudflare Pages project `events-sarawak-news`). Do not add DNS, a custom domain,
-or a hub link, and do not go live without Nazirul's explicit yes.
+**Current state: live** at https://events.sarawak.news
+(Cloudflare Pages project `events-sarawak-news`, production branch `main`).
+Do not attach any other domain, and do not add a hub link, without Nazirul's explicit yes.
 
 ## Cadence
 
@@ -44,21 +44,22 @@ Postponed: edit dates in `data/events.json` and add a `review_note`. Cancelled: 
 
 ## Redeploying the preview
 
-No CI deploy exists yet. Deploy `dist/` to the Cloudflare Pages project
-`events-sarawak-news` (production branch `main`). It must stay on
-`*.pages.dev` with no custom domain. Either:
+The GitHub `build` workflow has no deploy job. Deploy `dist/` to the existing
+Cloudflare Pages project `events-sarawak-news` (production branch `main`).
+The custom domain stays `events.sarawak.news`. Do not create a new Pages project
+and do not attach any other domain. Either:
 
 - `npx wrangler pages deploy dist --project-name events-sarawak-news --branch main` (needs a Cloudflare API token with Pages:Edit), or
 - what the preview currently uses: bundle `dist/` into one `_worker.js` that serves the files inline, and POST it as a multipart deployment (`manifest={}`, `branch=main`, `_worker.js`) to `/accounts/{id}/pages/projects/events-sarawak-news/deployments` through the Cloudflare API connector. The direct asset-upload endpoint returned "Authorization failed" from the connector.
 
-After deploying, check that `https://events-sarawak-news.pages.dev/` returns 200 and the new event shows under its month.
+After deploying, check that `https://events.sarawak.news/` returns 200 and the new event shows under its month.
 
 ## Hard stops
 
 - Any test, validation, or build failure, or an unexpected diff, means `blocked`.
 - A phone number, email or organiser contact anywhere in the data or on cards means `blocked`. Remove it, never publish it.
 - Changes to docs, scripts, sources or CI in a content run mean `blocked`.
-- DNS, domain, hub link, analytics or GA4 changes are out of scope. GA4 does not exist for this site yet.
+- DNS, domain, hub link, or analytics changes are out of scope for a content run. GA4 is already configured in `data/site.json`.
 
 ## Screenshots
 

@@ -84,7 +84,9 @@ class RenderTests(unittest.TestCase):
         head, _, body = self.html.partition("</head>")
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", head)
         self.assertIn("092a061973fc4d899cd2e4b52952af89", head)
-        self.assertIn('content="noindex"', head)
+        self.assertIn('content="index,follow"', head)
+        self.assertNotIn("noindex", head)
+        self.assertIn('<link rel="canonical" href="https://events.sarawak.news/" />', head)
         self.assertIn("https://www.googletagmanager.com/gtag/js?id=G-P7Y5Z19Q46", head)
         self.assertIn("gtag('config','G-P7Y5Z19Q46')", head)
         self.assertNotIn("googletagmanager", body)
@@ -113,7 +115,8 @@ class RenderTests(unittest.TestCase):
             self.assertNotIn("googletagmanager", page)
             self.assertNotIn("G-P7Y5Z19Q46", page)
             self.assertIn("static.cloudflareinsights.com/beacon.min.js", page)
-            self.assertIn('content="noindex"', page)
+            self.assertIn('content="index,follow"', page)
+            self.assertNotIn("noindex", page)
 
     def test_date_labels(self):
         ev = {"start_date": "2026-07-22", "end_date": "2026-08-16", "month": 7}
@@ -143,12 +146,30 @@ class RenderTests(unittest.TestCase):
             for f in ("index.html", "about.html", "style.css", "events.css", "app.js", "events.js", "fonts/Geist-Variable.woff2"):
                 self.assertTrue((out / f).exists(), f)
             self.assertFalse((out / "CNAME").exists())
-            for name in ("index.html", "about.html", "404.html"):
+            robots = (out / "robots.txt").read_text(encoding="utf-8")
+            self.assertEqual(
+                robots,
+                "User-agent: *\nAllow: /\nSitemap: https://events.sarawak.news/sitemap.xml\n",
+            )
+            self.assertNotIn("noindex", robots)
+            sitemap = (out / "sitemap.xml").read_text(encoding="utf-8")
+            self.assertIn("<loc>https://events.sarawak.news/</loc>", sitemap)
+            self.assertIn("<loc>https://events.sarawak.news/about.html</loc>", sitemap)
+            self.assertIn("<lastmod>2026-10-15</lastmod>", sitemap)
+            self.assertNotIn("404.html", sitemap)
+            canonicals = {
+                "index.html": "https://events.sarawak.news/",
+                "about.html": "https://events.sarawak.news/about.html",
+                "404.html": "https://events.sarawak.news/404.html",
+            }
+            for name, canonical in canonicals.items():
                 page = (out / name).read_text(encoding="utf-8")
                 head, _, _ = page.partition("</head>")
                 self.assertIn("gtag('config','G-P7Y5Z19Q46')", head)
                 self.assertIn("static.cloudflareinsights.com/beacon.min.js", page)
-                self.assertIn('content="noindex"', page)
+                self.assertIn('content="index,follow"', head)
+                self.assertNotIn("noindex", page)
+                self.assertIn(f'<link rel="canonical" href="{canonical}" />', head)
                 self.assertNotIn('href="https://sarawak.news', page)
 
 

@@ -24,6 +24,7 @@ SITE = ROOT / "site"
 DIST = ROOT / "dist"
 MYT = dt.timezone(dt.timedelta(hours=8))
 YEAR = 2026
+SITE_ORIGIN = "https://events.sarawak.news"
 CF_TOKEN = "092a061973fc4d899cd2e4b52952af89"  # zone sarawak.news, shared site
 GA_ID = re.compile(r"G-[A-Z0-9]+\Z")
 M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -159,7 +160,8 @@ HEAD = """<!doctype html>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="{desc}" />
-  <meta name="robots" content="noindex" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="{canonical}" />
   <title>{title}</title>
   <script>
     document.documentElement.classList.add("js");
@@ -235,12 +237,23 @@ FOOT = """  <footer class="site-footer">
 """
 
 
+def canonical_url(page: str) -> str:
+    if page == "home":
+        return f"{SITE_ORIGIN}/"
+    if page == "about":
+        return f"{SITE_ORIGIN}/about.html"
+    if page == "404":
+        return f"{SITE_ORIGIN}/404.html"
+    raise SystemExit(f"unknown page {page}")
+
+
 def shell(page: str, title: str, desc: str, main: str) -> str:
     home = page == "home"
     kw = dict(home_on=" is-active" if home else "", about_on="" if home else " is-active",
               home_cur=' aria-current="page"' if home else "",
               about_cur="" if home else ' aria-current="page"')
     return (HEAD.format(title=e(title), desc=e(desc), cf=CF_TOKEN,
+                       canonical=e(canonical_url(page)),
                        ga=render_ga_script(load_ga_measurement_id()), **kw)
             + main
             + FOOT.format(home_cur=kw["home_cur"], about_cur=kw["about_cur"]))
@@ -276,7 +289,7 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     return shell("home", "Events Sarawak", "Festivals, races, regattas and cultural events across Sarawak, listed by month.", main)
 
 
-def render_about(events: list[dict], now: dt.datetime | None = None) -> str:
+def render_about(events: list[dict], now: dt.datetime | None = None, page: str = "about") -> str:
     main = f"""  <main id="content">
     <header class="brief">
       <h1>About Events.Sarawak.News</h1>
@@ -290,7 +303,27 @@ def render_about(events: list[dict], now: dt.datetime | None = None) -> str:
     </div>
   </main>
 """
-    return shell("about", "About · Events Sarawak", "About Events.Sarawak.News, an independent listing of events across Sarawak.", main)
+    return shell(page, "About · Events Sarawak", "About Events.Sarawak.News, an independent listing of events across Sarawak.", main)
+
+
+def render_robots() -> str:
+    return f"User-agent: *\nAllow: /\nSitemap: {SITE_ORIGIN}/sitemap.xml\n"
+
+
+def render_sitemap(now: dt.datetime | None = None) -> str:
+    now = now or dt.datetime.now(MYT)
+    lastmod = now.astimezone(MYT).date().isoformat()
+    urls = (f"{SITE_ORIGIN}/", f"{SITE_ORIGIN}/about.html")
+    entries = "\n".join(
+        f"  <url>\n    <loc>{e(url)}</loc>\n    <lastmod>{lastmod}</lastmod>\n  </url>"
+        for url in urls
+    )
+    return (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+        f"{entries}\n"
+        "</urlset>\n"
+    )
 
 
 def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:
@@ -300,7 +333,9 @@ def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:
     shutil.copytree(SITE, out)
     (out / "index.html").write_text(render_index(events, now), encoding="utf-8")
     (out / "about.html").write_text(render_about(events, now), encoding="utf-8")
-    (out / "404.html").write_text(render_about(events, now), encoding="utf-8")
+    (out / "404.html").write_text(render_about(events, now, page="404"), encoding="utf-8")
+    (out / "robots.txt").write_text(render_robots(), encoding="utf-8")
+    (out / "sitemap.xml").write_text(render_sitemap(now), encoding="utf-8")
     return out
 
 
