@@ -9,6 +9,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -18,16 +19,41 @@ import events_lib  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data" / "events.json"
+SITE_CONFIG = ROOT / "data" / "site.json"
 SITE = ROOT / "site"
 DIST = ROOT / "dist"
 MYT = dt.timezone(dt.timedelta(hours=8))
 YEAR = 2026
 CF_TOKEN = "092a061973fc4d899cd2e4b52952af89"  # zone sarawak.news, shared site
+GA_ID = re.compile(r"G-[A-Z0-9]+\Z")
 M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 FULL = ["January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"]
 NOTE = "Dates subject to change, check with organisers."
 e = html.escape
+
+
+def load_ga_measurement_id(path: Path | None = None) -> str:
+    """GA4 measurement ID from data/site.json. Blank means omit gtag."""
+    raw = json.loads((path or SITE_CONFIG).read_text(encoding="utf-8")).get("ga4_measurement_id", "")
+    if raw is None:
+        raw = ""
+    if not isinstance(raw, str):
+        raise SystemExit("data/site.json ga4_measurement_id must be a string")
+    value = raw.strip()
+    if value and not GA_ID.fullmatch(value):
+        raise SystemExit("data/site.json ga4_measurement_id must be empty or a GA4 measurement ID")
+    return value
+
+
+def render_ga_script(measurement_id: str) -> str:
+    if not measurement_id:
+        return ""
+    return (
+        f'<script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>\n'
+        "  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+        f"gtag('js',new Date());gtag('config','{measurement_id}');</script>"
+    )
 
 
 def load_events(path: Path = DATA) -> list[dict]:
@@ -154,6 +180,7 @@ HEAD = """<!doctype html>
   <script src="events.js" defer></script>
   <!-- Cloudflare Web Analytics (zone sarawak.news) -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "{cf}"}}'></script>
+  {ga}
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to content</a>
@@ -213,7 +240,9 @@ def shell(page: str, title: str, desc: str, main: str) -> str:
     kw = dict(home_on=" is-active" if home else "", about_on="" if home else " is-active",
               home_cur=' aria-current="page"' if home else "",
               about_cur="" if home else ' aria-current="page"')
-    return (HEAD.format(title=e(title), desc=e(desc), cf=CF_TOKEN, **kw) + main
+    return (HEAD.format(title=e(title), desc=e(desc), cf=CF_TOKEN,
+                       ga=render_ga_script(load_ga_measurement_id()), **kw)
+            + main
             + FOOT.format(home_cur=kw["home_cur"], about_cur=kw["about_cur"]))
 
 

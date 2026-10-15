@@ -77,10 +77,43 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("data-division", self.html)
         self.assertNotIn("Browse by division", self.html)
 
-    def test_cloudflare_analytics_no_ga(self):
-        self.assertIn("static.cloudflareinsights.com/beacon.min.js", self.html)
-        self.assertIn("092a061973fc4d899cd2e4b52952af89", self.html)
-        self.assertNotIn("googletagmanager", self.html)
+    def test_cloudflare_and_ga4_in_head(self):
+        site = json.loads(build.SITE_CONFIG.read_text(encoding="utf-8"))
+        self.assertEqual(list(site), ["ga4_measurement_id"])
+        self.assertEqual(site["ga4_measurement_id"], "G-P7Y5Z19Q46")
+        head, _, body = self.html.partition("</head>")
+        self.assertIn("static.cloudflareinsights.com/beacon.min.js", head)
+        self.assertIn("092a061973fc4d899cd2e4b52952af89", head)
+        self.assertIn('content="noindex"', head)
+        self.assertIn("https://www.googletagmanager.com/gtag/js?id=G-P7Y5Z19Q46", head)
+        self.assertIn("gtag('config','G-P7Y5Z19Q46')", head)
+        self.assertNotIn("googletagmanager", body)
+        about = build.render_about(self.events, self.now)
+        about_head, _, _ = about.partition("</head>")
+        self.assertIn("gtag('config','G-P7Y5Z19Q46')", about_head)
+        self.assertIn("static.cloudflareinsights.com/beacon.min.js", about)
+
+    def test_blank_ga_measurement_id_omits_gtag(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "site.json").write_text(
+                json.dumps({"ga4_measurement_id": ""}), encoding="utf-8")
+            original = build.SITE_CONFIG
+            build.SITE_CONFIG = root / "site.json"
+            try:
+                out = build.build(root / "dist", self.now)
+                pages = [
+                    (out / name).read_text(encoding="utf-8")
+                    for name in ("index.html", "about.html", "404.html")
+                ]
+            finally:
+                build.SITE_CONFIG = original
+        for page in pages:
+            self.assertNotIn("gtag", page)
+            self.assertNotIn("googletagmanager", page)
+            self.assertNotIn("G-P7Y5Z19Q46", page)
+            self.assertIn("static.cloudflareinsights.com/beacon.min.js", page)
+            self.assertIn('content="noindex"', page)
 
     def test_date_labels(self):
         ev = {"start_date": "2026-07-22", "end_date": "2026-08-16", "month": 7}
@@ -110,6 +143,13 @@ class RenderTests(unittest.TestCase):
             for f in ("index.html", "about.html", "style.css", "events.css", "app.js", "events.js", "fonts/Geist-Variable.woff2"):
                 self.assertTrue((out / f).exists(), f)
             self.assertFalse((out / "CNAME").exists())
+            for name in ("index.html", "about.html", "404.html"):
+                page = (out / name).read_text(encoding="utf-8")
+                head, _, _ = page.partition("</head>")
+                self.assertIn("gtag('config','G-P7Y5Z19Q46')", head)
+                self.assertIn("static.cloudflareinsights.com/beacon.min.js", page)
+                self.assertIn('content="noindex"', page)
+                self.assertNotIn('href="https://sarawak.news', page)
 
 
 if __name__ == "__main__":
