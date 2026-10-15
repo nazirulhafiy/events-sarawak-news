@@ -27,6 +27,7 @@
         "town": {"type": "string", "minLength": 1},
         "division": {"enum": ["Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah", "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"]},
         "summary": {"type": "string", "minLength": 1, "maxLength": 280, "description": "1-2 factual sentences, no phone numbers or emails."},
+        "event_type": {"type": ["string", "null"], "enum": ["festival", "race", "regatta", "concert", "cultural", "sports", null]},
         "official_url": {"type": ["string", "null"], "pattern": "^https://"},
         "url": {"type": "string", "pattern": "^https://", "description": "Page the facts were verified on (becomes source_url)."},
         "source": {"type": "string", "minLength": 1},

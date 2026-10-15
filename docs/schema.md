@@ -24,6 +24,7 @@ Files that hold schema records:
 | `town` | string | yes | |
 | `division` | enum | yes | One of the 12 divisions: Betong, Bintulu, Kapit, Kuching, Limbang, Miri, Mukah, Samarahan, Sarikei, Serian, Sibu, Sri Aman. |
 | `summary` | string | yes | Short and factual, 1-2 sentences, at most 280 characters, original wording. |
+| `event_type` | enum or null | no | One of `festival`, `race`, `regatta`, `concert`, `cultural`, `sports`. Rendered as the red label on the card. Null or omitted renders no label. Any other value is a validation error. |
 | `official_url` | https URL or null | no | The organiser's own event page. Rendered as an "Official site" link. |
 
 ## Internal fields (never rendered)
@@ -43,6 +44,7 @@ fields to the templates (`events_lib.public`).
 
 - **No phone numbers, emails or organiser contact lines** in any field, public or internal. The validator rejects Malaysian phone shapes and email addresses. Cards carry no organiser or contact line at all.
 - No unknown fields: anything outside the two tables is a validation error.
+- `event_type` is a closed list taken from words the site already uses (festivals, races, regattas, concerts, cultural events, sports). `festival` also covers a pesta, fest, fair, carnival or fiesta. A race, marathon, run or trail is `race`. A regatta or regata is `regatta`. A concert is `concert`. A ritual, parade, open house or other cultural programme that is not already one of those is `cultural`. A championship, tournament, games or other sports meeting that is not a race or regatta is `sports`.
 - No on-site source attribution. `source_url` and `source_name` exist for review only.
 - Every URL is https.
 

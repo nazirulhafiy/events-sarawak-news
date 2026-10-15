@@ -71,6 +71,7 @@ class RenderTests(unittest.TestCase):
 
     def test_all_events_rendered(self):
         self.assertEqual(self.html.count('class="event-card"'), 114)
+        self.assertEqual(self.html.count('class="event-type"'), 114)
 
     def test_note_present_and_no_division_filter(self):
         self.assertIn("Dates subject to change, check with organisers", self.html)
@@ -153,8 +154,17 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("event-place-label\">Kuching", card)
         self.assertNotIn("event-date", card)
         self.assertNotIn("event-chip", card)
+        self.assertNotIn("event-type", card)
         self.assertNotIn("story-section", card)
         self.assertNotIn("story-source", card)
+        typed = build.render_card({
+            "id": "r", "name": "Regatta", "month": 10,
+            "start_date": "2026-10-30", "end_date": "2026-11-01", "date_tbc": False,
+            "summary": "A river regatta.", "venue": "Waterfront", "town": "Kuching",
+            "division": "Kuching", "event_type": "regatta",
+        })
+        self.assertIn('class="event-type">regatta<', typed)
+        self.assertIn('class="event-place-label">Kuching<', typed)
         fallback = build.render_card({
             "id": "y", "name": "Undated", "month": 5,
             "start_date": None, "end_date": None, "date_tbc": True,

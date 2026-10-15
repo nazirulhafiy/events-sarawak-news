@@ -17,9 +17,12 @@ MYT = dt.timezone(dt.timedelta(hours=8))
 
 DIVISIONS = {"Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah",
              "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"}
+# Words already used on the site: festivals, races, regattas, concerts,
+# cultural events, sports. Festival also covers pesta, fest, fair, carnival and fiesta.
+EVENT_TYPES = {"festival", "race", "regatta", "concert", "cultural", "sports"}
 STATUSES = {"published", "pending", "approved", "rejected", "duplicate", "cancelled"}
 PUBLIC_FIELDS = ["id", "name", "start_date", "end_date", "date_tbc", "month", "venue",
-                 "town", "division", "summary", "official_url"]
+                 "town", "division", "summary", "event_type", "official_url"]
 INTERNAL_FIELDS = ["source_url", "source_name", "discovered_at", "status", "review_note"]
 ALL_FIELDS = PUBLIC_FIELDS + INTERNAL_FIELDS
 REQUIRED = ["id", "name", "date_tbc", "month", "town", "division", "summary",
@@ -63,6 +66,9 @@ def validate_event(ev: dict) -> list[str]:
         errs.append(f"{eid}: bad status '{ev['status']}'")
     if ev["division"] not in DIVISIONS:
         errs.append(f"{eid}: unknown division '{ev['division']}'")
+    event_type = ev.get("event_type")
+    if event_type is not None and event_type not in EVENT_TYPES:
+        errs.append(f"{eid}: unknown event_type '{event_type}'")
     if not isinstance(ev["date_tbc"], bool):
         errs.append(f"{eid}: date_tbc must be boolean")
     try:
@@ -171,6 +177,7 @@ def normalise_candidate(c: dict, now: dt.datetime | None = None) -> dict:
         "town": town,
         "division": c.get("division") or "",
         "summary": re.sub(r"\s+", " ", c.get("summary") or "").strip(),
+        "event_type": c.get("event_type") or None,
         "official_url": c.get("official_url") or None,
         "source_url": c["url"],
         "source_name": c["source"],

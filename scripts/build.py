@@ -140,6 +140,8 @@ def render_card(ev: dict) -> str:
         f'<span class="event-place"><span class="event-place-label">{e(place)}</span></span>'
         if place else ""
     )
+    kind = (ev.get("event_type") or "").strip()
+    kind_html = f'<span class="event-type">{e(kind)}</span>' if kind else ""
     link = ""
     if ev.get("official_url"):
         link = (
@@ -151,6 +153,7 @@ def render_card(ev: dict) -> str:
         <p class="event-meta-row">
           {when}
           {pill}
+          {kind_html}
         </p>
         <h3 class="event-name">{e(ev['name'])}</h3>
         <p class="event-sum">{e(ev.get('summary') or '')}</p>

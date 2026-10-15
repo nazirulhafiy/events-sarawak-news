@@ -17,13 +17,16 @@
   text-transform: uppercase;
 }
 .event-meta-row time::after,
-.event-meta-row .event-when::after {
+.event-meta-row .event-when::after,
+.event-place::after {
   content: "·";
   margin-left: 7px;
   color: #b7bcc5;
 }
 .event-meta-row time:last-child::after,
-.event-meta-row .event-when:last-child::after { content: none; }
+.event-meta-row .event-when:last-child::after,
+.event-place:last-child::after { content: none; }
+.event-type { color: var(--sarawak-red-ink); font-weight: 900; }
 .event-place { font-weight: 900; }
 .event-place-label {
   padding: 1px 4px;
