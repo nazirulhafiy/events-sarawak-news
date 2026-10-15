@@ -100,6 +100,10 @@ class RenderTests(unittest.TestCase):
     def test_no_custom_domain_or_hub_link(self):
         self.assertNotIn('href="https://sarawak.news', self.html)
 
+    def test_hidden_panels_not_overridden_by_css(self):
+        css = (build.SITE / "events.css").read_text()
+        self.assertIn(".event-list[hidden] { display: none; }", css)
+
     def test_build_writes_dist(self):
         with tempfile.TemporaryDirectory() as d:
             out = build.build(Path(d) / "dist", self.now)

@@ -52,3 +52,4 @@ html[data-theme="dark"] .event-date { border: 1px solid var(--line); }
 .event-mon { white-space: nowrap; }
 @media (max-width: 560px) { .event-mon { letter-spacing: .02em; } }
 .event-date.is-tbc .event-day { font-size: 15px; letter-spacing: .04em; }
+.event-list[hidden] { display: none; }
