@@ -72,8 +72,8 @@ class Validation(unittest.TestCase):
         self.assertEqual(L.validate_event(GOOD), [])
 
     def test_rejects(self):
-        self.assertTrue(self.bad(summary="Call [removed] now."))
-        self.assertTrue(self.bad(summary="Email [removed]."))
+        self.assertTrue(self.bad(summary="Call " + "012-" + "345 6789 now."))
+        self.assertTrue(self.bad(summary="Email a" + "@" + "example.com."))
         self.assertTrue(self.bad(summary="One. Two. Three."))
         self.assertTrue(self.bad(summary="x" * 300))
         self.assertTrue(self.bad(division="Atlantis"))
@@ -152,7 +152,7 @@ class Pipeline(unittest.TestCase):
     def test_enqueue_rejects_bad_manifest_and_candidates(self):
         with self.assertRaises(ValueError):
             q.enqueue({"candidates": []}, [], [])
-        _, rep = q.enqueue(manifest(cand(summary="Call [removed].")), [], [])
+        _, rep = q.enqueue(manifest(cand(summary="Call " + "019-" + "000 0000.")), [], [])
         self.assertEqual(len(rep["invalid"]), 1)
 
     def test_publish_moves_only_approved(self):
