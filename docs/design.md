@@ -28,5 +28,5 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 Cloudflare Pages project `events-sarawak-news` (`*.pages.dev`), with no custom domain attached. At launch: attach events.sarawak.news, add DNS, remove `noindex`, link from the hub.
 
 ## Analytics
-- Cloudflare Web Analytics beacon, token `092a061973fc4d899cd2e4b52952af89` (zone sarawak.news, shared sarawak.news site).
-- **No GA4 yet**: no GA4 property exists for events.sarawak.news. Add the gtag snippet to `HEAD` in build.py once one is created.
+- Cloudflare Web Analytics beacon, token `092a061973fc4d899cd2e4b52952af89` (zone sarawak.news, shared sarawak.news site). The beacon is on every page.
+- GA4 property **Sarawak Events**. The measurement ID is the only value in `data/site.json`, key `ga4_measurement_id`, currently `G-P7Y5Z19Q46`. When that field is set, `scripts/build.py` injects the gtag snippet in `HEAD`. When it is empty, built pages include neither `gtag` nor `googletagmanager`. Preview pages stay `noindex`.
