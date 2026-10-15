@@ -145,7 +145,7 @@ class RenderTests(unittest.TestCase):
             out = build.build(Path(d) / "dist", self.now)
             for f in ("index.html", "about.html", "style.css", "events.css", "app.js", "events.js", "fonts/Geist-Variable.woff2"):
                 self.assertTrue((out / f).exists(), f)
-            self.assertFalse((out / "CNAME").exists())
+            self.assertEqual((out / "CNAME").read_text(encoding="utf-8"), "events.sarawak.news\n")
             robots = (out / "robots.txt").read_text(encoding="utf-8")
             self.assertEqual(
                 robots,
