@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://events.sarawak.news/schemas/candidate-manifest.json",
+  "title": "Events.Sarawak.News candidate manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "generated_at", "timezone", "candidates"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "timezone": {"const": "Asia/Kuching"},
+    "candidates": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/candidate"}}
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "start_date", "month", "town", "division", "summary", "url", "source", "language_verified", "discovered_at", "source_checked_at", "discovery_source_url"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "description": "Event name as the source states it."},
+        "start_date": {"type": ["string", "null"], "format": "date", "description": "null when the source gives no fixed date (becomes date_tbc)."},
+        "end_date": {"type": ["string", "null"], "format": "date"},
+        "month": {"type": "integer", "minimum": 1, "maximum": 12},
+        "year": {"type": "integer"},
+        "venue": {"type": ["string", "null"]},
+        "town": {"type": "string", "minLength": 1},
+        "division": {"enum": ["Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah", "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 280, "description": "1-2 factual sentences, no phone numbers or emails."},
+        "official_url": {"type": ["string", "null"], "pattern": "^https://"},
+        "url": {"type": "string", "pattern": "^https://", "description": "Page the facts were verified on (becomes source_url)."},
+        "source": {"type": "string", "minLength": 1},
+        "language_verified": {"const": true},
+        "discovered_at": {"type": "string", "format": "date-time"},
+        "source_checked_at": {"type": "string", "format": "date-time"},
+        "discovery_source_url": {"type": "string", "pattern": "^https://"}
+      }
+    }
+  }
+}

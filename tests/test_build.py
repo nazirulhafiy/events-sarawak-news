@@ -20,7 +20,7 @@ class DataTests(unittest.TestCase):
     def test_count_and_fields(self):
         self.assertEqual(len(self.events), 114)
         for ev in self.events:
-            for k in ("id", "name", "month", "division", "summary"):
+            for k in ("id", "name", "month", "division", "summary", "date_tbc"):
                 self.assertIn(k, ev)
             self.assertTrue(1 <= ev["month"] <= 12)
 
@@ -30,7 +30,7 @@ class DataTests(unittest.TestCase):
 
     def test_dates_valid_and_ordered(self):
         for ev in self.events:
-            if ev["start_date"]:
+            if ev["start_date"] and not ev["date_tbc"]:
                 s = dt.date.fromisoformat(ev["start_date"])
                 self.assertEqual(s.year, 2026)
                 self.assertEqual(s.month, ev["month"], ev["id"])

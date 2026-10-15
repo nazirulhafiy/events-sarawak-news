@@ -13,8 +13,11 @@ import shutil
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import events_lib  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data" / "events-2026.json"
+DATA = ROOT / "data" / "events.json"
 SITE = ROOT / "site"
 DIST = ROOT / "dist"
 MYT = dt.timezone(dt.timedelta(hours=8))
@@ -28,7 +31,12 @@ e = html.escape
 
 
 def load_events(path: Path = DATA) -> list[dict]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    """Published events only, internal fields stripped. Fails on schema errors."""
+    events = json.loads(path.read_text(encoding="utf-8"))
+    errs = events_lib.validate_collection(events)
+    if errs:
+        raise SystemExit("Schema errors:\n" + "\n".join(errs))
+    return events_lib.public(events)
 
 
 def month_counts(events: list[dict]) -> dict[int, int]:
@@ -54,7 +62,7 @@ def sort_key(ev: dict):
 
 def date_parts(ev: dict) -> tuple[str, str, str]:
     """Return (day, month label, accessible label)."""
-    if not ev.get("start_date"):
+    if ev.get("date_tbc") or not ev.get("start_date"):
         mon = M[int(ev["month"]) - 1]
         return "TBC", mon, f"Date to be confirmed, {FULL[int(ev['month']) - 1]} {YEAR}"
     s = dt.date.fromisoformat(ev["start_date"])
@@ -78,10 +86,8 @@ def where(ev: dict) -> str:
 
 def render_card(ev: dict) -> str:
     day, mon, label = date_parts(ev)
-    contact = " · ".join(e(x) for x in (ev.get("phone"), ev.get("email"), ev.get("website")) if x)
-    org = (f'<span class="event-org"><span class="event-label">Organiser</span> {e(ev["organiser"])}</span>'
-           if ev.get("organiser") else "")
-    contact_html = f"Contact: {contact}" if contact else "Organiser contact: to be confirmed"
+    link = (f'<a class="event-link" href="{e(ev["official_url"])}" target="_blank" rel="noopener noreferrer">Official site</a>'
+            if ev.get("official_url") else "")
     tbc = " is-tbc" if day == "TBC" else ""
     return f"""
       <li class="event-card" id="{e(ev['id'])}">
@@ -90,7 +96,7 @@ def render_card(ev: dict) -> str:
           <h3 class="event-name">{e(ev['name'])}</h3>
           <p class="event-sum">{e(ev.get('summary') or '')}</p>
           <p class="event-venue"><span class="event-label">Venue</span> {e(where(ev))}</p>
-          <p class="event-orgline">{org}<span class="event-contact">{contact_html}</span></p><div class="event-meta"><span class="event-chip">{e(ev.get('division') or '')}</span></div>
+          <div class="event-meta"><span class="event-chip">{e(ev.get('division') or '')}</span>{link}</div>
         </div>
       </li>"""
 
@@ -183,7 +189,7 @@ FOOT = """  <footer class="site-footer">
     <div class="site-footer-main">
       <div class="site-footer-summary">
         <p class="site-footer-brand">Events.Sarawak.News</p>
-        <p class="site-footer-note">An independent listing of events in Sarawak, compiled from the published Sarawak 2026 Calendar of Tourism Events. Dates and venues can change; confirm with each organiser. This website does not sell tickets.</p>
+        <p class="site-footer-note">An independent listing of events across Sarawak. Dates and venues can change, so check with the organiser before you travel. This website does not sell tickets.</p>
       </div>
       <nav aria-label="Explore" class="site-footer-nav">
         <h2>Explore</h2>
@@ -224,7 +230,7 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     main = f"""  <main id="content">
     <header class="brief">
       <h1>Events in Sarawak, month by month.</h1>
-      <p class="brief-deck">Listed from the Sarawak 2026 Calendar of Tourism Events.</p>
+      <p class="brief-deck">Festivals, races, regattas and cultural events across Sarawak.</p>
       {updated_html(now)}
     </header>
     <section class="category-filter month-filter" aria-labelledby="month-filter-title">
@@ -238,7 +244,7 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     {render_panels(events, cur)}
   </main>
 """
-    return shell("home", "Events Sarawak", "Events in Sarawak, listed by month.", main)
+    return shell("home", "Events Sarawak", "Festivals, races, regattas and cultural events across Sarawak, listed by month.", main)
 
 
 def render_about(events: list[dict], now: dt.datetime | None = None) -> str:
@@ -247,14 +253,15 @@ def render_about(events: list[dict], now: dt.datetime | None = None) -> str:
       <h1>About Events.Sarawak.News</h1>
       <p class="brief-deck">A plain month-by-month listing of events across Sarawak.</p>
     </header>
-    <div class="event-list" style="display:block">
-      <p>The {len(events)} events listed here come from the official Sarawak 2026 Calendar of Tourism Events published by the Ministry of Tourism, Creative Industry and Performing Arts Sarawak (MTCP). Where the calendar was unclear, the listing says so or marks the field as to be confirmed.</p>
-      <p><strong>{NOTE}</strong> Organisers can move, postpone or cancel events after the calendar is printed.</p>
-      <p>This is an independent site and is not affiliated with the Sarawak Government. It does not sell tickets. Spotted a mistake? Contact the publisher at <a class="site-footer-link" href="https://hafiy.my">hafiy.my</a>.</p>
+    <div class="event-list about-body">
+      <p>Events.Sarawak.News lists festivals, sports events, regattas, concerts and cultural celebrations happening around Sarawak, one month at a time. Each listing gives the dates, the venue, the division and a short factual description.</p>
+      <p>New events are added as they are announced and checked before they appear here. When a date has not been fixed, the listing shows it as TBC.</p>
+      <p><strong>{NOTE}</strong> Events can be moved, postponed or cancelled at short notice.</p>
+      <p>This is an independent site and is not affiliated with the Sarawak Government. It does not sell tickets. Spotted a mistake or know of an event that is missing? Get in touch via <a class="site-footer-link" href="https://hafiy.my">hafiy.my</a>.</p>
     </div>
   </main>
 """
-    return shell("about", "About · Events Sarawak", "About the Sarawak events listing.", main)
+    return shell("about", "About · Events Sarawak", "About Events.Sarawak.News, an independent listing of events across Sarawak.", main)
 
 
 def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:

@@ -1,0 +1,17 @@
+[
+  {"name": "Sarawak Tourism Board — events", "url": "https://sarawaktourism.com/events", "tier": 1, "category": "official tourism", "expected_yield": "high"},
+  {"name": "MTCP Sarawak — announcements", "url": "https://mtcp.sarawak.gov.my/", "tier": 1, "category": "government", "expected_yield": "medium"},
+  {"name": "Business Events Sarawak — calendar", "url": "https://www.businesseventssarawak.com/", "tier": 1, "category": "official tourism", "expected_yield": "medium"},
+  {"name": "BCCK — what's on", "url": "https://www.bcck.com.my/", "tier": 2, "category": "venue", "expected_yield": "medium"},
+  {"name": "UKAS — news", "url": "https://ukas.sarawak.gov.my/", "tier": 2, "category": "government comms", "expected_yield": "medium"},
+  {"name": "The Borneo Post — Sarawak festival search", "url": "https://www.theborneopost.com/?s=Sarawak+festival", "tier": 1, "category": "news", "expected_yield": "high"},
+  {"name": "The Borneo Post — Kuching event search", "url": "https://www.theborneopost.com/?s=Kuching+event", "tier": 1, "category": "news", "expected_yield": "high"},
+  {"name": "DayakDaily — festival search", "url": "https://dayakdaily.com/?s=festival", "tier": 1, "category": "news", "expected_yield": "high"},
+  {"name": "DayakDaily — regatta search", "url": "https://dayakdaily.com/?s=regatta", "tier": 1, "category": "news", "expected_yield": "medium"},
+  {"name": "Sarawak Tribune — festival search", "url": "https://www.sarawaktribune.com/?s=festival", "tier": 1, "category": "news", "expected_yield": "medium-high"},
+  {"name": "The Star — Sarawak festival search", "url": "https://www.thestar.com.my/search?query=Sarawak+festival", "tier": 2, "category": "news", "expected_yield": "medium"},
+  {"name": "TVS — news", "url": "https://tvstv.my/", "tier": 2, "category": "news", "expected_yield": "medium"},
+  {"name": "Rainforest World Music Festival", "url": "https://rwmf.net/", "tier": 2, "category": "organiser", "expected_yield": "low"},
+  {"name": "Borneo Jazz Festival", "url": "https://www.borneojazz.com/", "tier": 2, "category": "organiser", "expected_yield": "low"},
+  {"name": "Kuching Marathon", "url": "https://www.kuchingmarathon.org/", "tier": 2, "category": "organiser", "expected_yield": "low"}
+]

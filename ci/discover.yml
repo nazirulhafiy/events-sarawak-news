@@ -1,0 +1,27 @@
+name: discover
+
+# Scheduled candidate-URL discovery (internal review material only).
+# Kept under ci/ because the box token lacks `workflow` scope; move to
+# .github/workflows/ to enable. It never edits data/ or publishes.
+on:
+  schedule:
+    - cron: '0 23 * * *'   # 07:00 Asia/Kuching
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/validate.py
+      - run: python scripts/discover.py --limit-per-source 8
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidate-urls
+          path: dist/candidate-urls.json
