@@ -22,11 +22,13 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - `python3 scripts/build.py` → `dist/` (index.html, about.html, 404.html, assets). Standard library only.
 - Data: `data/events.json` in the standard schema (`docs/schema.md`). Only `published` records render, and internal fields (`source_url`, `source_name`, `discovered_at`, `status`, `review_note`) never do. Discovery and publishing: `docs/automation.md`, with the Maintainer Bot runbook in `docs/runbook.md`.
 - Tests: `python3 -m unittest discover -s tests`.
-- CI: `.github/workflows/build.yml` and `.github/workflows/discover.yml`. `build.yml` runs the tests, builds, and uploads a Pages artifact. It has no deploy job. GitHub Pages for nazirulhafiy resolves to hafiy.my/events-sarawak-news/, so production is the existing Cloudflare Pages project, not GitHub Pages.
+- CI: `.github/workflows/build.yml` and `.github/workflows/discover.yml`. `build.yml` runs tests, validates, builds `dist/`, uploads it as a workflow artifact, and on push to `main` deploys to Cloudflare Pages with Wrangler (`pages deploy dist --project-name=events-sarawak-news --branch=main`). Production is Cloudflare Pages, not GitHub Pages. Deploy needs repo secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; see `docs/runbook.md` for the manual Wrangler fallback.
 - Production origin: `https://events.sarawak.news`. The build writes `robots.txt` (`Allow: /` and `Sitemap: https://events.sarawak.news/sitemap.xml`) and `sitemap.xml` for the home page and `about.html`. Every HTML page has `<meta name="robots" content="index,follow">` and a `<link rel="canonical">` on that origin (`/`, `/about.html`, `/404.html`). `404.html` is not in the sitemap.
 
 ## Hosting
 Cloudflare Pages project `events-sarawak-news` (`events-sarawak-news.pages.dev`), production branch `main`, custom domain `events.sarawak.news` only. Do not attach any other domain. A hub link still needs Nazirul's explicit approval.
+
+**Deploy:** GitHub Actions `build` workflow on push to `main` (after `test-build` passes) uses `cloudflare/wrangler-action@v3` to publish `dist/` to the Pages project. The `production` environment URL is https://events.sarawak.news. No `pages` or `id-token` permissions (unlike the ai.sarawak.news / bantuan GitHub Pages repos).
 
 ## Analytics
 - Cloudflare Web Analytics beacon, token `092a061973fc4d899cd2e4b52952af89` (zone sarawak.news, shared sarawak.news site). The beacon is on every page.

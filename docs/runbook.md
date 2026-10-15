@@ -23,7 +23,7 @@ Do not attach any other domain, and do not add a hub link, without Nazirul's exp
 3. **Wait** for the terminal result (`published`, `no_update` or `blocked`).
 4. **Confirm** the remote branch or PR state and the SHA yourself. Do not trust the agent's report alone.
 5. **Ledger.** Write one record per screened URL: URL, canonical URL, first seen, last screened, run ID, outcome (`published`, `queued`, `duplicate`, `rejected`, `inaccessible`, `monitor`), one-line reason, agent run ID. The ledger is private and stays outside the repo.
-6. **Redeploy the preview** after anything reaches `main` (below).
+6. **Deploy** happens automatically when changes reach `main` (see below). Confirm the live site after a content publish.
 7. **Report** to Nazirul only on `PR-ready`, `published` or `blocked`. Stay quiet on `no_update`. Include **Needs manual check** items.
 
 ## Commands (what the Cloud Agent runs)
@@ -42,17 +42,31 @@ python3 scripts/build.py
 
 Postponed: edit dates in `data/events.json` and add a `review_note`. Cancelled: set `status` to `cancelled`; it stops rendering.
 
-## Redeploying the preview
+## Deploying
 
-The GitHub `build` workflow has no deploy job. Deploy `dist/` to the existing
-Cloudflare Pages project `events-sarawak-news` (production branch `main`).
-The custom domain stays `events.sarawak.news`. Do not create a new Pages project
-and do not attach any other domain. Either:
+**Automatic (preferred).** On every push to `main`, the GitHub `build` workflow
+runs tests, validates, builds `dist/`, then deploys to the Cloudflare Pages
+project `events-sarawak-news` (production branch `main`) via
+`cloudflare/wrangler-action@v3`. The live URL is https://events.sarawak.news.
+Do not create a new Pages project and do not attach any other domain.
 
-- `npx wrangler pages deploy dist --project-name events-sarawak-news --branch main` (needs a Cloudflare API token with Pages:Edit), or
-- what the preview currently uses: bundle `dist/` into one `_worker.js` that serves the files inline, and POST it as a multipart deployment (`manifest={}`, `branch=main`, `_worker.js`) to `/accounts/{id}/pages/projects/events-sarawak-news/deployments` through the Cloudflare API connector. The direct asset-upload endpoint returned "Authorization failed" from the connector.
+Repository secrets required for CI deploy (Settings → Secrets and variables → Actions):
 
-After deploying, check that `https://events.sarawak.news/` returns 200 and the new event shows under its month.
+- `CLOUDFLARE_API_TOKEN` — API token with **Cloudflare Pages: Edit** for this account.
+- `CLOUDFLARE_ACCOUNT_ID` — Cloudflare account ID for the Pages project.
+
+Until both secrets are set, pushes to `main` will pass `test-build` but the
+`deploy` job will fail.
+
+**Manual fallback.** From a clean `dist/` (run `python3 scripts/build.py` locally or download the `dist` artifact from a successful `test-build` run):
+
+```bash
+npx wrangler pages deploy dist --project-name events-sarawak-news --branch main
+```
+
+Use the same API token scope as above, or log in with `wrangler login`.
+
+After any deploy, check that `https://events.sarawak.news/` returns 200 and new events show under their month.
 
 ## Hard stops
 
