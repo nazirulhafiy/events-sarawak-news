@@ -22,7 +22,7 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - `python3 scripts/build.py` → `dist/` (index.html, about.html, 404.html, assets). Standard library only.
 - Data: `data/events.json` in the standard schema (`docs/schema.md`). Only `published` records render, and internal fields (`source_url`, `source_name`, `discovered_at`, `status`, `review_note`) never do. Discovery and publishing: `docs/automation.md`, with the Maintainer Bot runbook in `docs/runbook.md`.
 - Tests: `python3 -m unittest discover -s tests`.
-- CI: `ci/build.yml` and `ci/discover.yml` (move to `.github/workflows/build.yml`; the gh token on the box lacks `workflow` scope so it could not be pushed) (`build`) runs the tests, builds, and uploads a Pages artifact. **No deploy step during preview**, because GitHub Pages for nazirulhafiy resolves to hafiy.my/events-sarawak-news/.
+- CI: `.github/workflows/build.yml` and `.github/workflows/discover.yml`. `build.yml` runs the tests, builds, and uploads a Pages artifact. **No deploy step during preview**, because GitHub Pages for nazirulhafiy resolves to hafiy.my/events-sarawak-news/.
 
 ## Hosting (preview)
 Cloudflare Pages project `events-sarawak-news` (`*.pages.dev`), with no custom domain attached. At launch: attach events.sarawak.news, add DNS, remove `noindex`, link from the hub.
