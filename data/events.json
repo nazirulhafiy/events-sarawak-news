@@ -14,8 +14,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Listed under the February heading in the PDF although dated 16-18 Jan."
+    "status": "published"
   },
   {
     "id": "the-acg-concert-2026",
@@ -66,8 +65,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Printed on the April page but dated 2-3 Mar."
+    "status": "published"
   },
   {
     "id": "majlis-berlangger-mija-2026",
@@ -101,8 +99,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "possibly this event's."
+    "status": "published"
   },
   {
     "id": "bintulu-mountain-bike-challenge-2026",
@@ -162,16 +159,15 @@
     "end_date": null,
     "date_tbc": false,
     "month": 4,
-    "venue": "Tebedu / Entikong",
+    "venue": "Stadium Mini Tebedu",
     "town": "Tebedu",
     "division": "Serian",
-    "summary": "An annual Malaysia-Indonesia border sports and cultural programme between Tebedu and Entikong, hosted alternately by each country.",
+    "summary": "The 2026 edition is hosted in Tebedu, with traditional and modern sports at several venues in town and the opening and closing at Stadium Mini Tebedu. Malam Titian Muhibbah is held the same day at Dewan Tayung Langui, Kampung Pichin.",
     "official_url": null,
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Host side for 2026 (Tebedu or Entikong) not stated."
+    "status": "published"
   },
   {
     "id": "kejohanan-muaythai-piala-tyt-yang-di-pertua-negeri-sarawak-edisi-ke-10-piala-borneo-2026",
@@ -290,8 +286,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Two date blocks (25 Apr; assignment is inferred."
+    "status": "published"
   },
   {
     "id": "kaul-mukah-2026",
@@ -325,8 +320,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "verify."
+    "status": "published"
   },
   {
     "id": "silabur-ultra-trail-sutra-2026",
@@ -411,8 +405,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Specific venue not given beyond 'Tanjung Manis'. Division assigned by knowledge (Tanjung Manis district), verify."
+    "status": "published"
   },
   {
     "id": "kuching-music-festival-2026",
@@ -523,7 +516,7 @@
     "end_date": "2026-06-02",
     "date_tbc": false,
     "month": 5,
-    "venue": "Dataran Majlis Daerah Matu, Daro",
+    "venue": "Dataran Majlis Daerah Matu dan Daro",
     "town": "Matu",
     "division": "Mukah",
     "summary": "An annual district festival promoting Matu's local products, heritage sites, food and culture.",
@@ -531,8 +524,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Venue text reads 'Dataran Majlis Daerah Matu, Daro'."
+    "status": "published"
   },
   {
     "id": "bukit-sadok-expedition-2026",
@@ -549,8 +541,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "No date printed; listed under May."
+    "status": "published"
   },
   {
     "id": "pesta-babulang-lumba-kerbau-2026",
@@ -584,8 +575,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "No specific venue printed."
+    "status": "published"
   },
   {
     "id": "pesta-buntal-dan-regatta-saribas-2026",
@@ -653,8 +643,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "A separate 'Karnival Balau Dalat 2026' is listed 30 Oct-1 Nov (p.22) by a different organiser; check whether these are distinct events."
+    "status": "published"
   },
   {
     "id": "niti-daun-parade-2026",
@@ -671,8 +660,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Venue/organiser matched by layout."
+    "status": "published"
   },
   {
     "id": "regata-tandang-sari-2026",
@@ -706,8 +694,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Specific venue not printed."
+    "status": "published"
   },
   {
     "id": "pesta-medamit-sempena-ngiling-bidai-peringkat-daerah-limbang-2026",
@@ -775,8 +762,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Printed on the July page but dated 28 Jun."
+    "status": "published"
   },
   {
     "id": "borneo-cultural-festival-2026",
@@ -1002,9 +988,9 @@
   {
     "id": "ekspedisi-budaya-bukit-mabong-2026",
     "name": "Ekspedisi Budaya Bukit Mabong",
-    "start_date": null,
-    "end_date": null,
-    "date_tbc": true,
+    "start_date": "2026-07-10",
+    "end_date": "2026-07-12",
+    "date_tbc": false,
     "month": 7,
     "venue": "Tunoh, Bukit Mabong",
     "town": "Bukit Mabong",
@@ -1014,8 +1000,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Date unclear: '10-12 Jul' sits near the title but next to Sebauh details; listed under July. Venue matched by layout."
+    "status": "published"
   },
   {
     "id": "bintulu-marathon-2026",
@@ -1079,12 +1064,11 @@
     "town": "Kuching",
     "division": "Kuching",
     "summary": "The Pacific Asia Travel Association's trade mart, hosted in Kuching in 2026.",
-    "official_url": null,
+    "official_url": "https://www.pata.org/pata-travel-mart-2026",
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Organiser inferred from adjacent STB contact."
+    "status": "published"
   },
   {
     "id": "siol-international-mountain-bike-challenge-simbc-2026",
@@ -1254,8 +1238,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Spelled both 'Bederun' and 'Berderun' in the PDF."
+    "status": "published"
   },
   {
     "id": "benak-road-trail-run-2026",
@@ -1451,16 +1434,15 @@
     "end_date": "2026-09-26",
     "date_tbc": false,
     "month": 9,
-    "venue": "Kampung Tema Mawang (Tebedu) to Kampung Tebakang Bidayuh",
+    "venue": "Padang Bola Sepak, Kampung Bunga, Serian",
     "town": "Serian",
     "division": "Serian",
-    "summary": "A 25km rafting race held since 2012 with five categories, plus pageant, folk sports and cultural shows.",
+    "summary": "A 25km rafting race from Kampung Tema Mawang in Tebedu to Kampung Tebakang Bidayuh, held since 2012. The festival also has five race categories, a pageant, folk sports and cultural shows.",
     "official_url": null,
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Printed venue line reads 'Padang Bola Sepak, Kampung Bunga, Serian'; race route used here. Verify base venue."
+    "status": "published"
   },
   {
     "id": "sebauh-a1-challenge-2026",
@@ -1562,8 +1544,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Division assigned by knowledge (Tanjung Manis district), verify."
+    "status": "published"
   },
   {
     "id": "wak-festival-2026-wak-kuching-2026",
@@ -1699,8 +1680,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Division (Serian vs Kuching) not stated in PDF; verify."
+    "status": "published"
   },
   {
     "id": "kuching-waterfront-festival-2026",
@@ -1802,8 +1782,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Summary says 1872 'during the reign of Sir James Brooke' as printed (historically Charles Brooke); not repeated."
+    "status": "published"
   },
   {
     "id": "karnival-balau-dalat-2026",
@@ -1820,8 +1799,7 @@
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Possible overlap with 'Karnival Balau and Agrofest Dalat 2026' (19-21 Jun, p.8)."
+    "status": "published"
   },
   {
     "id": "baram-basin-indigenous-cultural-festival-bbic-festival-2026",

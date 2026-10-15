@@ -57,7 +57,7 @@ class SeedData(unittest.TestCase):
 
     def test_date_tbc_events(self):
         tbc = {e["id"] for e in self.events if e["date_tbc"]}
-        self.assertEqual(tbc, {"bukit-sadok-expedition-2026", "ekspedisi-budaya-bukit-mabong-2026"})
+        self.assertEqual(tbc, {"bukit-sadok-expedition-2026"})
 
     def test_queue_valid(self):
         self.assertEqual(L.validate_collection(L.load(L.QUEUE)), [])
