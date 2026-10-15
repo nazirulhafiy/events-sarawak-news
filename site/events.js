@@ -19,8 +19,12 @@
     });
     panels.forEach(p => { p.hidden = +p.dataset.panel !== m; });
     if (heading) heading.textContent = `${FULL[m - 1]} 2026`;
-    const a = tabs.querySelector(".is-active"), sc = tabs.closest("[data-category-scroll]") || tabs;
-    if (a) sc.scrollLeft = a.offsetLeft - sc.clientWidth / 2 + a.clientWidth / 2;
+    const a = tabs.querySelector(".is-active");
+    if (a) {
+      const sc = tabs.scrollWidth > tabs.clientWidth ? tabs : (tabs.closest("[data-category-scroll]") || tabs);
+      const ar = a.getBoundingClientRect(), sr = sc.getBoundingClientRect();
+      sc.scrollLeft += ar.left - sr.left - (sr.width - ar.width) / 2;
+    }
   }
   const q = Number(new URLSearchParams(location.search).get("month"));
   select(q >= 1 && q <= 12 ? q : mytMonth());
