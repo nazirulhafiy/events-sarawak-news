@@ -183,13 +183,15 @@ class Rendering(unittest.TestCase):
     def test_official_url_link(self):
         card = build.render_card(dict(GOOD, official_url="https://testfest.example"))
         self.assertIn('class="event-link" href="https://testfest.example"', card)
-        self.assertIn("Official site", card)
+        self.assertIn(f">{GOOD["name"]}</a>", card)
+        self.assertNotIn("Official site", card)
         self.assertNotIn("More information", card)
+        self.assertNotIn("event-links", card)
 
     def test_info_url_link(self):
         card = build.render_card(dict(GOOD, info_url="https://example.com/story"))
         self.assertIn('class="event-link" href="https://example.com/story"', card)
-        self.assertIn("More information", card)
+        self.assertNotIn("More information", card)
         self.assertNotIn("Official site", card)
         self.assertNotIn("Suara", card)
         self.assertNotIn("Borneo Post", card)
@@ -198,8 +200,10 @@ class Rendering(unittest.TestCase):
             official_url="https://organiser.example/event",
             info_url="https://example.com/story",
         ))
-        self.assertIn("Official site", both)
-        self.assertIn("More information", both)
+        self.assertIn('href="https://organiser.example/event"', both)
+        self.assertNotIn("example.com/story", both)
+        self.assertNotIn("Official site", both)
+        self.assertNotIn("More information", both)
         plain = build.render_card(GOOD)
         self.assertNotIn("event-link", plain)
 

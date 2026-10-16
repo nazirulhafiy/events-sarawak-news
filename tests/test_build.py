@@ -193,7 +193,10 @@ class RenderTests(unittest.TestCase):
             "official_url": "https://www.pata.org/pata-travel-mart-2026",
         })
         self.assertIn('class="event-link" href="https://www.pata.org/pata-travel-mart-2026"', linked)
-        self.assertIn("Official site", linked)
+        self.assertIn('tabindex="0"', linked)
+        self.assertIn('aria-label="Open event: Mart"', linked)
+        self.assertNotIn("Official site", linked)
+        self.assertNotIn("event-links", linked)
         self.assertIn("Venue", linked)
         self.assertIn("A travel mart.", linked)
         plain = build.render_card({
@@ -202,6 +205,7 @@ class RenderTests(unittest.TestCase):
             "summary": "A walk.", "venue": "Park", "town": "Kuching", "division": "Kuching",
         })
         self.assertNotIn("event-link", plain)
+        self.assertNotIn("tabindex=", plain)
 
     def test_card_type_and_hover_only_when_linked(self):
         css = (build.SITE / "events.css").read_text()
@@ -215,21 +219,20 @@ class RenderTests(unittest.TestCase):
         )
         self.assertNotIn(".event-name { font-size: 18px; }", css)
         self.assertIn(".event-card:has(.event-link):hover", css)
-        self.assertIn(
-            ".event-card:has(.event-link):not(:has(.event-link ~ .event-link)) .event-link::after",
-            css,
-        )
-        self.assertNotIn(".event-card:hover", css)
+        self.assertIn(".js .event-card:not(.is-revealed)", css)
+        self.assertIn("animation: story-reveal .7s cubic-bezier(.22, 1, .36, 1) both", css)
+        self.assertNotIn(".event-card:hover {", css)
+        self.assertNotIn("event-links", css)
 
     def test_info_link_and_hover_when_either_url_is_set(self):
         css = (build.SITE / "events.css").read_text()
+        js = (build.SITE / "events.js").read_text()
         self.assertIn(".event-card:has(.event-link):hover", css)
-        self.assertIn(
-            ".event-card:has(.event-link):not(:has(.event-link ~ .event-link)) .event-link::after",
-            css,
-        )
-        self.assertNotIn(".event-card:hover", css)
-        self.assertEqual(self.html.count("More information"), 2)
+        self.assertIn("IntersectionObserver", js)
+        self.assertIn("is-revealed", js)
+        self.assertNotIn(".event-card:hover {", css)
+        self.assertNotIn("Official site", self.html)
+        self.assertNotIn("More information", self.html)
         self.assertEqual(self.html.count('class="event-link"'), 9)
         self.assertIn(
             'href="https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/"',
@@ -243,7 +246,8 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("Suara Sarawak", self.html)
         self.assertNotIn("Borneo Post", self.html)
         cat = self.html.split('id="kuching-international-cat-festival-2026"', 1)[1].split("</li>", 1)[0]
-        self.assertIn("More information", cat)
+        self.assertIn('class="event-link"', cat)
+        self.assertNotIn("More information", cat)
         self.assertNotIn("Official site", cat)
 
     def test_undated_sorted_last(self):
