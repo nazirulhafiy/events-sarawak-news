@@ -346,9 +346,9 @@ def render_about(events: list[dict], now: dt.datetime | None = None, page: str =
     </header>
     <div class="event-list about-body">
       <p>Events.Sarawak.News lists festivals, sports events, regattas, concerts and cultural celebrations happening around Sarawak, one month at a time. Each listing gives the date, the town (or the division when no town is set), the venue and a short factual description.</p>
-      <p>New events are added as they are announced and checked before they appear here. When a date has not been fixed, the listing shows it as TBC.</p>
+      <p>When a date has not been fixed, the listing shows it as TBC.</p>
       <p><strong>{NOTE}</strong> Events can be moved, postponed or cancelled at short notice.</p>
-      <p>This is an independent site and is not affiliated with the Sarawak Government. It does not sell tickets. Spotted a mistake or know of an event that is missing? Get in touch via <a class="site-footer-link" href="https://hafiy.my">hafiy.my</a>.</p>
+      <p>This is an independent site and is not affiliated with the Sarawak Government.</p>
     </div>
   </main>
 """
