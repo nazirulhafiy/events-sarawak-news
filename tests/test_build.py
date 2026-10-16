@@ -161,9 +161,9 @@ class RenderTests(unittest.TestCase):
             "id": "r", "name": "Regatta", "month": 10,
             "start_date": "2026-10-30", "end_date": "2026-11-01", "date_tbc": False,
             "summary": "A river regatta.", "venue": "Waterfront", "town": "Kuching",
-            "division": "Kuching", "event_type": "regatta",
+            "division": "Kuching", "event_type": "sports",
         })
-        self.assertIn('class="event-type">regatta<', typed)
+        self.assertIn('class="event-type">sports<', typed)
         self.assertIn('class="event-place-label">Kuching<', typed)
         fallback = build.render_card({
             "id": "y", "name": "Undated", "month": 5,

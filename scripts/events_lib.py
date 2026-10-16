@@ -17,9 +17,10 @@ MYT = dt.timezone(dt.timedelta(hours=8))
 
 DIVISIONS = {"Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah",
              "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"}
-# Words already used on the site: festivals, races, regattas, concerts,
-# cultural events, sports. Festival also covers pesta, fest, fair, carnival and fiesta.
-EVENT_TYPES = {"festival", "race", "regatta", "concert", "cultural", "sports"}
+# Closed list. Races sit under sports (the word STB and MTCP use).
+# A regatta is festival or sports, not its own value. cultural stays:
+# STB's public section is Culture, and MTCP says "cultural event".
+EVENT_TYPES = {"festival", "sports", "concert", "cultural"}
 STATUSES = {"published", "pending", "approved", "rejected", "duplicate", "cancelled"}
 PUBLIC_FIELDS = ["id", "name", "start_date", "end_date", "date_tbc", "month", "venue",
                  "town", "division", "summary", "event_type", "official_url"]
