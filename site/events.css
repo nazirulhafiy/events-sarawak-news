@@ -47,6 +47,13 @@
 .event-list[hidden] { display: none; }
 .about-body { display: block; }
 .event-link { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* Shared shell label is 10px / 850 / muted. One step stronger, still a label. */
+#month-filter-title {
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+}
 @media (max-width: 560px) {
   .event-card { padding: 14px; }
   .event-name { font-size: 18px; }
