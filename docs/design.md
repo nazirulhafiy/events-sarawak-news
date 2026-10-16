@@ -9,7 +9,7 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - Header brand "Events.Sarawak.News"; footer credits hafiy.my and states non-affiliation with the Sarawak Government.
 
 ## Page
-- Brief: "Events in Sarawak, month by month." with the deck "Festivals, races, regattas and cultural events across Sarawak." and the last-updated date (build date, MYT). There is no source attribution anywhere on the site (cards, about, footer, meta). The 2026 tourism calendar was only the starter seed.
+- Brief: "Events in Sarawak, month by month." with the deck "Festivals, sports, cultural events and concerts across Sarawak." and the last-updated date (build date, MYT). There is no source attribution anywhere on the site (cards, about, footer, meta). The 2026 tourism calendar was only the starter seed.
 - Month tabs (Jan to Dec, 2026) reuse the `.category-filter` pill style, and each tab carries a count badge. Months with no events get no badge.
 - The current month in MYT (Asia/Kuching) is selected by default: build.py pre-selects the build-time month, and `events.js` re-selects using `Intl` with `timeZone: "Asia/Kuching"` on load. Before 2026 it shows January, and after 2026 it shows December. `?month=N` overrides.
 - Note under the tabs: "Dates subject to change, check with organisers."
