@@ -41,7 +41,10 @@ class SeedData(unittest.TestCase):
     def test_all_114_seed_events_valid(self):
         self.assertEqual(len(self.events), 114)
         self.assertEqual(L.validate_collection(self.events), [])
-        self.assertTrue(all(e["status"] == "published" for e in self.events))
+        statuses = {e["status"] for e in self.events}
+        self.assertEqual(statuses, {"published", "cancelled"})
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 112)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 2)
 
     def test_only_schema_fields(self):
         for e in self.events:
@@ -79,11 +82,29 @@ class SeedData(unittest.TestCase):
                 "https://suarasarawak.my/muaythai-piala-premier-sarawak-2026-pertembungan-300-peserta-di-bintulu/",
             "karnival-siburan-2026":
                 "https://suarasarawak.my/karnival-siburan-platform-ketengah-produk-budaya-tempatan/",
+            "karnival-balau-dalat-2026":
+                "https://utusansarawak.com.my/industri-balau-terus-diperkasa-jadi-bank-ekonomi-masyarakat-dalat/",
+            "pesta-tabih-long-bemang-2026":
+                "https://www.intourcams.my/events",
+            "pesta-kebudayaan-apau-koyan-2026":
+                "https://www.intourcams.my/events",
+            "krian-fest-nature-challenge-edisi-ke-4-2026":
+                "https://utusansarawak.com.my/pesta-saratok-2026-dan-krian-fest-nature-challenge-kembali-meriahkan-kriansaratok/",
+            "serian-international-cross-country-half-marathon-run-2026":
+                "https://malaysiarunner.com/event/68/Serian%20Eco%20Run%205.0%202026%20%28Early%20Bird%29",
+            "youth-day-limbang-motor-day-2026":
+                "https://limbang.sarawak.gov.my/web/subpage/news_view/941",
         })
         by_id = {e["id"]: e for e in self.events}
         self.assertIsNone(by_id["kuching-international-cat-festival-2026"]["official_url"])
         self.assertIsNone(by_id["kejohanan-muaythai-piala-premier-sarawak-edisi-ke-10-2026"]["official_url"])
         self.assertIsNone(by_id["karnival-siburan-2026"]["official_url"])
+        self.assertIsNone(by_id["karnival-balau-dalat-2026"]["official_url"])
+        self.assertEqual(
+            by_id["santubong-international-trail-run-2026"]["official_url"],
+            "https://www.santubongtrail.com/",
+        )
+        self.assertIsNone(by_id["santubong-international-trail-run-2026"].get("info_url"))
         kept = {
             "pata-travel-mart-ptm-2026": "https://www.pata.org/pata-travel-mart-2026",
             "wak-festival-2026-wak-kuching-2026": "https://wakfestival.com/",
@@ -92,18 +113,23 @@ class SeedData(unittest.TestCase):
             "kuching-waterfront-festival-2026": "https://regatta.sarawaktourism.com/",
             "sarawak-regatta-2026": "https://regatta.sarawaktourism.com/",
             "borneo-jazz-festival-2026": "https://jazzborneo.com/",
+            "santubong-international-trail-run-2026": "https://www.santubongtrail.com/",
         }
         for eid, url in kept.items():
             self.assertEqual(by_id[eid]["official_url"], url)
             self.assertIsNone(by_id[eid].get("info_url"))
         for eid in (
-            "karnival-balau-dalat-2026",
-            "youth-day-limbang-motor-day-2026",
             "limbang-open-international-tug-of-war-2026",
             "countdown-2027-2026",
+            "pesta-baeuh-kedayan-se-borneo-peringkat-daerah-lawas-m-t-k-l-2026",
+            "serian-international-remote-control-carnival-2026",
+            "sarikei-unity-run-8-0-2026",
         ):
             self.assertIsNone(by_id[eid].get("info_url"))
             self.assertIsNone(by_id[eid]["official_url"])
+        self.assertEqual(by_id["baram-basin-indigenous-cultural-festival-bbic-festival-2026"]["status"], "cancelled")
+        self.assertEqual(by_id["karnival-balau-and-agrofest-dalat-2026"]["status"], "cancelled")
+        self.assertNotIn("krian-nature-marathon-1st-edition-2026", by_id)
 
 
 class Validation(unittest.TestCase):
