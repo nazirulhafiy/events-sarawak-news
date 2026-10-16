@@ -70,6 +70,39 @@ class SeedData(unittest.TestCase):
         self.assertEqual(sum(counts.values()), len(self.events))
         self.assertEqual(set(counts), set(L.EVENT_TYPES))
 
+    def test_published_info_urls(self):
+        linked = {e["id"]: e["info_url"] for e in self.events if e.get("info_url")}
+        self.assertEqual(linked, {
+            "kuching-international-cat-festival-2026":
+                "https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/",
+            "kejohanan-muaythai-piala-premier-sarawak-edisi-ke-10-2026":
+                "https://suarasarawak.my/muaythai-piala-premier-sarawak-2026-pertembungan-300-peserta-di-bintulu/",
+        })
+        by_id = {e["id"]: e for e in self.events}
+        self.assertIsNone(by_id["kuching-international-cat-festival-2026"]["official_url"])
+        self.assertIsNone(by_id["kejohanan-muaythai-piala-premier-sarawak-edisi-ke-10-2026"]["official_url"])
+        kept = {
+            "pata-travel-mart-ptm-2026": "https://www.pata.org/pata-travel-mart-2026",
+            "wak-festival-2026-wak-kuching-2026": "https://wakfestival.com/",
+            "padawan-raft-safari-2026": "https://borneoraftsafari.com/events/padawan-raft-safari-2026",
+            "sarawak-international-dragon-boat-regatta-2026": "https://regatta.sarawaktourism.com/",
+            "kuching-waterfront-festival-2026": "https://regatta.sarawaktourism.com/",
+            "sarawak-regatta-2026": "https://regatta.sarawaktourism.com/",
+            "borneo-jazz-festival-2026": "https://jazzborneo.com/",
+        }
+        for eid, url in kept.items():
+            self.assertEqual(by_id[eid]["official_url"], url)
+            self.assertIsNone(by_id[eid].get("info_url"))
+        for eid in (
+            "karnival-siburan-2026",
+            "karnival-balau-dalat-2026",
+            "youth-day-limbang-motor-day-2026",
+            "limbang-open-international-tug-of-war-2026",
+            "countdown-2027-2026",
+        ):
+            self.assertIsNone(by_id[eid].get("info_url"))
+            self.assertIsNone(by_id[eid]["official_url"])
+
 
 class Validation(unittest.TestCase):
     def bad(self, **kw):
@@ -94,6 +127,7 @@ class Validation(unittest.TestCase):
         self.assertTrue(self.bad(start_date=None))
         self.assertTrue(self.bad(month=10))
         self.assertTrue(self.bad(official_url="http://insecure.example"))
+        self.assertTrue(self.bad(info_url="http://insecure.example"))
         self.assertTrue(self.bad(id="Not A Slug"))
         self.assertTrue(self.bad(phone="012"))
         ev = dict(GOOD); del ev["source_url"]
@@ -110,6 +144,13 @@ class Validation(unittest.TestCase):
     def test_slug(self):
         self.assertEqual(L.make_id("Pesta Ba'euh Kedayan", 2026), "pesta-baeuh-kedayan-2026")
         self.assertEqual(L.make_id("WAK Festival 2026", 2026), "wak-festival-2026")
+
+    def test_info_url_optional(self):
+        self.assertEqual(self.bad(info_url=None), [])
+        ev = dict(GOOD)
+        ev.pop("info_url", None)
+        self.assertEqual(L.validate_event(ev), [])
+        self.assertEqual(self.bad(info_url="https://example.com/story"), [])
 
 
 class Rendering(unittest.TestCase):
@@ -141,7 +182,26 @@ class Rendering(unittest.TestCase):
 
     def test_official_url_link(self):
         card = build.render_card(dict(GOOD, official_url="https://testfest.example"))
-        self.assertIn('href="https://testfest.example"', card)
+        self.assertIn('class="event-link" href="https://testfest.example"', card)
+        self.assertIn("Official site", card)
+        self.assertNotIn("More information", card)
+
+    def test_info_url_link(self):
+        card = build.render_card(dict(GOOD, info_url="https://example.com/story"))
+        self.assertIn('class="event-link" href="https://example.com/story"', card)
+        self.assertIn("More information", card)
+        self.assertNotIn("Official site", card)
+        self.assertNotIn("Suara", card)
+        self.assertNotIn("Borneo Post", card)
+        both = build.render_card(dict(
+            GOOD,
+            official_url="https://organiser.example/event",
+            info_url="https://example.com/story",
+        ))
+        self.assertIn("Official site", both)
+        self.assertIn("More information", both)
+        plain = build.render_card(GOOD)
+        self.assertNotIn("event-link", plain)
 
 
 class Pipeline(unittest.TestCase):

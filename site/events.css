@@ -46,13 +46,13 @@
 .event-list[hidden] { display: none; }
 .about-body { display: block; }
 .event-link { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-/* Same hover as ai.sarawak.news .story-card, only when Official site is present. */
+/* Same hover as ai.sarawak.news .story-card, when Official site or More information is present. */
 .event-card:has(.event-link) {
   position: relative;
   cursor: pointer;
   transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
 }
-.event-card:has(.event-link) .event-link::after {
+.event-card:has(.event-link):not(:has(.event-link ~ .event-link)) .event-link::after {
   content: "";
   position: absolute;
   inset: 0;

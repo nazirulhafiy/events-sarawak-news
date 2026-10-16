@@ -129,6 +129,13 @@ def where(ev: dict) -> str:
     return venue if town in venue else f"{venue}, {town}"
 
 
+def _event_link(url: str, label: str) -> str:
+    return (
+        f'<a class="event-link" href="{e(url)}" '
+        f'target="_blank" rel="noopener noreferrer">{e(label)}</a>'
+    )
+
+
 def render_card(ev: dict) -> str:
     text, iso = meta_date(ev)
     if iso:
@@ -142,12 +149,12 @@ def render_card(ev: dict) -> str:
     )
     kind = (ev.get("event_type") or "").strip()
     kind_html = f'<span class="event-type">{e(kind)}</span>' if kind else ""
-    link = ""
+    links = []
     if ev.get("official_url"):
-        link = (
-            f'\n        <p class="event-links"><a class="event-link" href="{e(ev["official_url"])}" '
-            f'target="_blank" rel="noopener noreferrer">Official site</a></p>'
-        )
+        links.append(_event_link(ev["official_url"], "Official site"))
+    if ev.get("info_url"):
+        links.append(_event_link(ev["info_url"], "More information"))
+    link = f'\n        <p class="event-links">{" ".join(links)}</p>' if links else ""
     return f"""
       <li class="event-card" id="{e(ev['id'])}"{f' data-event-type="{e(kind)}"' if kind else ""}>
         <p class="event-meta-row">
