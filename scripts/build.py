@@ -87,21 +87,39 @@ def sort_key(ev: dict):
     return (ev.get("start_date") or "9999", ev["name"].lower())
 
 
-def date_parts(ev: dict) -> tuple[str, str, str]:
-    """Return (day, month label, accessible label)."""
+def meta_date(ev: dict) -> tuple[str, str | None]:
+    """Meta-row date text, plus the start date for <time>, or None when TBC.
+
+    One day: ``15 OCT 2026``. Same month: ``2–4 OCT 2026``.
+    Across months: ``22 JUL–16 AUG 2026``. ``date_tbc`` stays ``TBC``.
+    """
     if ev.get("date_tbc") or not ev.get("start_date"):
-        mon = M[int(ev["month"]) - 1]
-        return "TBC", mon, f"Date to be confirmed, {FULL[int(ev['month']) - 1]} {YEAR}"
+        return "TBC", None
     s = dt.date.fromisoformat(ev["start_date"])
     f = dt.date.fromisoformat(ev["end_date"]) if ev.get("end_date") else None
-    sm = M[s.month - 1]
-    if f and f != s:
-        day = f"{s.day}\u2013{f.day}"
-        mon = sm if f.month == s.month else f"{sm}\u2013{M[f.month - 1]}"
-        label = f"{s.day} {sm} to {f.day} {M[f.month - 1]} {YEAR}"
+    if not f or f == s:
+        text = f"{s.day} {M[s.month - 1].upper()} {s.year}"
+    elif f.year != s.year:
+        text = (
+            f"{s.day} {M[s.month - 1].upper()} {s.year}\u2013"
+            f"{f.day} {M[f.month - 1].upper()} {f.year}"
+        )
+    elif f.month != s.month:
+        text = (
+            f"{s.day} {M[s.month - 1].upper()}\u2013"
+            f"{f.day} {M[f.month - 1].upper()} {f.year}"
+        )
     else:
-        day, mon, label = str(s.day), sm, f"{s.day} {sm} {YEAR}"
-    return day, mon, label
+        text = f"{s.day}\u2013{f.day} {M[s.month - 1].upper()} {s.year}"
+    return text, s.isoformat()
+
+
+def place_label(ev: dict) -> str:
+    """Town when set, otherwise the division. One place label, never a source."""
+    town = (ev.get("town") or "").strip()
+    if town:
+        return town
+    return (ev.get("division") or "").strip()
 
 
 def where(ev: dict) -> str:
@@ -112,19 +130,34 @@ def where(ev: dict) -> str:
 
 
 def render_card(ev: dict) -> str:
-    day, mon, label = date_parts(ev)
-    link = (f'<a class="event-link" href="{e(ev["official_url"])}" target="_blank" rel="noopener noreferrer">Official site</a>'
-            if ev.get("official_url") else "")
-    tbc = " is-tbc" if day == "TBC" else ""
+    text, iso = meta_date(ev)
+    if iso:
+        when = f'<time datetime="{e(iso)}">{e(text)}</time>'
+    else:
+        when = f'<span class="event-when">{e(text)}</span>'
+    place = place_label(ev)
+    pill = (
+        f'<span class="event-place"><span class="event-place-label">{e(place)}</span></span>'
+        if place else ""
+    )
+    kind = (ev.get("event_type") or "").strip()
+    kind_html = f'<span class="event-type">{e(kind)}</span>' if kind else ""
+    link = ""
+    if ev.get("official_url"):
+        link = (
+            f'\n        <p class="event-links"><a class="event-link" href="{e(ev["official_url"])}" '
+            f'target="_blank" rel="noopener noreferrer">Official site</a></p>'
+        )
     return f"""
       <li class="event-card" id="{e(ev['id'])}">
-        <div class="event-date{tbc}" role="img" aria-label="{e(label)}"><span class="event-day" aria-hidden="true">{day}</span><span class="event-mon" aria-hidden="true">{mon}</span></div>
-        <div class="event-body">
-          <h3 class="event-name">{e(ev['name'])}</h3>
-          <p class="event-sum">{e(ev.get('summary') or '')}</p>
-          <p class="event-venue"><span class="event-label">Venue</span> {e(where(ev))}</p>
-          <div class="event-meta"><span class="event-chip">{e(ev.get('division') or '')}</span>{link}</div>
-        </div>
+        <p class="event-meta-row">
+          {when}
+          {pill}
+          {kind_html}
+        </p>
+        <h3 class="event-name">{e(ev['name'])}</h3>
+        <p class="event-sum">{e(ev.get('summary') or '')}</p>
+        <p class="event-venue"><span class="event-label">Venue</span> {e(where(ev))}</p>{link}
       </li>"""
 
 
@@ -296,7 +329,7 @@ def render_about(events: list[dict], now: dt.datetime | None = None, page: str =
       <p class="brief-deck">A plain month-by-month listing of events across Sarawak.</p>
     </header>
     <div class="event-list about-body">
-      <p>Events.Sarawak.News lists festivals, sports events, regattas, concerts and cultural celebrations happening around Sarawak, one month at a time. Each listing gives the dates, the venue, the division and a short factual description.</p>
+      <p>Events.Sarawak.News lists festivals, sports events, regattas, concerts and cultural celebrations happening around Sarawak, one month at a time. Each listing gives the date, the town (or the division when no town is set), the venue and a short factual description.</p>
       <p>New events are added as they are announced and checked before they appear here. When a date has not been fixed, the listing shows it as TBC.</p>
       <p><strong>{NOTE}</strong> Events can be moved, postponed or cancelled at short notice.</p>
       <p>This is an independent site and is not affiliated with the Sarawak Government. It does not sell tickets. Spotted a mistake or know of an event that is missing? Get in touch via <a class="site-footer-link" href="https://hafiy.my">hafiy.my</a>.</p>

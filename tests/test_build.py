@@ -71,6 +71,7 @@ class RenderTests(unittest.TestCase):
 
     def test_all_events_rendered(self):
         self.assertEqual(self.html.count('class="event-card"'), 114)
+        self.assertEqual(self.html.count('class="event-type"'), 114)
 
     def test_note_present_and_no_division_filter(self):
         self.assertIn("Dates subject to change, check with organisers", self.html)
@@ -119,10 +120,69 @@ class RenderTests(unittest.TestCase):
             self.assertNotIn("noindex", page)
 
     def test_date_labels(self):
-        ev = {"start_date": "2026-07-22", "end_date": "2026-08-16", "month": 7}
-        self.assertEqual(build.date_parts(ev)[:2], ("22\u201316", "Jul\u2013Aug"))
-        self.assertEqual(build.date_parts({"start_date": "2026-10-03", "end_date": None, "month": 10})[:2], ("3", "Oct"))
-        self.assertEqual(build.date_parts({"start_date": None, "end_date": None, "month": 5})[0], "TBC")
+        self.assertEqual(
+            build.meta_date({"start_date": "2026-10-15", "end_date": None, "month": 10, "date_tbc": False}),
+            ("15 OCT 2026", "2026-10-15"),
+        )
+        self.assertEqual(
+            build.meta_date({"start_date": "2026-10-02", "end_date": "2026-10-04", "month": 10, "date_tbc": False})[0],
+            "2\u20134 OCT 2026",
+        )
+        self.assertEqual(
+            build.meta_date({"start_date": "2026-07-22", "end_date": "2026-08-16", "month": 7, "date_tbc": False})[0],
+            "22 JUL\u201316 AUG 2026",
+        )
+        self.assertEqual(
+            build.meta_date({"start_date": "2026-12-30", "end_date": "2027-01-02", "month": 12, "date_tbc": False})[0],
+            "30 DEC 2026\u20132 JAN 2027",
+        )
+        self.assertEqual(
+            build.meta_date({"start_date": None, "end_date": None, "month": 5, "date_tbc": True}),
+            ("TBC", None),
+        )
+
+    def test_meta_row_is_date_and_place_only(self):
+        card = build.render_card({
+            "id": "x", "name": "Regatta", "month": 10,
+            "start_date": "2026-10-02", "end_date": "2026-10-04", "date_tbc": False,
+            "summary": "A river race.", "venue": "Waterfront", "town": "Bau", "division": "Kuching",
+        })
+        self.assertIn('class="event-meta-row"', card)
+        self.assertIn(">2\u20134 OCT 2026<", card)
+        self.assertIn('datetime="2026-10-02"', card)
+        self.assertIn('class="event-place-label">Bau<', card)
+        self.assertNotIn("event-place-label\">Kuching", card)
+        self.assertNotIn("event-date", card)
+        self.assertNotIn("event-chip", card)
+        self.assertNotIn("event-type", card)
+        self.assertNotIn("story-section", card)
+        self.assertNotIn("story-source", card)
+        typed = build.render_card({
+            "id": "r", "name": "Regatta", "month": 10,
+            "start_date": "2026-10-30", "end_date": "2026-11-01", "date_tbc": False,
+            "summary": "A river regatta.", "venue": "Waterfront", "town": "Kuching",
+            "division": "Kuching", "event_type": "regatta",
+        })
+        self.assertIn('class="event-type">regatta<', typed)
+        self.assertIn('class="event-place-label">Kuching<', typed)
+        fallback = build.render_card({
+            "id": "y", "name": "Undated", "month": 5,
+            "start_date": None, "end_date": None, "date_tbc": True,
+            "summary": "Date not fixed.", "venue": "", "town": "", "division": "Miri",
+        })
+        self.assertIn('class="event-when">TBC<', fallback)
+        self.assertIn('class="event-place-label">Miri<', fallback)
+        self.assertNotIn("<time", fallback)
+        linked = build.render_card({
+            "id": "z", "name": "Mart", "month": 8,
+            "start_date": "2026-08-18", "end_date": "2026-08-20", "date_tbc": False,
+            "summary": "A travel mart.", "venue": "BCCK", "town": "Kuching", "division": "Kuching",
+            "official_url": "https://www.pata.org/pata-travel-mart-2026",
+        })
+        self.assertIn('class="event-link" href="https://www.pata.org/pata-travel-mart-2026"', linked)
+        self.assertIn("Official site", linked)
+        self.assertIn("Venue", linked)
+        self.assertIn("A travel mart.", linked)
 
     def test_undated_sorted_last(self):
         may = sorted([e for e in self.events if e["month"] == 5], key=build.sort_key)
@@ -130,8 +190,10 @@ class RenderTests(unittest.TestCase):
 
     def test_escaping(self):
         card = build.render_card({"id": "x", "name": "A <b>&", "month": 1, "start_date": None, "end_date": None,
-                                  "summary": "", "venue": "", "town": "", "division": "", "organiser": ""})
+                                  "summary": "", "venue": "", "town": "<i>", "division": "", "organiser": ""})
         self.assertIn("A &lt;b&gt;&amp;", card)
+        self.assertIn("&lt;i&gt;", card)
+        self.assertNotIn("event-place-label\"><i>", card)
 
     def test_no_custom_domain_or_hub_link(self):
         self.assertNotIn('href="https://sarawak.news', self.html)
