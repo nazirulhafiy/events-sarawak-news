@@ -18,7 +18,7 @@ MYT = dt.timezone(dt.timedelta(hours=8))
 DIVISIONS = {"Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah",
              "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"}
 # Closed list. Races sit under sports (the word STB and MTCP use).
-# A regatta is festival or sports, not its own value. cultural stays:
+# A regatta is festival for now, not its own value. cultural stays:
 # STB's public section is Culture, and MTCP says "cultural event".
 EVENT_TYPES = {"festival", "sports", "concert", "cultural"}
 STATUSES = {"published", "pending", "approved", "rejected", "duplicate", "cancelled"}
