@@ -4,11 +4,77 @@
   const panels = document.querySelectorAll("[data-panel]");
   const heading = document.querySelector("[data-month-heading]");
   const FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const VALID_TYPES = new Set(["festival", "sports", "cultural", "concert"]);
+  const params = new URLSearchParams(location.search);
+  const typeParam = (params.get("event_type") || "").toLowerCase();
+  const activeType = VALID_TYPES.has(typeParam) ? typeParam : null;
+
   function mytMonth() {
     const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kuching", month: "numeric", year: "numeric" }).formatToParts(new Date());
     const y = +parts.find(p => p.type === "year").value, m = +parts.find(p => p.type === "month").value;
     return y < 2026 ? 1 : y > 2026 ? 12 : m;
   }
+
+  function visibleCount(panel) {
+    return [...panel.querySelectorAll(".event-card")].filter(c => !c.hidden).length;
+  }
+
+  function applyTypeFilter() {
+    panels.forEach(panel => {
+      panel.querySelectorAll(".event-card").forEach(card => {
+        card.hidden = !!(activeType && card.dataset.eventType !== activeType);
+      });
+      let note = panel.querySelector("[data-type-filter-empty]");
+      const n = visibleCount(panel);
+      const hasCards = panel.querySelector(".event-card");
+      if (activeType && hasCards && n === 0) {
+        if (!note) {
+          note = document.createElement("li");
+          note.className = "event-empty";
+          note.dataset.typeFilterEmpty = "";
+          panel.appendChild(note);
+        }
+        const label = activeType.charAt(0).toUpperCase() + activeType.slice(1);
+        const month = FULL[+panel.dataset.panel - 1];
+        note.textContent = `No ${label} events listed for ${month} yet.`;
+        note.hidden = false;
+      } else if (note) {
+        note.hidden = true;
+      }
+    });
+    tabs.querySelectorAll("[data-m]").forEach(b => {
+      const panel = document.getElementById(`panel-${b.dataset.m}`);
+      if (!panel) return;
+      const n = visibleCount(panel);
+      let badge = b.querySelector(".category-filter-count");
+      if (activeType) {
+        if (n) {
+          if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "category-filter-count";
+            badge.setAttribute("aria-hidden", "true");
+            b.appendChild(document.createTextNode(" "));
+            b.appendChild(badge);
+          }
+          badge.textContent = String(n);
+          badge.hidden = false;
+        } else if (badge) {
+          badge.remove();
+        }
+      }
+      const month = FULL[+b.dataset.m - 1];
+      b.setAttribute("aria-label", `${month}, ${n} event${n === 1 ? "" : "s"}`);
+    });
+  }
+
+  function firstMonthWithEvents() {
+    for (let m = 1; m <= 12; m++) {
+      const panel = document.getElementById(`panel-${m}`);
+      if (panel && visibleCount(panel) > 0) return m;
+    }
+    return null;
+  }
+
   function select(m, focus) {
     tabs.querySelectorAll("[data-m]").forEach(b => {
       const on = +b.dataset.m === m;
@@ -26,8 +92,16 @@
       sc.scrollLeft += ar.left - sr.left - (sr.width - ar.width) / 2;
     }
   }
-  const q = Number(new URLSearchParams(location.search).get("month"));
-  select(q >= 1 && q <= 12 ? q : mytMonth());
+
+  applyTypeFilter();
+  const q = Number(params.get("month"));
+  let month = q >= 1 && q <= 12 ? q : mytMonth();
+  if (activeType && visibleCount(document.getElementById(`panel-${month}`)) === 0) {
+    const first = firstMonthWithEvents();
+    if (first) month = first;
+  }
+  select(month);
+
   tabs.addEventListener("click", ev => { const b = ev.target.closest("[data-m]"); if (b) select(+b.dataset.m); });
   tabs.addEventListener("keydown", ev => {
     const cur = +tabs.querySelector(".is-active").dataset.m;

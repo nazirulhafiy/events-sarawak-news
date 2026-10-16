@@ -149,7 +149,7 @@ def render_card(ev: dict) -> str:
             f'target="_blank" rel="noopener noreferrer">Official site</a></p>'
         )
     return f"""
-      <li class="event-card" id="{e(ev['id'])}">
+      <li class="event-card" id="{e(ev['id'])}"{f' data-event-type="{e(kind)}"' if kind else ""}>
         <p class="event-meta-row">
           {when}
           {pill}
@@ -258,6 +258,13 @@ FOOT = """  <footer class="site-footer">
         <ul>
           <li><a class="site-footer-link" href="./"{home_cur}>Home</a></li>
           <li><a class="site-footer-link" href="about.html"{about_cur}>About</a></li>
+        </ul>
+        <h2 class="site-footer-categories-title">Categories</h2>
+        <ul>
+          <li><a class="site-footer-link" href="/?event_type=festival">Festival</a></li>
+          <li><a class="site-footer-link" href="/?event_type=sports">Sports</a></li>
+          <li><a class="site-footer-link" href="/?event_type=cultural">Cultural</a></li>
+          <li><a class="site-footer-link" href="/?event_type=concert">Concert</a></li>
         </ul>
       </nav>
     </div>
