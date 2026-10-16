@@ -314,7 +314,6 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
         <div class="category-filter-options" data-months role="tablist" aria-label="Months">{render_tabs(counts, cur)}</div>
       </div>
     </section>
-    <p class="event-note">{NOTE}</p>
     <h2 class="event-month-heading" data-month-heading>{FULL[cur-1]} {YEAR}</h2>
     {render_panels(events, cur)}
   </main>
