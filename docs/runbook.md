@@ -10,8 +10,8 @@ Do not attach any other domain, and do not add a hub link, without Nazirul's exp
 
 ## Cadence
 
-- Daily at 07:00 Asia/Kuching, or when Nazirul asks.
-- Weekly (Monday): also sweep for postponements and cancellations of events in the next 60 days.
+- Daily at 07:00 Asia/Kuching (`discover.yml` leads + Maintainer Bot), or when Nazirul asks.
+- Weekly (Monday): also sweep for postponements and cancellations of events in the next 60 days, **and** scan for new events relevant to the period of the scan — **present time and future** (past-only backfill is not the default). Add only when a verifiable `official_url` or `info_url` exists; see source-link rule in `docs/schema.md`.
 
 ## Each run
 
@@ -41,6 +41,8 @@ python3 scripts/build.py
 ```
 
 Postponed: edit dates in `data/events.json` and add a `review_note`. Cancelled: set `status` to `cancelled`; it stops rendering.
+
+**Oct–Dec 2026 source-link policy:** before leaving an event `published` with `start_date` in October–December 2026, confirm it has `official_url` and/or `info_url` (official site, social, or news). If neither can be verified, cancel it — do not invent a URL. Full rule: `docs/schema.md` (Hard rules). New finds come from the Monday weekly scan (present + future), not past-only backfill.
 
 ## Production deploy (GitHub Pages)
 
