@@ -3,7 +3,7 @@
 ## Project
 Events.Sarawak.News is a dependency-free static site listing events across
 Sarawak by month. **Live**: https://events.sarawak.news
-(Cloudflare Pages project `events-sarawak-news`; `*.pages.dev` remains the project subdomain).
+(GitHub Pages via `.github/workflows/build.yml` on `nazirulhafiy/events-sarawak-news`).
 No further DNS, custom domain or hub link without Nazirul's explicit approval.
 
 - `data/events.json`: published events (schema: `docs/schema.md`).
@@ -19,7 +19,7 @@ No further DNS, custom domain or hub link without Nazirul's explicit approval.
 - No phone numbers, emails or organiser contact lines anywhere: not in the data, not on cards.
 - No on-site source attribution. `source_url` and `source_name` are internal.
 - Summaries are 1-2 short factual sentences in original wording.
-- Oct–Dec 2026 published events need `official_url` or `info_url` (official / social / news); otherwise cancel — see `docs/schema.md`. Weekly Monday scan adds sourced events for present/future dates (`docs/runbook.md`).
+- Oct–Dec 2026 published events need a card link: prefer `official_url`, else `info_url` (news or official social). Enforced by `scripts/validate.py` / `events_lib`. No `intourcams.my` URLs. Weekly Monday scan adds sourced events for present/future dates (`docs/runbook.md`).
 - Design or behaviour changes update `docs/design.md` in the same change.
 - Content runs follow `docs/automation.md`, and Maintainer Bot follows `docs/runbook.md`.
 

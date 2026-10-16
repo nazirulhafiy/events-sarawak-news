@@ -12,11 +12,12 @@ import events_lib as L  # noqa: E402
 import publish  # noqa: E402
 import queue as q  # noqa: E402
 
-GOOD = {"id": "test-fest-2026", "name": "Test Fest", "start_date": "2026-11-05", "end_date": "2026-11-07",
-        "date_tbc": False, "month": 11, "venue": "Kuching Waterfront", "town": "Kuching", "division": "Kuching",
+# September date so optional-URL fixtures stay valid; Oct–Dec published need a link (see Validation).
+GOOD = {"id": "test-fest-2026", "name": "Test Fest", "start_date": "2026-09-05", "end_date": "2026-09-07",
+        "date_tbc": False, "month": 9, "venue": "Kuching Waterfront", "town": "Kuching", "division": "Kuching",
         "summary": "A test festival on the waterfront.", "event_type": "festival", "official_url": None,
-        "source_url": "https://example.com/a", "source_name": "Example", "discovered_at": "2026-10-15T10:00:00+08:00",
-        "status": "published"}
+        "info_url": None, "source_url": "https://example.com/a", "source_name": "Example",
+        "discovered_at": "2026-10-15T10:00:00+08:00", "status": "published"}
 
 
 def cand(**kw):
@@ -131,6 +132,22 @@ class SeedData(unittest.TestCase):
             self.assertIsNone(by_id[eid]["official_url"])
         self.assertNotIn("krian-nature-marathon-1st-edition-2026", by_id)
 
+    def test_published_oct_dec_have_source_links(self):
+        for e in self.events:
+            if e["status"] != "published":
+                continue
+            start = e.get("start_date") or ""
+            if not (start.startswith("2026-10") or start.startswith("2026-11")
+                    or start.startswith("2026-12")):
+                continue
+            self.assertTrue(
+                e.get("official_url") or e.get("info_url"),
+                e["id"],
+            )
+            for k in ("official_url", "info_url", "source_url"):
+                url = e.get(k) or ""
+                self.assertNotIn("intourcams.my", url.lower(), f"{e['id']} {k}")
+
 
 class Validation(unittest.TestCase):
     def bad(self, **kw):
@@ -151,7 +168,7 @@ class Validation(unittest.TestCase):
         self.assertTrue(self.bad(event_type="regatta"))
         self.assertTrue(self.bad(event_type=""))
         self.assertTrue(self.bad(status="live"))
-        self.assertTrue(self.bad(end_date="2026-11-01"))
+        self.assertTrue(self.bad(end_date="2026-09-01"))
         self.assertTrue(self.bad(start_date=None))
         self.assertTrue(self.bad(month=10))
         self.assertTrue(self.bad(official_url="http://insecure.example"))
@@ -179,6 +196,78 @@ class Validation(unittest.TestCase):
         ev.pop("info_url", None)
         self.assertEqual(L.validate_event(ev), [])
         self.assertEqual(self.bad(info_url="https://example.com/story"), [])
+
+    def test_published_oct_dec_requires_source_link(self):
+        missing = self.bad(start_date="2026-11-05", end_date="2026-11-07", month=11,
+                           official_url=None, info_url=None)
+        self.assertTrue(any("official_url or info_url" in e for e in missing))
+        self.assertEqual(
+            self.bad(start_date="2026-11-05", end_date=None, month=11,
+                     official_url="https://organiser.example/event", info_url=None),
+            [],
+        )
+        self.assertEqual(
+            self.bad(start_date="2026-12-01", end_date=None, month=12,
+                     official_url=None, info_url="https://news.example/story"),
+            [],
+        )
+        # Pending / cancelled may lack links; outside the window too.
+        self.assertEqual(
+            self.bad(start_date="2026-11-05", end_date=None, month=11, status="pending",
+                     official_url=None, info_url=None),
+            [],
+        )
+        self.assertEqual(
+            self.bad(start_date="2026-11-05", end_date=None, month=11, status="cancelled",
+                     official_url=None, info_url=None),
+            [],
+        )
+        self.assertEqual(
+            self.bad(start_date="2026-09-05", end_date=None, month=9,
+                     official_url=None, info_url=None),
+            [],
+        )
+
+    def test_rejects_intourcams_urls(self):
+        for field in ("official_url", "info_url", "source_url"):
+            errs = self.bad(**{field: "https://www.intourcams.my/events/foo"})
+            self.assertTrue(any("intourcams.my" in e for e in errs), field)
+        self.assertEqual(
+            self.bad(official_url="https://organiser.example/ok",
+                     info_url="https://news.example/ok",
+                     source_url="https://example.com/ok"),
+            [],
+        )
+
+
+class Dedupe(unittest.TestCase):
+    def test_find_duplicate_matches_url_fields(self):
+        base = dict(GOOD, id="a-2026", name="Alpha Fest",
+                    official_url="https://a.example/off",
+                    info_url="https://a.example/info",
+                    source_url="https://a.example/src")
+        pool = [base]
+        self.assertIs(
+            L.find_duplicate(dict(GOOD, id="b-2026", name="Other",
+                                  official_url="https://a.example/off"), pool),
+            base,
+        )
+        self.assertIs(
+            L.find_duplicate(dict(GOOD, id="c-2026", name="Other",
+                                  info_url="https://a.example/info"), pool),
+            base,
+        )
+        self.assertIs(
+            L.find_duplicate(dict(GOOD, id="d-2026", name="Other",
+                                  source_url="https://a.example/src"), pool),
+            base,
+        )
+        self.assertIsNone(
+            L.find_duplicate(dict(GOOD, id="e-2026", name="Other",
+                                  official_url="https://other.example/x",
+                                  info_url="https://other.example/y",
+                                  source_url="https://other.example/z"), pool)
+        )
 
 
 class Rendering(unittest.TestCase):
@@ -242,7 +331,32 @@ class Pipeline(unittest.TestCase):
         self.assertEqual(rep["pending"], ["kuching-lantern-walk-2026"])
         self.assertEqual(queue[0]["status"], "pending")
         self.assertEqual(queue[0]["source_url"], "https://dayakdaily.com/lantern")
+        self.assertIsNone(queue[0].get("info_url"))
         self.assertEqual(L.validate_event(queue[0]), [])
+
+    def test_enqueue_carries_info_url(self):
+        c = cand(info_url="https://dayakdaily.com/lantern", official_url=None)
+        queue, rep = q.enqueue(manifest(c), [], [])
+        self.assertEqual(rep["pending"], ["kuching-lantern-walk-2026"])
+        self.assertEqual(queue[0]["info_url"], "https://dayakdaily.com/lantern")
+        self.assertEqual(queue[0]["source_url"], "https://dayakdaily.com/lantern")
+        self.assertIsNone(queue[0]["official_url"])
+        # Publishing Oct–Dec without inventing URLs: info_url alone is enough.
+        publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
+        events, _, ids = publish.publish([], queue)
+        self.assertEqual(ids, ["kuching-lantern-walk-2026"])
+        pub = next(e for e in events if e["id"] == ids[0])
+        self.assertEqual(pub["info_url"], "https://dayakdaily.com/lantern")
+        self.assertEqual(L.validate_event(pub), [])
+
+    def test_enqueue_dedupes_on_info_url(self):
+        first = cand(name="Lantern One", info_url="https://news.example/same")
+        queue, _ = q.enqueue(manifest(first), [], [])
+        second = cand(name="Lantern Two", url="https://other.example/page",
+                      info_url="https://news.example/same")
+        queue, rep = q.enqueue(manifest(second), [], queue)
+        self.assertEqual(len(queue), 1)
+        self.assertEqual(len(rep["duplicate"]), 1)
 
     def test_enqueue_dedupes_seed(self):
         c = cand(name="Sarawak Regatta", start_date="2026-10-31", end_date="2026-11-01", month=10)
@@ -265,13 +379,19 @@ class Pipeline(unittest.TestCase):
         self.assertEqual(len(rep["invalid"]), 1)
 
     def test_publish_moves_only_approved(self):
-        queue, _ = q.enqueue(manifest(cand(), cand(name="Miri Kite Day", url="https://y.example/k", town="Miri", division="Miri")), [], [])
+        queue, _ = q.enqueue(manifest(
+            cand(info_url="https://dayakdaily.com/lantern"),
+            cand(name="Miri Kite Day", url="https://y.example/k", town="Miri", division="Miri",
+                 info_url="https://y.example/k"),
+        ), [], [])
         publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
         events, rest, ids = publish.publish(copy.deepcopy(L.load(L.EVENTS)), queue)
         self.assertEqual(ids, ["kuching-lantern-walk-2026"])
         self.assertEqual(len(events), 115)
         self.assertEqual([r["id"] for r in rest], ["miri-kite-day-2026"])
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["status"], "published")
+        self.assertEqual(next(e for e in events if e["id"] == ids[0])["info_url"],
+                         "https://dayakdaily.com/lantern")
 
     def test_candidate_schema_file_matches_queue_requirements(self):
         schema = json.loads((ROOT / "automation" / "candidate.schema.json").read_text())

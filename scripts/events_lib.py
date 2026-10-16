@@ -33,6 +33,12 @@ ID_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 # Malaysian phone shapes: 0xx-xxx xxxx, 08x-xxx xxx, +60...
 PHONE_RE = re.compile(r"(?:\+?60[\s-]?|\b0)\d{1,3}[\s-]?\d{3,4}[\s-]?\d{3,4}\b")
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
+# Prefer news or dedicated official pages over INTOURCAMS listing URLs.
+INTOURCAMS_HOST = "intourcams.my"
+# Published events in this window need official_url or info_url (docs/schema.md).
+SOURCE_LINK_WINDOW_START = dt.date(2026, 10, 1)
+SOURCE_LINK_WINDOW_END = dt.date(2026, 12, 31)
+URL_FIELDS = ("official_url", "info_url", "source_url")
 
 
 def slugify(text: str) -> str:
@@ -93,10 +99,17 @@ def validate_event(ev: dict) -> list[str]:
         errs.append(f"{eid}: summary longer than {SUMMARY_MAX} chars")
     if len(re.findall(r"[.!?](?:\s|$)", summ)) > 2:
         errs.append(f"{eid}: summary must be 1-2 sentences")
-    for k in ("official_url", "info_url", "source_url"):
+    for k in URL_FIELDS:
         v = ev.get(k)
         if v and not str(v).startswith("https://"):
             errs.append(f"{eid}: {k} must be https")
+        if v and INTOURCAMS_HOST in str(v).lower():
+            errs.append(f"{eid}: {k} must not use intourcams.my")
+    if ev["status"] == "published" and s and SOURCE_LINK_WINDOW_START <= s <= SOURCE_LINK_WINDOW_END:
+        if not (ev.get("official_url") or ev.get("info_url")):
+            errs.append(
+                f"{eid}: published Oct–Dec 2026 events need official_url or info_url"
+            )
     for k in PUBLIC_FIELDS + ["review_note"]:
         v = ev.get(k)
         if isinstance(v, str) and (PHONE_RE.search(v) or EMAIL_RE.search(v)):
@@ -136,7 +149,7 @@ def _norm_name(name: str) -> str:
 
 
 def find_duplicate(ev: dict, pool: list[dict]) -> dict | None:
-    """Same id, same official/source URL, or same normalised name with overlapping dates."""
+    """Same id, same official/info/source URL, or same normalised name with overlapping dates."""
     name = _norm_name(ev["name"])
     s, f = _date(ev.get("start_date")), _date(ev.get("end_date"))
     for other in pool:
@@ -144,8 +157,10 @@ def find_duplicate(ev: dict, pool: list[dict]) -> dict | None:
             continue
         if other.get("id") == ev.get("id"):
             return other
-        if ev.get("official_url") and ev.get("official_url") == other.get("official_url"):
-            return other
+        for k in URL_FIELDS:
+            url = ev.get(k)
+            if url and url == other.get(k):
+                return other
         if _norm_name(other["name"]) == name:
             os_, of = _date(other.get("start_date")), _date(other.get("end_date"))
             if not s or not os_:
@@ -180,6 +195,7 @@ def normalise_candidate(c: dict, now: dt.datetime | None = None) -> dict:
         "summary": re.sub(r"\s+", " ", c.get("summary") or "").strip(),
         "event_type": c.get("event_type") or None,
         "official_url": c.get("official_url") or None,
+        "info_url": c.get("info_url") or None,
         "source_url": c["url"],
         "source_name": c["source"],
         "discovered_at": c.get("discovered_at") or now.isoformat(timespec="seconds"),

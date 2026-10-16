@@ -44,7 +44,7 @@ python3 scripts/build.py
 
 Postponed: edit dates in `data/events.json` and add a `review_note`. Cancelled: set `status` to `cancelled`; it stops rendering.
 
-**Oct–Dec 2026 source-link policy:** before leaving an event `published` with `start_date` in October–December 2026, confirm it has `official_url` and/or `info_url` (official site, social, or news). If neither can be verified, cancel it — do not invent a URL. Full rule: `docs/schema.md` (Hard rules). New finds come from the Monday weekly scan (present + future), not past-only backfill.
+**Oct–Dec 2026 source-link policy:** before leaving an event `published` with `start_date` in October–December 2026, confirm a card link — prefer `official_url`, else `info_url` (news or official social). `scripts/validate.py` fails without one. Never use `intourcams.my` in `official_url` / `info_url` / `source_url`. If neither link can be verified, cancel — do not invent a URL. Full rule: `docs/schema.md` (Hard rules). New finds come from the Monday weekly scan (present + future), not past-only backfill.
 
 ## Production deploy (GitHub Pages)
 
