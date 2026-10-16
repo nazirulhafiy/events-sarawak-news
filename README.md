@@ -1,6 +1,8 @@
 # events-sarawak-news
 
-**events.sarawak.news**: events across Sarawak, month by month. Live: https://events.sarawak.news. Cloudflare Pages project `events-sarawak-news`.
+**events.sarawak.news** — Sarawak events, in one place. Live: https://events.sarawak.news.
+
+Hosted on **GitHub Pages** from `nazirulhafiy/events-sarawak-news` (`main`). Production deploys via `.github/workflows/build.yml` (`actions/deploy-pages@v4` to the `github-pages` environment). Migrated from Cloudflare Pages on **15 October 2026** (no `wrangler pages deploy`).
 
 Published events: 114 (content audit 2026-10-15).
 
@@ -13,4 +15,4 @@ python3 scripts/queue.py manifest.json   # -> data/review-queue.json
 python3 scripts/publish.py               # approved -> data/events.json, rebuild
 ```
 
-Docs: `docs/schema.md` (event schema), `docs/automation.md` (discovery/publish contract), `docs/runbook.md` (Maintainer Bot), `docs/design.md`.
+Docs: `docs/schema.md` (event schema), `docs/automation.md` (discovery/publish contract), `docs/runbook.md` (Maintainer Bot), `docs/design.md`, `docs/operations.md` (hosting, deploy, analytics).
