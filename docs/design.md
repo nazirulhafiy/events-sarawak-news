@@ -9,12 +9,13 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - Header brand "Events.Sarawak.News"; footer credits hafiy.my and states non-affiliation with the Sarawak Government.
 
 ## Page
-- Brief: "Events in Sarawak, month by month." with the deck "Festivals, races, regattas and cultural events across Sarawak." and the last-updated date (build date, MYT). There is no source attribution anywhere on the site (cards, about, footer, meta). The 2026 tourism calendar was only the starter seed.
+- Brief: "Events in Sarawak, month by month." with the deck "Festivals, sports, cultural events and concerts across Sarawak." and the last-updated date (build date, MYT). There is no source attribution anywhere on the site (cards, about, footer, meta). The 2026 tourism calendar was only the starter seed.
 - Month tabs (Jan to Dec, 2026) reuse the `.category-filter` pill style, and each tab carries a count badge. Months with no events get no badge.
 - The current month in MYT (Asia/Kuching) is selected by default: build.py pre-selects the build-time month, and `events.js` re-selects using `Intl` with `timeZone: "Asia/Kuching"` on load. Before 2026 it shows January, and after 2026 it shows December. `?month=N` overrides.
-- No division filter. The division shows as a chip on each card.
-- Card: date block, name, 1-2 sentence summary, venue (or "{town} (venue to be confirmed)"), division chip, and an "Official site" link when `official_url` is set. **No organiser or contact lines and no phone numbers**: removed from both data and cards (v2).
-- Date block (approved smaller version): `#111111` background with brand yellow `#f7c948` text, 92px column (58px on phones). Ranges read `22–16` / `JUL–AUG`. Events with `date_tbc: true` show `TBC` and sort last in their month.
+- No division filter.
+- Card: meta row, name, 1-2 sentence summary, venue (or "{town} (venue to be confirmed)"), and an "Official site" link when `official_url` is set. **No organiser or contact lines, no phone numbers, and no source attribution**: those stay off the card.
+- Meta row, above the title, same inline pattern as ai.sarawak.news `.story-meta-row` (date, then labels). There is no left-hand date square. On the news row, yellow `.story-source-label` is the story source and red `.story-section` is the story topic (`color: var(--sarawak-red-ink)`, weight 900, no fill). Events do not print the news source or topic. The yellow label is the **place**: town when set, otherwise division. The red label is `event_type` (`festival`, `sports`, `concert`, `cultural`), same red text and no fill. Races use `sports`. Every published regatta uses `festival` for now. It is omitted when `event_type` is empty. The published listing sets a type on every event, so every published card shows the red label.
+- Date text is uppercase: `15 OCT 2026`. A range in one month reads `2–4 OCT 2026`. A range across months reads `22 JUL–16 AUG 2026`. Events with `date_tbc: true` show `TBC` and sort last in their month.
 - All 12 month panels are pre-rendered as static HTML (ARIA tabs/tabpanels; arrow keys move between tabs), so the page works without JS.
 
 ## Build

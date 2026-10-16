@@ -14,7 +14,7 @@ import queue as q  # noqa: E402
 
 GOOD = {"id": "test-fest-2026", "name": "Test Fest", "start_date": "2026-11-05", "end_date": "2026-11-07",
         "date_tbc": False, "month": 11, "venue": "Kuching Waterfront", "town": "Kuching", "division": "Kuching",
-        "summary": "A test festival on the waterfront.", "official_url": None,
+        "summary": "A test festival on the waterfront.", "event_type": "festival", "official_url": None,
         "source_url": "https://example.com/a", "source_name": "Example", "discovered_at": "2026-10-15T10:00:00+08:00",
         "status": "published"}
 
@@ -62,6 +62,14 @@ class SeedData(unittest.TestCase):
     def test_queue_valid(self):
         self.assertEqual(L.validate_collection(L.load(L.QUEUE)), [])
 
+    def test_published_events_are_typed(self):
+        counts = {}
+        for ev in self.events:
+            self.assertIn(ev.get("event_type"), L.EVENT_TYPES, ev["id"])
+            counts[ev["event_type"]] = counts.get(ev["event_type"], 0) + 1
+        self.assertEqual(sum(counts.values()), len(self.events))
+        self.assertEqual(set(counts), set(L.EVENT_TYPES))
+
 
 class Validation(unittest.TestCase):
     def bad(self, **kw):
@@ -77,6 +85,10 @@ class Validation(unittest.TestCase):
         self.assertTrue(self.bad(summary="One. Two. Three."))
         self.assertTrue(self.bad(summary="x" * 300))
         self.assertTrue(self.bad(division="Atlantis"))
+        self.assertTrue(self.bad(event_type="gala"))
+        self.assertTrue(self.bad(event_type="race"))
+        self.assertTrue(self.bad(event_type="regatta"))
+        self.assertTrue(self.bad(event_type=""))
         self.assertTrue(self.bad(status="live"))
         self.assertTrue(self.bad(end_date="2026-11-01"))
         self.assertTrue(self.bad(start_date=None))
@@ -89,6 +101,11 @@ class Validation(unittest.TestCase):
 
     def test_tbc_allows_no_date(self):
         self.assertEqual(self.bad(start_date=None, end_date=None, date_tbc=True), [])
+
+    def test_event_type_allows_null_and_known_values(self):
+        self.assertEqual(self.bad(event_type=None), [])
+        for kind in L.EVENT_TYPES:
+            self.assertEqual(self.bad(event_type=kind), [], kind)
 
     def test_slug(self):
         self.assertEqual(L.make_id("Pesta Ba'euh Kedayan", 2026), "pesta-baeuh-kedayan-2026")
