@@ -35,8 +35,8 @@
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-.event-name { margin: 0 0 4px; font-size: 21px; font-weight: 800; line-height: 1.25; letter-spacing: -.01em; }
-.event-sum { margin: 0 0 8px; }
+.event-name { margin: 0; font-size: 17px; font-weight: 800; line-height: 1.35; letter-spacing: -.012em; }
+.event-sum { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .event-venue { margin: 0; color: var(--muted); font-size: 15px; }
 .event-venue:not(:last-child) { margin-bottom: 12px; }
 .event-label { font-weight: 600; color: var(--ink); margin-right: 4px; }
@@ -46,6 +46,41 @@
 .event-list[hidden] { display: none; }
 .about-body { display: block; }
 .event-link { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* Same hover as ai.sarawak.news .story-card, only when Official site is present. */
+.event-card:has(.event-link) {
+  position: relative;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
+}
+.event-card:has(.event-link) .event-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.event-link:focus-visible { outline: none; }
+.event-card:has(.event-link:focus-visible) {
+  outline: 3px solid var(--sarawak-yellow);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .event-card:has(.event-link):hover {
+    border-color: #cbd1da;
+    box-shadow: 0 8px 20px rgb(17 24 39 / 8%);
+    transform: translateY(-3px) rotate(-.25deg);
+  }
+  .event-card:has(.event-link):nth-child(even):hover {
+    transform: translateY(-3px) rotate(.25deg);
+  }
+  html[data-theme="dark"] .event-card:has(.event-link):hover {
+    border-color: #4b5663;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 28%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .event-card:has(.event-link) { transition: none; }
+  .event-card:has(.event-link):hover,
+  .event-card:has(.event-link):nth-child(even):hover { transform: none; }
+}
 /* Shared shell label is 10px / 850 / muted. One step stronger, still a label. */
 #month-filter-title {
   margin-bottom: 12px;
@@ -55,5 +90,4 @@
 }
 @media (max-width: 560px) {
   .event-card { padding: 14px; }
-  .event-name { font-size: 18px; }
 }
