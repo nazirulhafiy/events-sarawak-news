@@ -77,10 +77,13 @@ class SeedData(unittest.TestCase):
                 "https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/",
             "kejohanan-muaythai-piala-premier-sarawak-edisi-ke-10-2026":
                 "https://suarasarawak.my/muaythai-piala-premier-sarawak-2026-pertembungan-300-peserta-di-bintulu/",
+            "karnival-siburan-2026":
+                "https://suarasarawak.my/karnival-siburan-platform-ketengah-produk-budaya-tempatan/",
         })
         by_id = {e["id"]: e for e in self.events}
         self.assertIsNone(by_id["kuching-international-cat-festival-2026"]["official_url"])
         self.assertIsNone(by_id["kejohanan-muaythai-piala-premier-sarawak-edisi-ke-10-2026"]["official_url"])
+        self.assertIsNone(by_id["karnival-siburan-2026"]["official_url"])
         kept = {
             "pata-travel-mart-ptm-2026": "https://www.pata.org/pata-travel-mart-2026",
             "wak-festival-2026-wak-kuching-2026": "https://wakfestival.com/",
@@ -94,7 +97,6 @@ class SeedData(unittest.TestCase):
             self.assertEqual(by_id[eid]["official_url"], url)
             self.assertIsNone(by_id[eid].get("info_url"))
         for eid in (
-            "karnival-siburan-2026",
             "karnival-balau-dalat-2026",
             "youth-day-limbang-motor-day-2026",
             "limbang-open-international-tug-of-war-2026",
