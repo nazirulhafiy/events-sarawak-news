@@ -43,8 +43,8 @@ class SeedData(unittest.TestCase):
         self.assertEqual(L.validate_collection(self.events), [])
         statuses = {e["status"] for e in self.events}
         self.assertEqual(statuses, {"published", "cancelled"})
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 112)
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 2)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 110)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 4)
 
     def test_only_schema_fields(self):
         for e in self.events:
@@ -84,10 +84,6 @@ class SeedData(unittest.TestCase):
                 "https://suarasarawak.my/karnival-siburan-platform-ketengah-produk-budaya-tempatan/",
             "karnival-balau-dalat-2026":
                 "https://utusansarawak.com.my/industri-balau-terus-diperkasa-jadi-bank-ekonomi-masyarakat-dalat/",
-            "pesta-tabih-long-bemang-2026":
-                "https://www.intourcams.my/events",
-            "pesta-kebudayaan-apau-koyan-2026":
-                "https://www.intourcams.my/events",
             "krian-fest-nature-challenge-edisi-ke-4-2026":
                 "https://utusansarawak.com.my/pesta-saratok-2026-dan-krian-fest-nature-challenge-kembali-meriahkan-kriansaratok/",
             "serian-international-cross-country-half-marathon-run-2026":
@@ -129,6 +125,10 @@ class SeedData(unittest.TestCase):
             self.assertIsNone(by_id[eid]["official_url"])
         self.assertEqual(by_id["baram-basin-indigenous-cultural-festival-bbic-festival-2026"]["status"], "cancelled")
         self.assertEqual(by_id["karnival-balau-and-agrofest-dalat-2026"]["status"], "cancelled")
+        self.assertEqual(by_id["pesta-tabih-long-bemang-2026"]["status"], "cancelled")
+        self.assertEqual(by_id["pesta-kebudayaan-apau-koyan-2026"]["status"], "cancelled")
+        self.assertIsNone(by_id["pesta-tabih-long-bemang-2026"].get("info_url"))
+        self.assertIsNone(by_id["pesta-kebudayaan-apau-koyan-2026"].get("info_url"))
         self.assertNotIn("krian-nature-marathon-1st-edition-2026", by_id)
 
 
