@@ -251,7 +251,7 @@ FOOT = """  <footer class="site-footer">
     <div class="site-footer-main">
       <div class="site-footer-summary">
         <p class="site-footer-brand">Events.Sarawak.News</p>
-        <p class="site-footer-note">An independent listing of events across Sarawak. Dates and venues can change, so check with the organiser before you travel. This website does not sell tickets.</p>
+        <p class="site-footer-note">An independent listing of events across Sarawak.</p>
       </div>
       <nav aria-label="Explore" class="site-footer-nav">
         <h2>Explore</h2>
