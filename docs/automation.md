@@ -61,6 +61,7 @@ Read `AGENTS.md`, this contract, `docs/schema.md`, `data/sources.json`, `automat
 - Summary is 1-2 original factual sentences: no hype, no copied paragraph, **no phone numbers, emails or organiser contacts**.
 - Not purely promotional for a single shop, not a private function, not a webinar with no Sarawak venue.
 - A distinct event. A postponement updates the existing record's dates (and `review_note`) instead of adding a new record. A cancellation sets `status: cancelled`.
+- For **Oct–Dec 2026** (scope for now): only publish when `official_url` or `info_url` is a verified official site, social page, or news article. Otherwise leave pending or cancel — never invent a URL. See `docs/schema.md`.
 
 ## Required verification (before any push)
 
