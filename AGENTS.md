@@ -19,7 +19,7 @@ No further DNS, custom domain or hub link without Nazirul's explicit approval.
 - No phone numbers, emails or organiser contact lines anywhere: not in the data, not on cards.
 - No on-site source attribution. `source_url` and `source_name` are internal.
 - Summaries are 1-2 short factual sentences in original wording.
-- Oct–Dec 2026 published events need `official_url` or `info_url` (official / social / news); otherwise cancel — see `docs/schema.md`.
+- Oct–Dec 2026 published events need `official_url` or `info_url` (official / social / news); otherwise cancel — see `docs/schema.md`. Weekly Monday scan adds sourced events for present/future dates (`docs/runbook.md`).
 - Design or behaviour changes update `docs/design.md` in the same change.
 - Content runs follow `docs/automation.md`, and Maintainer Bot follows `docs/runbook.md`.
 
