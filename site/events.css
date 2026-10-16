@@ -1,5 +1,4 @@
 .month-filter { margin-bottom: 10px; }
-.event-note { margin: 4px 0 28px; color: var(--muted); font-size: 14px; }
 .event-month-heading { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .event-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .event-card { display: grid; grid-template-columns: 112px 1fr; gap: 22px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
@@ -20,7 +19,7 @@
   .event-mon { font-size: 12px; }
   .event-name { font-size: 18px; }
 }
-.event-note, .event-month-heading, .event-list { max-width: 760px; margin-left: auto; margin-right: auto; }
+.event-month-heading, .event-list { max-width: 760px; margin-left: auto; margin-right: auto; }
 .event-card { grid-template-columns: 128px 1fr; }
 .event-date { align-self: start; }
 .event-day { font-size: 32px; }

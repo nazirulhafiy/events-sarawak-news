@@ -12,7 +12,6 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - Brief: "Events in Sarawak, month by month." with the deck "Festivals, races, regattas and cultural events across Sarawak." and the last-updated date (build date, MYT). There is no source attribution anywhere on the site (cards, about, footer, meta). The 2026 tourism calendar was only the starter seed.
 - Month tabs (Jan to Dec, 2026) reuse the `.category-filter` pill style, and each tab carries a count badge. Months with no events get no badge.
 - The current month in MYT (Asia/Kuching) is selected by default: build.py pre-selects the build-time month, and `events.js` re-selects using `Intl` with `timeZone: "Asia/Kuching"` on load. Before 2026 it shows January, and after 2026 it shows December. `?month=N` overrides.
-- Note under the tabs: "Dates subject to change, check with organisers."
 - No division filter. The division shows as a chip on each card.
 - Card: date block, name, 1-2 sentence summary, venue (or "{town} (venue to be confirmed)"), division chip, and an "Official site" link when `official_url` is set. **No organiser or contact lines and no phone numbers**: removed from both data and cards (v2).
 - Date block (approved smaller version): `#111111` background with brand yellow `#f7c948` text, 92px column (58px on phones). Ranges read `22–16` / `JUL–AUG`. Events with `date_tbc: true` show `TBC` and sort last in their month.

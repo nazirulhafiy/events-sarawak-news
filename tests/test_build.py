@@ -72,8 +72,8 @@ class RenderTests(unittest.TestCase):
     def test_all_events_rendered(self):
         self.assertEqual(self.html.count('class="event-card"'), 114)
 
-    def test_note_present_and_no_division_filter(self):
-        self.assertIn("Dates subject to change, check with organisers", self.html)
+    def test_no_event_note_or_division_filter(self):
+        self.assertNotIn('class="event-note"', self.html)
         self.assertNotIn("data-division", self.html)
         self.assertNotIn("Browse by division", self.html)
 
