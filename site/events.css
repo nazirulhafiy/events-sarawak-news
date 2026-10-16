@@ -35,8 +35,8 @@
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-.event-name { margin: 0 0 4px; font-size: 21px; font-weight: 800; line-height: 1.25; letter-spacing: -.01em; }
-.event-sum { margin: 0 0 8px; }
+.event-name { margin: 0; font-size: 17px; font-weight: 800; line-height: 1.35; letter-spacing: -.012em; }
+.event-sum { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .event-venue { margin: 0; color: var(--muted); font-size: 15px; }
 .event-venue:not(:last-child) { margin-bottom: 12px; }
 .event-label { font-weight: 600; color: var(--ink); margin-right: 4px; }
@@ -90,5 +90,4 @@
 }
 @media (max-width: 560px) {
   .event-card { padding: 14px; }
-  .event-name { font-size: 18px; }
 }

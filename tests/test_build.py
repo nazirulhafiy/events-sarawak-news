@@ -196,6 +196,30 @@ class RenderTests(unittest.TestCase):
         self.assertIn("Official site", linked)
         self.assertIn("Venue", linked)
         self.assertIn("A travel mart.", linked)
+        plain = build.render_card({
+            "id": "plain", "name": "Walk", "month": 1,
+            "start_date": "2026-01-01", "end_date": "2026-01-01", "date_tbc": False,
+            "summary": "A walk.", "venue": "Park", "town": "Kuching", "division": "Kuching",
+        })
+        self.assertNotIn("event-link", plain)
+
+    def test_card_type_and_hover_only_when_linked(self):
+        css = (build.SITE / "events.css").read_text()
+        self.assertIn(
+            ".event-name { margin: 0; font-size: 17px; font-weight: 800; line-height: 1.35; letter-spacing: -.012em; }",
+            css,
+        )
+        self.assertIn(
+            ".event-sum { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.55; }",
+            css,
+        )
+        self.assertNotIn(".event-name { font-size: 18px; }", css)
+        self.assertIn(".event-card:has(.event-link):hover", css)
+        self.assertIn(
+            ".event-card:has(.event-link):not(:has(.event-link ~ .event-link)) .event-link::after",
+            css,
+        )
+        self.assertNotIn(".event-card:hover", css)
 
     def test_info_link_and_hover_when_either_url_is_set(self):
         css = (build.SITE / "events.css").read_text()
