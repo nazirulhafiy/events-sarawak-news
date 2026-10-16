@@ -86,6 +86,8 @@ class Validation(unittest.TestCase):
         self.assertTrue(self.bad(summary="x" * 300))
         self.assertTrue(self.bad(division="Atlantis"))
         self.assertTrue(self.bad(event_type="gala"))
+        self.assertTrue(self.bad(event_type="race"))
+        self.assertTrue(self.bad(event_type="regatta"))
         self.assertTrue(self.bad(event_type=""))
         self.assertTrue(self.bad(status="live"))
         self.assertTrue(self.bad(end_date="2026-11-01"))
