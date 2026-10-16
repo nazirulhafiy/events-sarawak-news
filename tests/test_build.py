@@ -39,7 +39,7 @@ class DataTests(unittest.TestCase):
 
     def test_month_counts_match_review(self):
         c = build.month_counts(self.events)
-        self.assertEqual([c[m] for m in range(1, 13)], [2, 1, 2, 14, 13, 13, 14, 11, 21, 15, 4, 4])
+        self.assertEqual([c[m] for m in range(1, 13)], [2, 1, 2, 14, 13, 13, 14, 12, 21, 14, 4, 4])
 
 
 class RenderTests(unittest.TestCase):
@@ -59,7 +59,7 @@ class RenderTests(unittest.TestCase):
         tabs = re.findall(r'<button type="button" role="tab".*?</button>', self.html)
         self.assertEqual(len(tabs), 12)
         self.assertIn('aria-selected="true"', tabs[9])
-        self.assertIn('>Oct <span class="category-filter-count" aria-hidden="true">15</span>', tabs[9])
+        self.assertIn('>Oct <span class="category-filter-count" aria-hidden="true">14</span>', tabs[9])
         self.assertEqual(sum('aria-selected="true"' in t for t in tabs), 1)
 
     def test_only_current_panel_visible(self):
@@ -233,7 +233,7 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn(".event-card:hover {", css)
         self.assertNotIn("Official site", self.html)
         self.assertNotIn("More information", self.html)
-        self.assertEqual(self.html.count('class="event-link"'), 9)
+        self.assertEqual(self.html.count('class="event-link"'), 10)
         self.assertIn(
             'href="https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/"',
             self.html,
@@ -242,7 +242,10 @@ class RenderTests(unittest.TestCase):
             'href="https://suarasarawak.my/muaythai-piala-premier-sarawak-2026-pertembungan-300-peserta-di-bintulu/"',
             self.html,
         )
-        self.assertNotIn("karnival-siburan-platform", self.html)
+        self.assertIn(
+            'href="https://suarasarawak.my/karnival-siburan-platform-ketengah-produk-budaya-tempatan/"',
+            self.html,
+        )
         self.assertNotIn("Suara Sarawak", self.html)
         self.assertNotIn("Borneo Post", self.html)
         cat = self.html.split('id="kuching-international-cat-festival-2026"', 1)[1].split("</li>", 1)[0]
