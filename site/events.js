@@ -110,4 +110,33 @@
     else return;
     ev.preventDefault();
   });
+
+  // Whole-card click-through, same pattern as ai.sarawak.news .story-card.
+  document.querySelectorAll(".event-card").forEach(card => {
+    const link = card.querySelector(".event-link");
+    if (!link) return;
+    card.addEventListener("click", event => {
+      if (event.target.closest("a, button, input, select, textarea")) return;
+      link.click();
+    });
+    card.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      link.click();
+    });
+  });
+
+  // Card reveal: same IntersectionObserver + is-revealed as bantuan.sarawak.news.
+  const eventCards = document.querySelectorAll(".event-card");
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  if (eventCards.length && !reduceMotion && "IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-revealed");
+        revealObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px", threshold: 0 });
+    eventCards.forEach(card => revealObserver.observe(card));
+  }
 })();

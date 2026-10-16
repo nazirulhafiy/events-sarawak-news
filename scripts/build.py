@@ -129,11 +129,9 @@ def where(ev: dict) -> str:
     return venue if town in venue else f"{venue}, {town}"
 
 
-def _event_link(url: str, label: str) -> str:
-    return (
-        f'<a class="event-link" href="{e(url)}" '
-        f'target="_blank" rel="noopener noreferrer">{e(label)}</a>'
-    )
+def card_destination(ev: dict) -> str | None:
+    """Prefer the organiser page; fall back to a dedicated info article."""
+    return ev.get("official_url") or ev.get("info_url") or None
 
 
 def render_card(ev: dict) -> str:
@@ -149,22 +147,27 @@ def render_card(ev: dict) -> str:
     )
     kind = (ev.get("event_type") or "").strip()
     kind_html = f'<span class="event-type">{e(kind)}</span>' if kind else ""
-    links = []
-    if ev.get("official_url"):
-        links.append(_event_link(ev["official_url"], "Official site"))
-    if ev.get("info_url"):
-        links.append(_event_link(ev["info_url"], "More information"))
-    link = f'\n        <p class="event-links">{" ".join(links)}</p>' if links else ""
+    dest = card_destination(ev)
+    if dest:
+        name = (
+            f'<h3 class="event-name">'
+            f'<a class="event-link" href="{e(dest)}" '
+            f'target="_blank" rel="noopener noreferrer">{e(ev["name"])}</a></h3>'
+        )
+        interactive = f' tabindex="0" aria-label="Open event: {e(ev["name"])}"'
+    else:
+        name = f'<h3 class="event-name">{e(ev["name"])}</h3>'
+        interactive = ""
     return f"""
-      <li class="event-card" id="{e(ev['id'])}"{f' data-event-type="{e(kind)}"' if kind else ""}>
+      <li class="event-card" id="{e(ev['id'])}"{f' data-event-type="{e(kind)}"' if kind else ""}{interactive}>
         <p class="event-meta-row">
           {when}
           {pill}
           {kind_html}
         </p>
-        <h3 class="event-name">{e(ev['name'])}</h3>
+        {name}
         <p class="event-sum">{e(ev.get('summary') or '')}</p>
-        <p class="event-venue"><span class="event-label">Venue</span> {e(where(ev))}</p>{link}
+        <p class="event-venue"><span class="event-label">Venue</span> {e(where(ev))}</p>
       </li>"""
 
 

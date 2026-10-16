@@ -36,31 +36,28 @@
   -webkit-box-decoration-break: clone;
 }
 .event-name { margin: 0; font-size: 17px; font-weight: 800; line-height: 1.35; letter-spacing: -.012em; }
+.event-name .event-link { color: inherit; text-decoration: none; }
 .event-sum { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .event-venue { margin: 0; color: var(--muted); font-size: 15px; }
-.event-venue:not(:last-child) { margin-bottom: 12px; }
 .event-label { font-weight: 600; color: var(--ink); margin-right: 4px; }
-.event-links { margin: 0; }
 .event-empty { padding: 36px 20px; border: 1px dashed var(--line); border-radius: 14px; text-align: center; color: var(--muted); }
 .event-month-heading, .event-list { max-width: 760px; margin-left: auto; margin-right: auto; }
 .event-list[hidden] { display: none; }
 .about-body { display: block; }
-.event-link { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-/* Same hover as ai.sarawak.news .story-card, when Official site or More information is present. */
+/* Whole-card control when a destination URL exists (ai.sarawak.news .story-card). */
 .event-card:has(.event-link) {
-  position: relative;
   cursor: pointer;
   transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
 }
-.event-card:has(.event-link):not(:has(.event-link ~ .event-link)) .event-link::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-.event-link:focus-visible { outline: none; }
-.event-card:has(.event-link:focus-visible) {
+.event-card:has(.event-link):focus-visible {
   outline: 3px solid var(--sarawak-yellow);
   outline-offset: 3px;
+}
+.event-card:hover .event-name .event-link,
+.event-card:focus-visible .event-name .event-link,
+.event-card:focus-within .event-name .event-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 @media (hover: hover) {
   .event-card:has(.event-link):hover {
@@ -75,11 +72,32 @@
     border-color: #4b5663;
     box-shadow: 0 8px 20px rgb(0 0 0 / 28%);
   }
+  .event-card:hover .event-name .event-link::after {
+    content: "↗";
+    margin-left: .28em;
+  }
+}
+/* Card reveal: same story-reveal as bantuan.sarawak.news scheme cards. */
+.js .event-card:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.js .event-card.is-revealed {
+  animation: story-reveal .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes story-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .event-card:has(.event-link) { transition: none; }
   .event-card:has(.event-link):hover,
   .event-card:has(.event-link):nth-child(even):hover { transform: none; }
+  .js .event-card.is-revealed { animation: none; }
+  .js .event-card:not(.is-revealed) {
+    opacity: 1;
+    transform: none;
+  }
 }
 /* Shared shell label is 10px / 850 / muted. One step stronger, still a label. */
 #month-filter-title {
