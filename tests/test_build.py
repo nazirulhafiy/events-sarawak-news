@@ -78,6 +78,19 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("data-division", self.html)
         self.assertNotIn("Browse by division", self.html)
 
+    def test_footer_categories_and_card_type_data(self):
+        self.assertIn('class="site-footer-categories-title">Categories</h2>', self.html)
+        for kind, label in (
+            ("festival", "Festival"),
+            ("sports", "Sports"),
+            ("cultural", "Cultural"),
+            ("concert", "Concert"),
+        ):
+            self.assertIn(f'href="/?event_type={kind}">{label}</a>', self.html)
+        self.assertEqual(self.html.count('data-event-type="'), 114)
+        about = build.render_about(self.events, self.now)
+        self.assertIn('href="/?event_type=festival">Festival</a>', about)
+
     def test_cloudflare_and_ga4_in_head(self):
         site = json.loads(build.SITE_CONFIG.read_text(encoding="utf-8"))
         self.assertEqual(list(site), ["ga4_measurement_id"])

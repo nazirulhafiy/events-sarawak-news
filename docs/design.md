@@ -7,6 +7,7 @@ Same template as ai.sarawak.news (`nazirulhafiy/sarawak-ai-news`) and bantuan.sa
 - `site/style.css` and `site/app.js` are the shared shell (sticky bar, mobile nav, theme toggle, footer). Theme is stored in `localStorage["sarawak-theme"]`, falls back to `prefers-color-scheme`, and `?theme=light|dark` forces it.
 - Font: Geist variable (`site/fonts/Geist-Variable.woff2`), self-hosted.
 - Header brand "Events.Sarawak.News"; footer credits hafiy.my and states non-affiliation with the Sarawak Government.
+- Footer nav matches the sarawak.news shell: **Explore** (Home, About) and **Categories** (Festival, Sports, Cultural, Concert). Category links go to `/?event_type=festival`, `sports`, `cultural`, or `concert`. On the home page, `events.js` hides cards that do not match the type, updates month tab count badges to the filtered totals, and switches to the first month that has a match when the current month has none. `?month=N` still selects the month tab; both query params can be combined.
 
 ## Page
 - Brief: "Events in Sarawak, month by month." with the deck "Festivals, sports, cultural events and concerts across Sarawak." and the last-updated date (build date, MYT). There is no source attribution anywhere on the site (cards, about, footer, meta). The 2026 tourism calendar was only the starter seed.
