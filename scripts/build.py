@@ -251,7 +251,7 @@ FOOT = """  <footer class="site-footer">
     <div class="site-footer-main">
       <div class="site-footer-summary">
         <p class="site-footer-brand">Events.Sarawak.News</p>
-        <p class="site-footer-note">An independent listing of events across Sarawak. Dates and venues can change, so check with the organiser before you travel. This website does not sell tickets.</p>
+        <p class="site-footer-note">An independent listing of events across Sarawak.</p>
       </div>
       <nav aria-label="Explore" class="site-footer-nav">
         <h2>Explore</h2>
@@ -314,7 +314,6 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
         <div class="category-filter-options" data-months role="tablist" aria-label="Months">{render_tabs(counts, cur)}</div>
       </div>
     </section>
-    <p class="event-note">{NOTE}</p>
     <h2 class="event-month-heading" data-month-heading>{FULL[cur-1]} {YEAR}</h2>
     {render_panels(events, cur)}
   </main>
