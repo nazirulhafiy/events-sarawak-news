@@ -305,11 +305,11 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     main = f"""  <main id="content">
     <header class="brief">
       <h1>Events in Sarawak, month by month.</h1>
-      <p class="brief-deck">Festivals, races, regattas and cultural events across Sarawak.</p>
+      <p class="brief-deck">Festivals, sports, cultural events and concerts across Sarawak.</p>
       {updated_html(now)}
     </header>
     <section class="category-filter month-filter" aria-labelledby="month-filter-title">
-      <p class="category-filter-title" id="month-filter-title">Browse by month, {YEAR}</p>
+      <p class="category-filter-title" id="month-filter-title">Browse by month</p>
       <div class="category-filter-scroll" data-category-scroll>
         <div class="category-filter-options" data-months role="tablist" aria-label="Months">{render_tabs(counts, cur)}</div>
       </div>
@@ -319,7 +319,7 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     {render_panels(events, cur)}
   </main>
 """
-    return shell("home", "Events Sarawak", "Festivals, races, regattas and cultural events across Sarawak, listed by month.", main)
+    return shell("home", "Events Sarawak", "Festivals, sports, cultural events and concerts across Sarawak, listed by month.", main)
 
 
 def render_about(events: list[dict], now: dt.datetime | None = None, page: str = "about") -> str:
