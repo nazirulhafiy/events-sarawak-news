@@ -33,4 +33,4 @@ GitHub Pages from `nazirulhafiy/events-sarawak-news` (`main`), deployed by `.git
 
 ## Analytics
 - Cloudflare Web Analytics beacon, token `092a061973fc4d899cd2e4b52952af89` (zone sarawak.news, shared sarawak.news site). The beacon is on every page.
-- GA4 property **Sarawak Events**, measurement ID `G-7R9G7T5N9P` (stored in `data/site.json` as `ga4_measurement_id`). When set, `scripts/build.py` injects the gtag snippet in `HEAD`; when empty, built pages omit `gtag` / `googletagmanager`.
+- GA4 property **Sarawak Events**, measurement ID `G-P7Y5Z19Q46` (stored in `data/site.json` as `ga4_measurement_id`). When set, `scripts/build.py` injects the gtag snippet in `HEAD`; when empty, built pages omit `gtag` / `googletagmanager`.

@@ -78,4 +78,4 @@ Report: status (`published`, `no_update`, `blocked`), start SHA, discovery run I
 
 ## CI
 
-Workflows live under `.github/workflows/` (`build.yml`, `discover.yml`). `build.yml` tests, validates and builds, with no Pages deploy (GitHub Pages for this account would serve under hafiy.my). `discover.yml` runs discovery daily at 07:00 MYT and uploads `candidate-urls.json` as an artifact.
+Workflows live under `.github/workflows/` (`build.yml`, `discover.yml`). `build.yml` runs tests, `scripts/validate.py`, and `scripts/build.py`, uploads `dist/` as a GitHub Pages artifact, and on push to `main` deploys via `actions/deploy-pages@v4` to the `github-pages` environment (production migrated to GitHub Pages on **15 October 2026**). `discover.yml` runs discovery daily at 07:00 MYT and uploads `candidate-urls.json` as an artifact.

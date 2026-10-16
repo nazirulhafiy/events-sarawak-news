@@ -33,7 +33,7 @@ Both beacons are injected on every HTML page by `scripts/build.py`.
 
 | Service | ID / token | Notes |
 |---------|------------|--------|
-| Google Analytics 4 | `G-7R9G7T5N9P` | Property **Sarawak Events**; value from `data/site.json` → `ga4_measurement_id` |
+| Google Analytics 4 | `G-P7Y5Z19Q46` | Property **Sarawak Events**; value from `data/site.json` → `ga4_measurement_id` |
 | Cloudflare Web Analytics | `092a061973fc4d899cd2e4b52952af89` | Zone `sarawak.news`, shared with other sarawak.news sites |
 
 Analytics or domain changes are out of scope for routine content runs (`docs/runbook.md`).
