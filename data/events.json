@@ -1765,12 +1765,11 @@
     "summary": "A tapah fish festival with fishing contests, freshwater cuisine and Orang Ulu performances, promoting fish-breeding conservation.",
     "event_type": "festival",
     "official_url": null,
-    "info_url": "https://www.intourcams.my/events",
-    "source_url": "https://www.intourcams.my/events",
-    "source_name": "INTOURCAMS Events — Pesta Tabih Long Bemang",
+    "source_url": "https://mtcp.sarawak.gov.my/",
+    "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Kept dates/venue (MTCP + INTOURCAMS). Added info_url to INTOURCAMS listing; no dedicated event page found."
+    "status": "cancelled",
+    "review_note": "Unpublished: Oct 2026 listing unsupported outside MTCP seed; no recent news or official 2026 page to verify. INTOURCAMS listing URL removed (not preferred)."
   },
   {
     "id": "pesta-kebudayaan-apau-koyan-2026",
@@ -1785,12 +1784,11 @@
     "summary": "A cultural festival alternating yearly with the Belaga Regatta, with Orang Ulu music, dances and folk games.",
     "event_type": "festival",
     "official_url": null,
-    "info_url": "https://www.intourcams.my/events",
-    "source_url": "https://www.intourcams.my/events",
-    "source_name": "INTOURCAMS Events — Pesta Kebudayaan Apau Koyan",
+    "source_url": "https://mtcp.sarawak.gov.my/",
+    "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
-    "status": "published",
-    "review_note": "Kept 23–25 Oct (MTCP + INTOURCAMS + Kapit 2026 programme). Added info_url to INTOURCAMS listing."
+    "status": "cancelled",
+    "review_note": "Unpublished: Oct 2026 listing unsupported outside MTCP seed; no recent news or official 2026 page to verify (prior Apau Koyan coverage is 2024-only). INTOURCAMS listing URL removed (not preferred)."
   },
   {
     "id": "sarawak-international-dragon-boat-regatta-2026",

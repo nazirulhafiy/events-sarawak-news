@@ -18,7 +18,7 @@ class DataTests(unittest.TestCase):
         self.events = build.load_events()
 
     def test_count_and_fields(self):
-        self.assertEqual(len(self.events), 112)
+        self.assertEqual(len(self.events), 110)
         for ev in self.events:
             for k in ("id", "name", "month", "division", "summary", "date_tbc"):
                 self.assertIn(k, ev)
@@ -39,7 +39,7 @@ class DataTests(unittest.TestCase):
 
     def test_month_counts_match_review(self):
         c = build.month_counts(self.events)
-        self.assertEqual([c[m] for m in range(1, 13)], [2, 1, 2, 14, 13, 13, 14, 12, 21, 11, 5, 4])
+        self.assertEqual([c[m] for m in range(1, 13)], [2, 1, 2, 14, 13, 13, 14, 12, 21, 9, 5, 4])
 
 
 class RenderTests(unittest.TestCase):
@@ -59,7 +59,7 @@ class RenderTests(unittest.TestCase):
         tabs = re.findall(r'<button type="button" role="tab".*?</button>', self.html)
         self.assertEqual(len(tabs), 12)
         self.assertIn('aria-selected="true"', tabs[9])
-        self.assertIn('>Oct <span class="category-filter-count" aria-hidden="true">11</span>', tabs[9])
+        self.assertIn('>Oct <span class="category-filter-count" aria-hidden="true">9</span>', tabs[9])
         self.assertEqual(sum('aria-selected="true"' in t for t in tabs), 1)
 
     def test_only_current_panel_visible(self):
@@ -70,8 +70,8 @@ class RenderTests(unittest.TestCase):
         self.assertIn('data-panel="10"', visible[0])
 
     def test_all_events_rendered(self):
-        self.assertEqual(self.html.count('class="event-card"'), 112)
-        self.assertEqual(self.html.count('class="event-type"'), 112)
+        self.assertEqual(self.html.count('class="event-card"'), 110)
+        self.assertEqual(self.html.count('class="event-type"'), 110)
 
     def test_no_event_note_or_division_filter(self):
         self.assertNotIn('class="event-note"', self.html)
@@ -87,7 +87,7 @@ class RenderTests(unittest.TestCase):
             ("concert", "Concert"),
         ):
             self.assertIn(f'href="/?event_type={kind}">{label}</a>', self.html)
-        self.assertEqual(self.html.count('data-event-type="'), 112)
+        self.assertEqual(self.html.count('data-event-type="'), 110)
         about = build.render_about(self.events, self.now)
         self.assertIn('href="/?event_type=festival">Festival</a>', about)
 
@@ -233,7 +233,7 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn(".event-card:hover {", css)
         self.assertNotIn("Official site", self.html)
         self.assertNotIn("More information", self.html)
-        self.assertEqual(self.html.count('class="event-link"'), 17)
+        self.assertEqual(self.html.count('class="event-link"'), 15)
         self.assertIn(
             'href="https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/"',
             self.html,
@@ -247,7 +247,7 @@ class RenderTests(unittest.TestCase):
             self.html,
         )
         self.assertIn('href="https://www.santubongtrail.com/"', self.html)
-        self.assertIn('href="https://www.intourcams.my/events"', self.html)
+        self.assertNotIn("intourcams.my", self.html)
         self.assertIn(
             'href="https://limbang.sarawak.gov.my/web/subpage/news_view/941"',
             self.html,
