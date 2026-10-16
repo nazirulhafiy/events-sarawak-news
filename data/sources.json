@@ -13,5 +13,22 @@
   {"name": "TVS — news", "url": "https://tvstv.my/", "tier": 2, "category": "news", "expected_yield": "medium"},
   {"name": "Rainforest World Music Festival", "url": "https://rwmf.net/", "tier": 2, "category": "organiser", "expected_yield": "low"},
   {"name": "Borneo Jazz Festival", "url": "https://www.borneojazz.com/", "tier": 2, "category": "organiser", "expected_yield": "low"},
-  {"name": "Kuching Marathon", "url": "https://www.kuchingmarathon.org/", "tier": 2, "category": "organiser", "expected_yield": "low"}
+  {"name": "Kuching Marathon", "url": "https://www.kuchingmarathon.org/", "tier": 2, "category": "organiser", "expected_yield": "low"},
+
+  {"name": "Sarawak Tourism Board — Facebook", "url": "https://www.facebook.com/visitsarawak", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Official STB Facebook. Tourism festivals, campaigns and statewide event announcements."},
+  {"name": "Sarawak Tourism Board — Instagram", "url": "https://www.instagram.com/sarawaktravel/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Official STB Instagram (@sarawaktravel). Festival teasers and event highlights."},
+  {"name": "MTCP Sarawak — Facebook", "url": "https://www.facebook.com/MTCPSWK/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Ministry of Tourism, Creative Industry & Performing Arts Sarawak. Ministry announcements and cultural programmes."},
+  {"name": "Business Events Sarawak — Facebook", "url": "https://www.facebook.com/businesseventssarawak", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "BESarawak / Sarawak Convention Bureau. MICE, congress and incentive-event announcements."},
+  {"name": "Business Events Sarawak — Instagram", "url": "https://www.instagram.com/besarawak/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "BESarawak Instagram (@besarawak). Business-events destination and calendar promo."},
+  {"name": "BCCK — Facebook", "url": "https://www.facebook.com/BorneoConventionCentreKuching", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Borneo Convention Centre Kuching. Venue what's-on and hosted events."},
+  {"name": "BCCK — Instagram", "url": "https://www.instagram.com/bccksarawak/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "BCCK Instagram (@bccksarawak). Venue events and public programmes."},
+  {"name": "DBKU — Facebook", "url": "https://www.facebook.com/BandarayaKU", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Dewan Bandaraya Kuching Utara. City North civic and public events."},
+  {"name": "DBKU — Instagram", "url": "https://www.instagram.com/bandarayaku/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "DBKU Instagram (@bandarayaku), listed on the council's Media Sosial page. Civic events."},
+  {"name": "MBKS — Facebook", "url": "https://www.facebook.com/CounciloftheCityofKuchingSouth", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Majlis Bandaraya Kuching Selatan, linked from the official MBKS website. City South public events."},
+  {"name": "Miri City Council — Facebook", "url": "https://www.facebook.com/majlisbandaraya.miri", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Majlis Bandaraya Miri (MCC). City council public events and notices."},
+  {"name": "Rainforest World Music Festival — Facebook", "url": "https://www.facebook.com/rwmf.official/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Official RWMF Facebook. Festival dates, lineup and ticket updates."},
+  {"name": "Rainforest World Music Festival — Instagram", "url": "https://www.instagram.com/rwmf.official/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Official RWMF Instagram (@rwmf.official). Festival announcements."},
+  {"name": "Borneo Jazz Festival — Facebook", "url": "https://www.facebook.com/borneojazz.official/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Official Borneo Jazz Facebook. Miri festival dates and lineup."},
+  {"name": "Borneo Jazz Festival — Instagram", "url": "https://www.instagram.com/borneojazz/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Official Borneo Jazz Instagram (@borneojazz). Festival announcements."},
+  {"name": "Kuching Marathon — Facebook", "url": "https://www.facebook.com/KuchingMarathonAssociation/", "tier": 2, "category": "social", "expected_yield": "browser", "notes": "Kuching Marathon Association Facebook. Race date, registration and route notices."}
 ]

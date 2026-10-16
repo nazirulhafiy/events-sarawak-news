@@ -28,9 +28,42 @@ PLACE_WORDS = ["sarawak", "kuching", "miri", "sibu", "bintulu", "mukah", "kapit"
                "sri aman", "serian", "samarahan", "sarikei", "bau", "lundu", "belaga", "bario", "santubong"]
 DATE_RE = re.compile(r"\b(\d{1,2})(?:\s*[-–]\s*\d{1,2})?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b", re.I)
 
+# Facebook / Instagram block scripted scrapes; emit browser leads instead.
+SOCIAL_HOST_SUFFIXES = ("facebook.com", "fb.com", "instagram.com", "instagr.am")
+
 
 def load_sources() -> list[dict]:
     return json.loads((ROOT / "data" / "sources.json").read_text())
+
+
+def host_of(url: str) -> str:
+    return urlparse(url).netloc.lower().split(":")[0].removeprefix("www.")
+
+
+def is_social_source(src: dict) -> bool:
+    """True when the source is a curated social page (category or FB/IG host)."""
+    if (src.get("category") or "").lower() == "social":
+        return True
+    host = host_of(src["url"])
+    return any(host == s or host.endswith("." + s) for s in SOCIAL_HOST_SUFFIXES)
+
+
+def social_browser_lead(src: dict) -> dict:
+    """Leave the page URL as a lead for the agent to open in a browser (public posts only)."""
+    note = src.get("notes") or (
+        "Facebook/Instagram blocks scripted fetch — open public posts in a browser (no login)."
+    )
+    return {
+        "title": src["name"],
+        "url": src["url"],
+        "score": 0,
+        "matched": ["needs_browser"],
+        "source": src["name"],
+        "discovery_source_url": src["url"],
+        "maybe_known": False,
+        "needs_browser": True,
+        "note": note,
+    }
 
 
 def fetch(url: str, timeout: int = 12) -> tuple[int, str]:
@@ -64,15 +97,23 @@ def discover(limit_per_source: int, min_score: int) -> list[dict]:
     known = known_names()
     seen, out = set(), []
     for src in load_sources():
+        if is_social_source(src):
+            # Do not fail the run: FB/IG are browser leads, not scrape targets.
+            print(f"INFO {src['name']}: social source — browser lead (skip scrape)", file=sys.stderr)
+            lead = social_browser_lead(src)
+            if lead["url"] not in seen:
+                seen.add(lead["url"])
+                out.append(lead)
+            continue
         try:
             _, body = fetch(src["url"])
         except Exception as exc:  # noqa: BLE001 - report, keep going
             print(f"WARN {src['name']}: {exc}", file=sys.stderr)
             continue
-        host = urlparse(src["url"]).netloc
+        host = host_of(src["url"])
         found = []
         for url, title in links_from_page(src["url"], body):
-            if url in seen or urlparse(url).netloc.split(":")[0].removeprefix("www.") != host.removeprefix("www."):
+            if url in seen or host_of(url) != host:
                 continue
             sc, matched = score(title, url)
             if sc < min_score:
