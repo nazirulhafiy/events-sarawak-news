@@ -25,7 +25,8 @@ Files that hold schema records:
 | `division` | enum | yes | One of the 12 divisions: Betong, Bintulu, Kapit, Kuching, Limbang, Miri, Mukah, Samarahan, Sarikei, Serian, Sibu, Sri Aman. |
 | `summary` | string | yes | Short and factual, 1-2 sentences, at most 280 characters, original wording. |
 | `event_type` | enum or null | no | One of `festival`, `sports`, `concert`, `cultural`. Rendered as the red label on the card. Null or omitted renders no label. Any other value, including the retired `race` and `regatta`, is a validation error. |
-| `official_url` | https URL or null | no | The organiser's own event page. Rendered as an "Official site" link. |
+| `official_url` | https URL or null | no | The organiser's own event page. Rendered as an "Official site" link. A news article is not an official site. |
+| `info_url` | https URL or null | no | A dedicated article about this event. Rendered as a "More information" link, with no outlet name. Null or omitted when there is no such article. |
 
 ## Internal fields (never rendered)
 

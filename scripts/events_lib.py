@@ -23,7 +23,7 @@ DIVISIONS = {"Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah"
 EVENT_TYPES = {"festival", "sports", "concert", "cultural"}
 STATUSES = {"published", "pending", "approved", "rejected", "duplicate", "cancelled"}
 PUBLIC_FIELDS = ["id", "name", "start_date", "end_date", "date_tbc", "month", "venue",
-                 "town", "division", "summary", "event_type", "official_url"]
+                 "town", "division", "summary", "event_type", "official_url", "info_url"]
 INTERNAL_FIELDS = ["source_url", "source_name", "discovered_at", "status", "review_note"]
 ALL_FIELDS = PUBLIC_FIELDS + INTERNAL_FIELDS
 REQUIRED = ["id", "name", "date_tbc", "month", "town", "division", "summary",
@@ -93,7 +93,7 @@ def validate_event(ev: dict) -> list[str]:
         errs.append(f"{eid}: summary longer than {SUMMARY_MAX} chars")
     if len(re.findall(r"[.!?](?:\s|$)", summ)) > 2:
         errs.append(f"{eid}: summary must be 1-2 sentences")
-    for k in ("official_url", "source_url"):
+    for k in ("official_url", "info_url", "source_url"):
         v = ev.get(k)
         if v and not str(v).startswith("https://"):
             errs.append(f"{eid}: {k} must be https")

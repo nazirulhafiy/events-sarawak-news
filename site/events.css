@@ -46,6 +46,41 @@
 .event-list[hidden] { display: none; }
 .about-body { display: block; }
 .event-link { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* Same hover as ai.sarawak.news .story-card, when Official site or More information is present. */
+.event-card:has(.event-link) {
+  position: relative;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
+}
+.event-card:has(.event-link):not(:has(.event-link ~ .event-link)) .event-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.event-link:focus-visible { outline: none; }
+.event-card:has(.event-link:focus-visible) {
+  outline: 3px solid var(--sarawak-yellow);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .event-card:has(.event-link):hover {
+    border-color: #cbd1da;
+    box-shadow: 0 8px 20px rgb(17 24 39 / 8%);
+    transform: translateY(-3px) rotate(-.25deg);
+  }
+  .event-card:has(.event-link):nth-child(even):hover {
+    transform: translateY(-3px) rotate(.25deg);
+  }
+  html[data-theme="dark"] .event-card:has(.event-link):hover {
+    border-color: #4b5663;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 28%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .event-card:has(.event-link) { transition: none; }
+  .event-card:has(.event-link):hover,
+  .event-card:has(.event-link):nth-child(even):hover { transform: none; }
+}
 /* Shared shell label is 10px / 850 / muted. One step stronger, still a label. */
 #month-filter-title {
   margin-bottom: 12px;
