@@ -12,6 +12,7 @@ Do not attach any other domain, and do not add a hub link, without Nazirul's exp
 
 - Daily at 07:00 Asia/Kuching (`discover.yml` leads + Maintainer Bot), or when Nazirul asks.
 - Weekly (Monday): also sweep for postponements and cancellations of events in the next 60 days, **and** scan for new events relevant to the period of the scan — **present time and future** (past-only backfill is not the default). Add only when a verifiable `official_url` or `info_url` exists; see source-link rule in `docs/schema.md`.
+- Monday social sweep: `data/sources.json` entries with `category: social` (Facebook / Instagram pages of STB, MTCP, BES, BCCK, councils, major organisers). The verifying agent opens each in a **browser**, reads **public posts only**, and **never logs in**. `scripts/discover.py` does not scrape those pages; it emits `needs_browser` leads so the run still has useful URLs.
 
 ## Each run
 
@@ -30,7 +31,8 @@ Do not attach any other domain, and do not add a hub link, without Nazirul's exp
 
 ```bash
 python3 scripts/discover.py --limit-per-source 8      # leads -> dist/candidate-urls.json
-# verify each lead in a browser, write manifest.json (automation/candidate.schema.json)
+# verify each lead in a browser (incl. needs_browser social leads: public posts only, no login)
+# write manifest.json (automation/candidate.schema.json)
 python3 scripts/queue.py manifest.json                # -> data/review-queue.json (pending / duplicate)
 python3 scripts/publish.py --approve <id> [--approve <id>]
 python3 scripts/publish.py --reject <id> --reason "not in Sarawak"
