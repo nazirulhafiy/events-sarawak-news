@@ -231,7 +231,7 @@ HEAD = """<!doctype html>
   <a class="skip-link" href="#content">Skip to content</a>
   <header class="bar">
     <div class="bar-inner">
-      <span class="brand-lockup"><a class="brand" href="./">Events.Sarawak.News</a></span>
+      <span class="brand-lockup"><a class="brand" href="./"><img class="brand-mark brand-mark-light" src="icons/nav-mark-transparent.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><img class="brand-mark brand-mark-dark" src="icons/nav-mark-transparent-dark.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><span class="brand-text">Events.Sarawak.News</span></a></span>
       <nav class="site-nav" id="primary-navigation" aria-label="Primary">
         <a class="site-nav-link{home_on}" href="./"{home_cur}>Home</a>
         <a class="site-nav-link{about_on}" href="about.html"{about_cur}>About</a>

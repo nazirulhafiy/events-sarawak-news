@@ -280,8 +280,27 @@ class RenderTests(unittest.TestCase):
     def test_build_writes_dist(self):
         with tempfile.TemporaryDirectory() as d:
             out = build.build(Path(d) / "dist", self.now)
-            for f in ("index.html", "about.html", "style.css", "events.css", "app.js", "events.js", "fonts/Geist-Variable.woff2"):
+            for f in (
+                "index.html",
+                "about.html",
+                "style.css",
+                "events.css",
+                "app.js",
+                "events.js",
+                "fonts/Geist-Variable.woff2",
+                "icons/nav-mark-transparent.svg",
+                "icons/nav-mark-transparent-dark.svg",
+            ):
                 self.assertTrue((out / f).exists(), f)
+            icons = build.SITE / "icons"
+            self.assertEqual(
+                (out / "icons" / "nav-mark-transparent.svg").read_bytes(),
+                (icons / "nav-mark-transparent.svg").read_bytes(),
+            )
+            self.assertEqual(
+                (out / "icons" / "nav-mark-transparent-dark.svg").read_bytes(),
+                (icons / "nav-mark-transparent-dark.svg").read_bytes(),
+            )
             self.assertEqual((out / "CNAME").read_text(encoding="utf-8"), "events.sarawak.news\n")
             robots = (out / "robots.txt").read_text(encoding="utf-8")
             self.assertEqual(
@@ -308,6 +327,10 @@ class RenderTests(unittest.TestCase):
                 self.assertNotIn("noindex", page)
                 self.assertIn(f'<link rel="canonical" href="{canonical}" />', head)
                 self.assertNotIn('href="https://sarawak.news', page)
+                self.assertIn('src="icons/nav-mark-transparent.svg"', page)
+                self.assertIn('src="icons/nav-mark-transparent-dark.svg"', page)
+                self.assertIn('class="brand-text">Events.Sarawak.News</span>', page)
+                self.assertNotIn("nav-mark-on-black", page)
 
 
 if __name__ == "__main__":
