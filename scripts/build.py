@@ -268,6 +268,7 @@ FOOT = """  <footer class="site-footer">
         <ul>
           <li><a class="site-footer-link" href="./"{home_cur}>Home</a></li>
           <li><a class="site-footer-link" href="about.html"{about_cur}>About</a></li>
+          <li><a class="site-footer-link" href="mailto:contact@sarawak.news">Contact</a></li>
         </ul>
         <h2 class="site-footer-categories-title">Categories</h2>
         <ul>
