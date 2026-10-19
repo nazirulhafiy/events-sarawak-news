@@ -80,6 +80,10 @@ class RenderTests(unittest.TestCase):
 
     def test_footer_categories_and_card_type_data(self):
         self.assertIn('class="site-footer-categories-title">Categories</h2>', self.html)
+        self.assertIn(
+            '<a class="site-footer-link" href="mailto:contact@sarawak.news">Contact</a>',
+            self.html,
+        )
         for kind, label in (
             ("festival", "Festival"),
             ("sports", "Sports"),
@@ -90,6 +94,10 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(self.html.count('data-event-type="'), 106)
         about = build.render_about(self.events, self.now)
         self.assertIn('href="/?event_type=festival">Festival</a>', about)
+        self.assertIn(
+            '<a class="site-footer-link" href="mailto:contact@sarawak.news">Contact</a>',
+            about,
+        )
 
     def test_cloudflare_and_ga4_in_head(self):
         site = json.loads(build.SITE_CONFIG.read_text(encoding="utf-8"))

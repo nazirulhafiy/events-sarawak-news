@@ -280,9 +280,15 @@ class Rendering(unittest.TestCase):
         self.about = build.render_about(build.load_events())
 
     def test_no_contacts_or_internal_fields_rendered(self):
+        footer_contact = (
+            '<a class="site-footer-link" href="mailto:contact@sarawak.news">Contact</a>'
+        )
         for page in (self.html, self.about):
             self.assertNotIn("Organiser", page)
-            self.assertNotIn("Contact", page)
+            # Site-footer Explore Contact is allowed; event cards must not
+            # show organiser contact lines.
+            self.assertIn(footer_contact, page)
+            self.assertEqual(page.count(">Contact<"), 1)
             self.assertNotIn("contact: to be confirmed", page.lower())
             self.assertIsNone(L.PHONE_RE.search(re.sub(r"<script.*?</script>", "", page, flags=re.S)))
             self.assertNotIn("mtcp.sarawak.gov.my", page)
