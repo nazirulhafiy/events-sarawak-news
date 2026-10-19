@@ -40,11 +40,11 @@ class SeedData(unittest.TestCase):
         self.events = L.load(L.EVENTS)
 
     def test_all_114_seed_events_valid(self):
-        self.assertEqual(len(self.events), 114)
+        self.assertEqual(len(self.events), 116)
         self.assertEqual(L.validate_collection(self.events), [])
         statuses = {e["status"] for e in self.events}
         self.assertEqual(statuses, {"published", "cancelled"})
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 104)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 106)
         self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 10)
 
     def test_only_schema_fields(self):
@@ -77,6 +77,10 @@ class SeedData(unittest.TestCase):
     def test_published_info_urls(self):
         linked = {e["id"]: e["info_url"] for e in self.events if e.get("info_url")}
         self.assertEqual(linked, {
+            "festival-gendang-melayu-sarawak-2026":
+                "https://dayakdaily.com/road-closures-in-kuching-for-sarawak-regatta-waterfront-festival-from-oct-13-to-nov-4/",
+            "festival-kraf-borneo-sarawak-sarawak-borneo-craft-festival-2026":
+                "https://dayakdaily.com/sarawak-borneo-craft-festival-targets-rm3-mln-in-sales-125000-visitors-oct-23-nov-1/",
             "kuching-international-cat-festival-2026":
                 "https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/",
             "kejohanan-muaythai-piala-premier-sarawak-edisi-ke-10-2026":
@@ -387,7 +391,7 @@ class Pipeline(unittest.TestCase):
         publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
         events, rest, ids = publish.publish(copy.deepcopy(L.load(L.EVENTS)), queue)
         self.assertEqual(ids, ["kuching-lantern-walk-2026"])
-        self.assertEqual(len(events), 115)
+        self.assertEqual(len(events), 117)
         self.assertEqual([r["id"] for r in rest], ["miri-kite-day-2026"])
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["status"], "published")
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["info_url"],
