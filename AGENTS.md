@@ -28,7 +28,10 @@ No further DNS, custom domain or hub link without Nazirul's explicit approval.
 
 ## Required checks
 ```bash
+python3 kit/sync.py --check --hub-path "$SN_HUB_PATH"   # CI clones hub at kit/PIN
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -v
 python3 scripts/build.py
 ```
+
+When opening the **live** site, use `?internal=1` so `sn_internal` marks GA4 internal and skips the Cloudflare beacon.

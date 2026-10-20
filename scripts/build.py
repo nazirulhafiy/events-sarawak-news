@@ -21,13 +21,13 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from kit.analytics_loader import (  # noqa: E402
+from kit.python.analytics_loader import (  # noqa: E402
     ANALYTICS_LOADER_ATTR,
     render_analytics_loader as kit_render_analytics_loader,
 )
-from kit.analytics_registry import AnalyticsRegistry, load_analytics  # noqa: E402
-from kit.shell import NavItem, render_back_to_top, render_footer as kit_render_footer  # noqa: E402
-from kit.shell import render_header as kit_render_header  # noqa: E402
+from kit.python.analytics_registry import AnalyticsRegistry, load_analytics  # noqa: E402
+from kit.python.shell import NavItem, render_back_to_top, render_footer as kit_render_footer  # noqa: E402
+from kit.python.shell import render_header as kit_render_header  # noqa: E402
 
 DATA = ROOT / "data" / "events.json"
 SITE_CONFIG = ROOT / "data" / "site.json"
@@ -328,8 +328,14 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
             NavItem("home", "./", "Home"),
             NavItem("about", "about.html", "About"),
         ),
-        extra_nav_html=FOOTER_CATEGORIES,
         credit_html=FOOTER_CREDIT,
+    )
+    # Events Categories block is site-specific; kit footer is Explore + Contact only.
+    explore_close = "        </ul>\n      </nav>"
+    if explore_close not in footer:
+        raise SystemExit("kit footer missing Explore nav close for Categories inject")
+    footer = footer.replace(
+        explore_close, f"        </ul>\n{FOOTER_CATEGORIES}      </nav>", 1
     )
     return (
         render_head(
