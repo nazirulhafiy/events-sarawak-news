@@ -1,6 +1,6 @@
 # events-sarawak-news
 
-**events.sarawak.news** — Sarawak events, in one place. Live: https://events.sarawak.news.
+**events.sarawak.news** — site title, tagline, description, and About lead live in `data/site.json`. Live: https://events.sarawak.news.
 
 Hosted on **GitHub Pages** from `nazirulhafiy/events-sarawak-news` (`main`). Production deploys via `.github/workflows/build.yml` (`actions/deploy-pages@v4` to the `github-pages` environment). Migrated from Cloudflare Pages on **15 October 2026** (no `wrangler pages deploy`).
 
