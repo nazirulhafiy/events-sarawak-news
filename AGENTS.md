@@ -25,10 +25,15 @@ No further DNS, custom domain or hub link without Nazirul's explicit approval.
 - Oct–Dec 2026 published events need a card link: prefer `official_url`, else `info_url` (news or official social). Enforced by `scripts/validate.py` / `events_lib`. No `intourcams.my` URLs. Weekly Monday scan adds sourced events for present/future dates (`docs/runbook.md`).
 - Design or behaviour changes update `docs/design.md` in the same change.
 - Content runs follow `docs/automation.md`, and Maintainer Bot follows `docs/runbook.md`.
+- CI **docs check** enforces that rule on watched design/behaviour paths. Add the
+  `no-docs-needed` label when a change genuinely needs no `docs/` update. See
+  `docs/ci.md`. Generated fact blocks are a separate gate:
+  `python3 kit/generate_docs.py --check`.
 
 ## Required checks
 ```bash
 python3 kit/sync.py --check --hub-path "$SN_HUB_PATH"   # CI clones hub at kit/PIN
+python3 kit/generate_docs.py --check
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -v
 python3 scripts/build.py
