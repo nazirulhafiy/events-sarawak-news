@@ -18,7 +18,7 @@ Site wording (`title`, `tagline`, `description`, `about_lead`): `data/site.json`
 
 ### `build.yml` jobs
 
-1. **test-build** (every push and PR) — `python3 kit/sync.py --check` (shallow-fetches hub at `kit/PIN`), `python -m unittest discover -s tests`, `scripts/validate.py`, `scripts/build.py`, then `actions/upload-pages-artifact@v3` with `path: dist`.
+1. **test-build** (every push and PR) — `python3 kit/sync.py --check` (shallow-fetches hub at `kit/PIN`), `python3 kit/generate_docs.py --check`, `python -m unittest discover -s tests`, `scripts/validate.py`, `scripts/build.py`, then `actions/upload-pages-artifact@v3` with `path: dist`.
 2. **deploy** (push to `main` only) — `actions/deploy-pages@v4` to the `github-pages` environment after **test-build** succeeds.
 
 After merge to `main`, confirm the **deploy** job in the latest **build** workflow run, then spot-check https://events.sarawak.news/.
