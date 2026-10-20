@@ -18,22 +18,56 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import events_lib  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from kit.analytics_loader import (  # noqa: E402
+    ANALYTICS_LOADER_ATTR,
+    render_analytics_loader as kit_render_analytics_loader,
+)
+from kit.analytics_registry import AnalyticsRegistry, load_analytics  # noqa: E402
+from kit.shell import NavItem, render_back_to_top, render_footer as kit_render_footer  # noqa: E402
+from kit.shell import render_header as kit_render_header  # noqa: E402
+
 DATA = ROOT / "data" / "events.json"
 SITE_CONFIG = ROOT / "data" / "site.json"
+ANALYTICS_CONFIG = ROOT / "data" / "analytics.json"
 SITE = ROOT / "site"
 DIST = ROOT / "dist"
 MYT = dt.timezone(dt.timedelta(hours=8))
 YEAR = 2026
 SITE_ORIGIN = "https://events.sarawak.news"
-CF_TOKEN = "092a061973fc4d899cd2e4b52952af89"  # zone sarawak.news, shared site
 GA_ID = re.compile(r"G-[A-Z0-9]+\Z")
 M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 FULL = ["January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"]
 NOTE = "Dates subject to change, check with organisers."
+FOOTER_NOTE = "An independent listing of events across Sarawak."
 # Site title, tagline, description, and About lead live only in data/site.json.
 SITE_COPY_FIELDS = ("title", "tagline", "description", "about_lead")
+FOOTER_CATEGORIES = """        <h2 class="site-footer-categories-title">Categories</h2>
+        <ul>
+          <li><a class="site-footer-link" href="/?event_type=festival">Festival</a></li>
+          <li><a class="site-footer-link" href="/?event_type=sports">Sports</a></li>
+          <li><a class="site-footer-link" href="/?event_type=cultural">Cultural</a></li>
+          <li><a class="site-footer-link" href="/?event_type=concert">Concert</a></li>
+        </ul>
+"""
+FOOTER_CREDIT = (
+    'Built by <a class="site-footer-link site-footer-credit-link" href="https://hafiy.my" '
+    'target="_blank" rel="noopener noreferrer">hafiy.my</a>, an independent publication. '
+    "Not affiliated with the Sarawak Government."
+)
 e = html.escape
+
+
+def analytics_registry() -> AnalyticsRegistry:
+    return load_analytics(ANALYTICS_CONFIG)
+
+
+def render_analytics_loader(registry: AnalyticsRegistry | None = None) -> str:
+    """Emit the shared kit analytics loader from ``data/analytics.json``."""
+    return kit_render_analytics_loader(registry if registry is not None else analytics_registry())
 
 
 def load_site(path: Path | None = None) -> dict[str, str]:
@@ -54,7 +88,7 @@ def load_site(path: Path | None = None) -> dict[str, str]:
 
 
 def load_ga_measurement_id(path: Path | None = None) -> str:
-    """GA4 measurement ID from data/site.json. Blank means omit gtag."""
+    """GA4 measurement ID from data/site.json (kept in sync with analytics.json)."""
     raw = json.loads((path or SITE_CONFIG).read_text(encoding="utf-8")).get("ga4_measurement_id", "")
     if raw is None:
         raw = ""
@@ -66,14 +100,17 @@ def load_ga_measurement_id(path: Path | None = None) -> str:
     return value
 
 
-def render_ga_script(measurement_id: str) -> str:
-    if not measurement_id:
-        return ""
-    return (
-        f'<script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>\n'
-        "  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
-        f"gtag('js',new Date());gtag('config','{measurement_id}');</script>"
-    )
+def assert_site_ga_matches_registry(registry: AnalyticsRegistry | None = None) -> str:
+    """Require data/site.json ga4_measurement_id to match the analytics registry."""
+    registry = registry if registry is not None else analytics_registry()
+    site_id = load_ga_measurement_id()
+    reg_id = registry.primary_ga4_id()
+    if site_id != reg_id:
+        raise SystemExit(
+            "data/site.json ga4_measurement_id must match data/analytics.json "
+            f"({site_id!r} != {reg_id!r})"
+        )
+    return reg_id
 
 
 def load_events(path: Path = DATA) -> list[dict]:
@@ -216,7 +253,18 @@ def render_panels(events: list[dict], current: int) -> str:
     return "\n    ".join(out)
 
 
-HEAD = """<!doctype html>
+def canonical_url(page: str) -> str:
+    if page == "home":
+        return f"{SITE_ORIGIN}/"
+    if page == "about":
+        return f"{SITE_ORIGIN}/about.html"
+    if page == "404":
+        return f"{SITE_ORIGIN}/404.html"
+    raise SystemExit(f"unknown page {page}")
+
+
+def render_head(*, title: str, desc: str, canonical: str, site_name: str, analytics: str) -> str:
+    return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -250,94 +298,55 @@ HEAD = """<!doctype html>
   <link rel="stylesheet" href="events.css" />
   <script src="app.js" defer></script>
   <script src="events.js" defer></script>
-  <!-- Cloudflare Web Analytics (zone sarawak.news) -->
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "{cf}"}}'></script>
-  {ga}
+  {analytics}
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to content</a>
-  <header class="bar">
-    <div class="bar-inner">
-      <span class="brand-lockup"><a class="brand" href="./"><img class="brand-mark brand-mark-light" src="icons/nav-mark-transparent.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><img class="brand-mark brand-mark-dark" src="icons/nav-mark-transparent-dark.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><span class="brand-text">{brand}</span></a></span>
-      <nav class="site-nav" id="primary-navigation" aria-label="Primary">
-        <a class="site-nav-link{home_on}" href="./"{home_cur}>Home</a>
-        <a class="site-nav-link{about_on}" href="about.html"{about_cur}>About</a>
-      </nav>
-      <span class="bar-rule-tail" aria-hidden="true"></span>
-      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation" title="Open navigation">
-        <span></span><span></span><span></span>
-      </button>
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Switch to dark mode">
-        <svg class="theme-icon-morph" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24">
-          <mask id="theme-toggle-moon-mask"><rect width="24" height="24" fill="#fff"></rect><circle cx="17" cy="7" r="7" fill="#000"></circle></mask>
-          <circle class="theme-icon-moon" cx="12" cy="12" r="9" mask="url(#theme-toggle-moon-mask)"></circle>
-          <circle class="theme-icon-sun" cx="12" cy="12" r="5"></circle>
-          <g class="theme-icon-rays">
-            <line x1="12" y1="1.6" x2="12" y2="3.8"></line><line x1="12" y1="20.2" x2="12" y2="22.4"></line>
-            <line x1="1.6" y1="12" x2="3.8" y2="12"></line><line x1="20.2" y1="12" x2="22.4" y2="12"></line>
-            <line x1="4.6" y1="4.6" x2="6.2" y2="6.2"></line><line x1="17.8" y1="17.8" x2="19.4" y2="19.4"></line>
-            <line x1="4.6" y1="19.4" x2="6.2" y2="17.8"></line><line x1="17.8" y1="6.2" x2="19.4" y2="4.6"></line>
-          </g>
-        </svg>
-      </button>
-    </div>
-  </header>
 """
-
-FOOT = """  <footer class="site-footer">
-    <div class="site-footer-main">
-      <div class="site-footer-summary">
-        <p class="site-footer-brand">{brand}</p>
-        <p class="site-footer-note">An independent listing of events across Sarawak.</p>
-      </div>
-      <nav aria-label="Explore" class="site-footer-nav">
-        <h2>Explore</h2>
-        <ul>
-          <li><a class="site-footer-link" href="./"{home_cur}>Home</a></li>
-          <li><a class="site-footer-link" href="about.html"{about_cur}>About</a></li>
-          <li><a class="site-footer-link" href="mailto:contact@sarawak.news">Contact</a></li>
-        </ul>
-        <h2 class="site-footer-categories-title">Categories</h2>
-        <ul>
-          <li><a class="site-footer-link" href="/?event_type=festival">Festival</a></li>
-          <li><a class="site-footer-link" href="/?event_type=sports">Sports</a></li>
-          <li><a class="site-footer-link" href="/?event_type=cultural">Cultural</a></li>
-          <li><a class="site-footer-link" href="/?event_type=concert">Concert</a></li>
-        </ul>
-      </nav>
-    </div>
-    <div class="site-footer-bottom">
-      <p>Built by <a class="site-footer-link site-footer-credit-link" href="https://hafiy.my" target="_blank" rel="noopener noreferrer">hafiy.my</a>, an independent publication. Not affiliated with the Sarawak Government.</p>
-    </div>
-  </footer>
-</body>
-</html>
-"""
-
-
-def canonical_url(page: str) -> str:
-    if page == "home":
-        return f"{SITE_ORIGIN}/"
-    if page == "about":
-        return f"{SITE_ORIGIN}/about.html"
-    if page == "404":
-        return f"{SITE_ORIGIN}/404.html"
-    raise SystemExit(f"unknown page {page}")
 
 
 def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | None = None) -> str:
     site = load_site() if site is None else site
-    home = page == "home"
-    brand = e(site["title"])
-    kw = dict(home_on=" is-active" if home else "", about_on="" if home else " is-active",
-              home_cur=' aria-current="page"' if home else "",
-              about_cur="" if home else ' aria-current="page"')
-    return (HEAD.format(title=e(title), desc=e(desc), site_name=brand, brand=brand,
-                       cf=CF_TOKEN, canonical=e(canonical_url(page)),
-                       ga=render_ga_script(load_ga_measurement_id()), **kw)
-            + main
-            + FOOT.format(brand=brand, home_cur=kw["home_cur"], about_cur=kw["about_cur"]))
-
+    registry = analytics_registry()
+    assert_site_ga_matches_registry(registry)
+    active = "home" if page == "home" else "about"
+    brand = site["title"]
+    header = kit_render_header(
+        brand_title=brand,
+        brand_href="./",
+        active=active,
+        nav_items=(
+            NavItem("home", "./", "Home"),
+            NavItem("about", "about.html", "About"),
+        ),
+    )
+    footer = kit_render_footer(
+        brand_title=brand,
+        brand_note=FOOTER_NOTE,
+        active=active,
+        explore_items=(
+            NavItem("home", "./", "Home"),
+            NavItem("about", "about.html", "About"),
+        ),
+        extra_nav_html=FOOTER_CATEGORIES,
+        credit_html=FOOTER_CREDIT,
+    )
+    return (
+        render_head(
+            title=e(title),
+            desc=e(desc),
+            canonical=e(canonical_url(page)),
+            site_name=e(brand),
+            analytics=render_analytics_loader(registry),
+        )
+        + header
+        + "\n"
+        + main
+        + footer
+        + "\n"
+        + render_back_to_top()
+        + "\n</body>\n</html>\n"
+    )
 
 def updated_html(now: dt.datetime) -> str:
     d = now.astimezone(MYT)

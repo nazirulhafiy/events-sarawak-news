@@ -105,6 +105,11 @@ class RenderTests(unittest.TestCase):
         for key in ("title", "tagline", "description", "about_lead"):
             self.assertIn(key, site)
             self.assertTrue(isinstance(site[key], str) and site[key].strip())
+        registry = build.analytics_registry()
+        self.assertEqual(registry.primary_ga4_id(), "G-P7Y5Z19Q46")
+        self.assertEqual(registry.primary_cf_token(), "092a061973fc4d899cd2e4b52952af89")
+        self.assertEqual(registry.internal_cookie, "sn_internal")
+        self.assertEqual(build.assert_site_ga_matches_registry(registry), "G-P7Y5Z19Q46")
         copy = build.load_site()
         self.assertIn(f'<h1>{copy["tagline"]}</h1>', self.html)
         self.assertIn(f'<p class="brief-deck">{copy["description"]}</p>', self.html)
@@ -114,20 +119,26 @@ class RenderTests(unittest.TestCase):
         )
         self.assertIn(f'property="og:site_name" content="{copy["title"]}"', self.html)
         head, _, body = self.html.partition("</head>")
+        self.assertIn(build.ANALYTICS_LOADER_ATTR, head)
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", head)
         self.assertIn("092a061973fc4d899cd2e4b52952af89", head)
+        self.assertIn("sn_internal", head)
+        self.assertIn("traffic_type", head)
+        self.assertIn("events.sarawak.news", head)
         self.assertIn('content="index,follow"', head)
         self.assertNotIn("noindex", head)
         self.assertIn('<link rel="canonical" href="https://events.sarawak.news/" />', head)
-        self.assertIn("https://www.googletagmanager.com/gtag/js?id=G-P7Y5Z19Q46", head)
-        self.assertIn("gtag('config','G-P7Y5Z19Q46')", head)
+        self.assertIn("G-P7Y5Z19Q46", head)
+        self.assertIn("googletagmanager.com/gtag/js", head)
         self.assertNotIn("googletagmanager", body)
+        self.assertIn('data-back-to-top aria-label="Back to top"', self.html)
         about = build.render_about(self.events, self.now)
         about_head, _, _ = about.partition("</head>")
-        self.assertIn("gtag('config','G-P7Y5Z19Q46')", about_head)
-        self.assertIn("static.cloudflareinsights.com/beacon.min.js", about)
+        self.assertIn(build.ANALYTICS_LOADER_ATTR, about_head)
+        self.assertIn("G-P7Y5Z19Q46", about_head)
+        self.assertIn("static.cloudflareinsights.com/beacon.min.js", about_head)
 
-    def test_blank_ga_measurement_id_omits_gtag(self):
+    def test_site_ga_must_match_analytics_registry(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             copy = build.load_site()
@@ -136,20 +147,11 @@ class RenderTests(unittest.TestCase):
             original = build.SITE_CONFIG
             build.SITE_CONFIG = root / "site.json"
             try:
-                out = build.build(root / "dist", self.now)
-                pages = [
-                    (out / name).read_text(encoding="utf-8")
-                    for name in ("index.html", "about.html", "404.html")
-                ]
+                with self.assertRaises(SystemExit) as ctx:
+                    build.assert_site_ga_matches_registry()
+                self.assertIn("must match data/analytics.json", str(ctx.exception))
             finally:
                 build.SITE_CONFIG = original
-        for page in pages:
-            self.assertNotIn("gtag", page)
-            self.assertNotIn("googletagmanager", page)
-            self.assertNotIn("G-P7Y5Z19Q46", page)
-            self.assertIn("static.cloudflareinsights.com/beacon.min.js", page)
-            self.assertIn('content="index,follow"', page)
-            self.assertNotIn("noindex", page)
 
     def test_date_labels(self):
         self.assertEqual(
@@ -340,8 +342,10 @@ class RenderTests(unittest.TestCase):
             for name, canonical in canonicals.items():
                 page = (out / name).read_text(encoding="utf-8")
                 head, _, _ = page.partition("</head>")
-                self.assertIn("gtag('config','G-P7Y5Z19Q46')", head)
-                self.assertIn("static.cloudflareinsights.com/beacon.min.js", page)
+                self.assertIn(build.ANALYTICS_LOADER_ATTR, head)
+                self.assertIn("G-P7Y5Z19Q46", head)
+                self.assertIn("sn_internal", head)
+                self.assertIn("static.cloudflareinsights.com/beacon.min.js", head)
                 self.assertIn('content="index,follow"', head)
                 self.assertNotIn("noindex", page)
                 self.assertIn(f'<link rel="canonical" href="{canonical}" />', head)

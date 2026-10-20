@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "internal_cookie": "sn_internal",
+  "spa": false,
+  "hosts": {
+    "events.sarawak.news": {
+      "ga4_measurement_id": "G-P7Y5Z19Q46",
+      "cf_beacon_token": "092a061973fc4d899cd2e4b52952af89",
+      "aliases": ["www.events.sarawak.news"],
+      "legacy_internal_cookies": []
+    }
+  }
+}

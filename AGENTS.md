@@ -6,13 +6,15 @@ Sarawak by month. **Live**: https://events.sarawak.news
 (GitHub Pages via `.github/workflows/build.yml` on `nazirulhafiy/events-sarawak-news`).
 No further DNS, custom domain or hub link without Nazirul's explicit approval.
 
-- `data/site.json`: site `title`, `tagline`, `description`, `about_lead`, and GA4 id (single source of truth for public wording).
+- `data/site.json`: site `title`, `tagline`, `description`, `about_lead`, and GA4 id (single source of truth for public wording; GA4 must match `data/analytics.json`).
+- `data/analytics.json`: kit-shaped analytics registry (`sn_internal`, hosts, GA4, CF token).
+- `kit/`: vendored sarawak.news shared kit (pinned by `kit/PIN` to a hub commit). See `kit/README.md`.
 - `data/events.json`: published events (schema: `docs/schema.md`).
 - `data/review-queue.json`: candidates awaiting review.
 - `data/sources.json`: public source pages watched for discovery.
 - `scripts/events_lib.py`: schema validation, normalisation and dedupe.
 - `scripts/discover.py`, `scripts/queue.py`, `scripts/publish.py`, `scripts/validate.py`: the pipeline (`docs/automation.md`).
-- `scripts/build.py`: renders `dist/`.
+- `scripts/build.py`: renders `dist/` (imports fleet chrome from `kit/`).
 - `site/`: shared sarawak.news shell assets plus `events.css`/`events.js`.
 - `.github/workflows/`: GitHub Actions workflows (`build.yml`, `discover.yml`).
 
