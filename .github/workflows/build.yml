@@ -25,6 +25,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Check shared kit sync
+        env:
+          SN_HUB_PATH: ${{ runner.temp }}/sarawak-news-hub
+        run: |
+          PIN=$(tr -d '[:space:]' < kit/PIN)
+          git init "$SN_HUB_PATH"
+          git -C "$SN_HUB_PATH" remote add origin https://github.com/nazirulhafiy/sarawak-news-hub.git
+          git -C "$SN_HUB_PATH" fetch --depth 1 origin "$PIN"
+          python3 kit/sync.py --check --hub-path "$SN_HUB_PATH"
       - name: Run tests
         run: python -m unittest discover -s tests -v
       - name: Validate schema
