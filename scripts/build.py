@@ -26,7 +26,6 @@ from kit.python.analytics_loader import (  # noqa: E402
     render_analytics_loader as kit_render_analytics_loader,
 )
 from kit.python.analytics_registry import AnalyticsRegistry, load_analytics  # noqa: E402
-from kit.python.asset_urls import versioned_href  # noqa: E402
 from kit.python.shell import NavItem, render_back_to_top, render_footer as kit_render_footer  # noqa: E402
 from kit.python.shell import render_header as kit_render_header  # noqa: E402
 
@@ -35,20 +34,6 @@ SITE_CONFIG = ROOT / "data" / "site.json"
 ANALYTICS_CONFIG = ROOT / "data" / "analytics.json"
 SITE = ROOT / "site"
 DIST = ROOT / "dist"
-FAVICON_HANDOFF = ROOT / "design-handoff" / "favicon-F1"
-# Published names, copied from design-handoff/favicon-F1/. The handoff folder itself stays unpublished.
-FAVICON_FILES = {
-    "favicon.ico": "favicon.ico",
-    "favicon.svg": "favicon.svg",
-    "apple-touch-icon.png": "apple-touch-icon.png",
-    "icon-192.png": "icon-192.png",
-    "icon-512.png": "icon-512.png",
-}
-
-
-def versioned_icon(public_name: str) -> str:
-    src_name = FAVICON_FILES[public_name]
-    return versioned_href(public_name, FAVICON_HANDOFF / src_name)
 MYT = dt.timezone(dt.timedelta(hours=8))
 YEAR = 2026
 SITE_ORIGIN = "https://events.sarawak.news"
@@ -279,11 +264,6 @@ def canonical_url(page: str) -> str:
 
 
 def render_head(*, title: str, desc: str, canonical: str, site_name: str, analytics: str) -> str:
-    icon_svg = versioned_icon("favicon.svg")
-    icon_ico = versioned_icon("favicon.ico")
-    icon_apple = versioned_icon("apple-touch-icon.png")
-    icon_192 = versioned_icon("icon-192.png")
-    icon_512 = versioned_icon("icon-512.png")
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -312,11 +292,7 @@ def render_head(*, title: str, desc: str, canonical: str, site_name: str, analyt
       }}
     }} catch (error) {{}}
   </script>
-  <link rel="icon" href="{e(icon_svg)}" type="image/svg+xml" />
-  <link rel="icon" href="{e(icon_ico)}" sizes="any" />
-  <link rel="apple-touch-icon" href="{e(icon_apple)}" />
-  <link rel="icon" href="{e(icon_192)}" type="image/png" sizes="192x192" />
-  <link rel="icon" href="{e(icon_512)}" type="image/png" sizes="512x512" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗓️</text></svg>" />
   <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="events.css" />
@@ -449,23 +425,11 @@ def render_sitemap(now: dt.datetime | None = None) -> str:
     )
 
 
-def publish_favicons(out: Path) -> None:
-    """Copy handoff icons to the dist root (handoff itself is not published)."""
-    if not FAVICON_HANDOFF.is_dir():
-        raise SystemExit(f"missing favicon handoff {FAVICON_HANDOFF.relative_to(ROOT)}")
-    for public_name, src_name in FAVICON_FILES.items():
-        src = FAVICON_HANDOFF / src_name
-        if not src.is_file():
-            raise SystemExit(f"missing favicon source {src.relative_to(ROOT)}")
-        shutil.copy2(src, out / public_name)
-
-
 def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:
     events = load_events()
     if out.exists():
         shutil.rmtree(out)
     shutil.copytree(SITE, out)
-    publish_favicons(out)
     (out / "index.html").write_text(render_index(events, now), encoding="utf-8")
     (out / "about.html").write_text(render_about(events, now), encoding="utf-8")
     (out / "404.html").write_text(render_about(events, now, page="404"), encoding="utf-8")
