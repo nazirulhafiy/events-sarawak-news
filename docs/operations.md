@@ -2,7 +2,7 @@
 
 Production site: https://events.sarawak.news  
 Repository: `nazirulhafiy/events-sarawak-news`  
-Tagline (home deck): **Sarawak events, in one place.**
+Site wording (`title`, `tagline`, `description`, `about_lead`): `data/site.json` (single source; do not hand-type elsewhere).
 
 ## Hosting and deploy
 

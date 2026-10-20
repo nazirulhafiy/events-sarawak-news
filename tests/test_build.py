@@ -101,8 +101,18 @@ class RenderTests(unittest.TestCase):
 
     def test_cloudflare_and_ga4_in_head(self):
         site = json.loads(build.SITE_CONFIG.read_text(encoding="utf-8"))
-        self.assertEqual(list(site), ["ga4_measurement_id"])
         self.assertEqual(site["ga4_measurement_id"], "G-P7Y5Z19Q46")
+        for key in ("title", "tagline", "description", "about_lead"):
+            self.assertIn(key, site)
+            self.assertTrue(isinstance(site[key], str) and site[key].strip())
+        copy = build.load_site()
+        self.assertIn(f'<h1>{copy["tagline"]}</h1>', self.html)
+        self.assertIn(f'<p class="brief-deck">{copy["description"]}</p>', self.html)
+        self.assertIn(
+            f'content="{copy["description"].rstrip(".")}, listed by month."',
+            self.html,
+        )
+        self.assertIn(f'property="og:site_name" content="{copy["title"]}"', self.html)
         head, _, body = self.html.partition("</head>")
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", head)
         self.assertIn("092a061973fc4d899cd2e4b52952af89", head)
@@ -120,8 +130,9 @@ class RenderTests(unittest.TestCase):
     def test_blank_ga_measurement_id_omits_gtag(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
-            (root / "site.json").write_text(
-                json.dumps({"ga4_measurement_id": ""}), encoding="utf-8")
+            copy = build.load_site()
+            payload = {"ga4_measurement_id": "", **copy}
+            (root / "site.json").write_text(json.dumps(payload), encoding="utf-8")
             original = build.SITE_CONFIG
             build.SITE_CONFIG = root / "site.json"
             try:
@@ -337,7 +348,8 @@ class RenderTests(unittest.TestCase):
                 self.assertNotIn('href="https://sarawak.news', page)
                 self.assertIn('src="icons/nav-mark-transparent.svg"', page)
                 self.assertIn('src="icons/nav-mark-transparent-dark.svg"', page)
-                self.assertIn('class="brand-text">Events.Sarawak.News</span>', page)
+                copy = build.load_site()
+                self.assertIn(f'class="brand-text">{copy["title"]}</span>', page)
                 self.assertNotIn("nav-mark-on-black", page)
 
 

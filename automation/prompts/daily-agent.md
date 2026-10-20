@@ -1,6 +1,7 @@
-# Cursor Daily Agent Prompt: Events.Sarawak.News
+# Cursor Daily Agent Prompt: events.sarawak.news
 
 You are the single Cursor Cloud Agent for one events.sarawak.news run.
+(Public brand wording lives in `data/site.json`.)
 
 Read and follow `AGENTS.md`, `docs/automation.md` and `docs/schema.md`. The
 automation contract is authoritative. Run Stage A first, and run Stage B only

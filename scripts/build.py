@@ -31,7 +31,26 @@ M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"
 FULL = ["January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"]
 NOTE = "Dates subject to change, check with organisers."
+# Site title, tagline, description, and About lead live only in data/site.json.
+SITE_COPY_FIELDS = ("title", "tagline", "description", "about_lead")
 e = html.escape
+
+
+def load_site(path: Path | None = None) -> dict[str, str]:
+    """Load title/tagline/description/about_lead from data/site.json."""
+    cfg = path or SITE_CONFIG
+    if not cfg.is_file():
+        raise SystemExit(f"missing site copy file: {cfg.relative_to(ROOT)}")
+    payload = json.loads(cfg.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise SystemExit("data/site.json must be an object")
+    site: dict[str, str] = {}
+    for field in SITE_COPY_FIELDS:
+        value = payload.get(field)
+        if not isinstance(value, str) or not value.strip():
+            raise SystemExit(f"data/site.json is missing {field}")
+        site[field] = value.strip()
+    return site
 
 
 def load_ga_measurement_id(path: Path | None = None) -> str:
@@ -205,6 +224,14 @@ HEAD = """<!doctype html>
   <meta name="description" content="{desc}" />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="{canonical}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{title}" />
+  <meta property="og:description" content="{desc}" />
+  <meta property="og:site_name" content="{site_name}" />
+  <meta property="og:url" content="{canonical}" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{title}" />
+  <meta name="twitter:description" content="{desc}" />
   <title>{title}</title>
   <script>
     document.documentElement.classList.add("js");
@@ -231,7 +258,7 @@ HEAD = """<!doctype html>
   <a class="skip-link" href="#content">Skip to content</a>
   <header class="bar">
     <div class="bar-inner">
-      <span class="brand-lockup"><a class="brand" href="./"><img class="brand-mark brand-mark-light" src="icons/nav-mark-transparent.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><img class="brand-mark brand-mark-dark" src="icons/nav-mark-transparent-dark.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><span class="brand-text">Events.Sarawak.News</span></a></span>
+      <span class="brand-lockup"><a class="brand" href="./"><img class="brand-mark brand-mark-light" src="icons/nav-mark-transparent.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><img class="brand-mark brand-mark-dark" src="icons/nav-mark-transparent-dark.svg" alt="" width="220" height="220" decoding="async" aria-hidden="true" /><span class="brand-text">{brand}</span></a></span>
       <nav class="site-nav" id="primary-navigation" aria-label="Primary">
         <a class="site-nav-link{home_on}" href="./"{home_cur}>Home</a>
         <a class="site-nav-link{about_on}" href="about.html"{about_cur}>About</a>
@@ -260,7 +287,7 @@ HEAD = """<!doctype html>
 FOOT = """  <footer class="site-footer">
     <div class="site-footer-main">
       <div class="site-footer-summary">
-        <p class="site-footer-brand">Events.Sarawak.News</p>
+        <p class="site-footer-brand">{brand}</p>
         <p class="site-footer-note">An independent listing of events across Sarawak.</p>
       </div>
       <nav aria-label="Explore" class="site-footer-nav">
@@ -298,16 +325,18 @@ def canonical_url(page: str) -> str:
     raise SystemExit(f"unknown page {page}")
 
 
-def shell(page: str, title: str, desc: str, main: str) -> str:
+def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | None = None) -> str:
+    site = load_site() if site is None else site
     home = page == "home"
+    brand = e(site["title"])
     kw = dict(home_on=" is-active" if home else "", about_on="" if home else " is-active",
               home_cur=' aria-current="page"' if home else "",
               about_cur="" if home else ' aria-current="page"')
-    return (HEAD.format(title=e(title), desc=e(desc), cf=CF_TOKEN,
-                       canonical=e(canonical_url(page)),
+    return (HEAD.format(title=e(title), desc=e(desc), site_name=brand, brand=brand,
+                       cf=CF_TOKEN, canonical=e(canonical_url(page)),
                        ga=render_ga_script(load_ga_measurement_id()), **kw)
             + main
-            + FOOT.format(home_cur=kw["home_cur"], about_cur=kw["about_cur"]))
+            + FOOT.format(brand=brand, home_cur=kw["home_cur"], about_cur=kw["about_cur"]))
 
 
 def updated_html(now: dt.datetime) -> str:
@@ -318,12 +347,15 @@ def updated_html(now: dt.datetime) -> str:
 
 def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     now = now or dt.datetime.now(MYT)
+    site = load_site()
     cur = default_month(now)
     counts = month_counts(events)
+    # Live home meta is description without its trailing period, plus ", listed by month."
+    meta_desc = f"{site['description'].rstrip('.')}, listed by month."
     main = f"""  <main id="content">
     <header class="brief">
-      <h1>Events in Sarawak, month by month.</h1>
-      <p class="brief-deck">Festivals, sports, cultural events and concerts across Sarawak.</p>
+      <h1>{e(site["tagline"])}</h1>
+      <p class="brief-deck">{e(site["description"])}</p>
       {updated_html(now)}
     </header>
     <section class="category-filter month-filter" aria-labelledby="month-filter-title">
@@ -336,24 +368,26 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     {render_panels(events, cur)}
   </main>
 """
-    return shell("home", "Events Sarawak", "Festivals, sports, cultural events and concerts across Sarawak, listed by month.", main)
+    return shell("home", "Events Sarawak", meta_desc, main, site)
 
 
 def render_about(events: list[dict], now: dt.datetime | None = None, page: str = "about") -> str:
+    site = load_site()
+    about_meta = f"About {site['title']}, an independent listing of events across Sarawak."
     main = f"""  <main id="content">
     <header class="brief">
-      <h1>About Events.Sarawak.News</h1>
-      <p class="brief-deck">A plain month-by-month listing of events across Sarawak.</p>
+      <h1>About {e(site["title"])}</h1>
+      <p class="brief-deck">{e(site["about_lead"])}</p>
     </header>
     <div class="event-list about-body">
-      <p>Events.Sarawak.News lists festivals, sports events, regattas, concerts and cultural celebrations happening around Sarawak, one month at a time. Each listing gives the date, the town (or the division when no town is set), the venue and a short factual description.</p>
+      <p>{e(site["title"])} lists festivals, sports events, regattas, concerts and cultural celebrations happening around Sarawak, one month at a time. Each listing gives the date, the town (or the division when no town is set), the venue and a short factual description.</p>
       <p>When a date has not been fixed, the listing shows it as TBC.</p>
       <p><strong>{NOTE}</strong> Events can be moved, postponed or cancelled at short notice.</p>
       <p>This is an independent site and is not affiliated with the Sarawak Government.</p>
     </div>
   </main>
 """
-    return shell(page, "About · Events Sarawak", "About Events.Sarawak.News, an independent listing of events across Sarawak.", main)
+    return shell(page, "About · Events Sarawak", about_meta, main, site)
 
 
 def render_robots() -> str:

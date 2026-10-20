@@ -1,11 +1,12 @@
 # AGENTS.md
 
 ## Project
-Events.Sarawak.News is a dependency-free static site listing events across
+This repo is a dependency-free static site listing events across
 Sarawak by month. **Live**: https://events.sarawak.news
 (GitHub Pages via `.github/workflows/build.yml` on `nazirulhafiy/events-sarawak-news`).
 No further DNS, custom domain or hub link without Nazirul's explicit approval.
 
+- `data/site.json`: site `title`, `tagline`, `description`, `about_lead`, and GA4 id (single source of truth for public wording).
 - `data/events.json`: published events (schema: `docs/schema.md`).
 - `data/review-queue.json`: candidates awaiting review.
 - `data/sources.json`: public source pages watched for discovery.

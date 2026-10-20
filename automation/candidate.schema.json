@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://events.sarawak.news/schemas/candidate-manifest.json",
-  "title": "Events.Sarawak.News candidate manifest",
+  "title": "events.sarawak.news candidate manifest",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "run_id", "generated_at", "timezone", "candidates"],
