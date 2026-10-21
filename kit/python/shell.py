@@ -4,11 +4,44 @@
 from __future__ import annotations
 
 import html
+import json
 from collections.abc import Sequence
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 
 CONTACT_HREF = "mailto:contact@sarawak.news"
 CONTACT_LABEL = "Contact"
+
+_FLEET_CROSS_LINKS_JSON = Path(__file__).resolve().parents[1] / "fleet-cross-links.json"
+
+
+@lru_cache(maxsize=1)
+def _fleet_sites() -> tuple[tuple[str, str, str], ...]:
+    payload = json.loads(_FLEET_CROSS_LINKS_JSON.read_text(encoding="utf-8"))
+    sites = payload.get("sites")
+    if not isinstance(sites, list):
+        raise ValueError("fleet-cross-links.json must contain a sites array")
+    out: list[tuple[str, str, str]] = []
+    for entry in sites:
+        if not isinstance(entry, dict):
+            raise ValueError("fleet-cross-links.json sites entries must be objects")
+        site_id = str(entry.get("id", "")).strip()
+        href = str(entry.get("href", "")).strip()
+        label = str(entry.get("label", "")).strip()
+        if not site_id or not href or not label:
+            raise ValueError("fleet-cross-links.json entries need id, href, and label")
+        out.append((site_id, href, label))
+    return tuple(out)
+
+
+def fleet_cross_link_items(fleet_site: str) -> tuple[NavItem, ...]:
+    """Footer sister-site links for the given fleet id (hub, ai, events, bantuan)."""
+    return tuple(
+        NavItem(site_id, href, label)
+        for site_id, href, label in _fleet_sites()
+        if site_id != fleet_site
+    )
 
 # Forced mid-note line break (AI.Sarawak.News footer). Sites opt in via brand_note_parts.
 FOOTER_NOTE_BREAK = '<br class="site-footer-note-break" />'
@@ -100,14 +133,19 @@ def render_footer(
     explore_items: list[NavItem] | tuple[NavItem, ...],
     brand_note_parts: Sequence[str] | None = None,
     credit_html: str | None = None,
+    fleet_site: str | None = None,
 ) -> str:
     """Render the shared footer. Contact is always the last Explore link.
 
     Pass ``brand_note`` for a single escaped paragraph (hub, bantuan, events).
     Pass ``brand_note_parts`` (two or more strings) to insert
     ``<br class="site-footer-note-break" />`` between escaped sentences (AI).
+    Pass ``fleet_site`` (hub, ai, events, or bantuan) to append crawlable
+    sister-site links before Contact.
     """
     items = list(explore_items)
+    if fleet_site is not None:
+        items.extend(fleet_cross_link_items(fleet_site))
     if not any(item.href == CONTACT_HREF for item in items):
         items.append(NavItem("contact", CONTACT_HREF, CONTACT_LABEL))
 
