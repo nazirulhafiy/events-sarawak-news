@@ -1067,8 +1067,11 @@ html[data-theme="dark"] .site-footer {
 .site-footer-categories-title {
   position: relative;
   margin-top: 34px;
-  padding-top: 18px;
   border-top: 0;
+}
+
+.site-footer-nav h2.site-footer-categories-title {
+  padding-top: 28px;
 }
 
 .site-footer-categories-title::before {
@@ -1293,6 +1296,10 @@ html[data-theme="dark"] .site-footer {
   .site-footer-categories-title::before {
     right: -18px;
     left: -18px;
+  }
+
+  .site-footer-nav h2.site-footer-categories-title {
+    padding-top: 22px;
   }
 
   .site-footer-bottom { padding: 14px 18px; }
