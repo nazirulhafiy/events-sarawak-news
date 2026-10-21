@@ -17,9 +17,24 @@ _FLEET_CROSS_LINKS_JSON = Path(__file__).resolve().parents[1] / "fleet-cross-lin
 
 
 @lru_cache(maxsize=1)
-def _fleet_sites() -> tuple[tuple[str, str, str], ...]:
+def _fleet_cross_links_payload() -> dict:
     payload = json.loads(_FLEET_CROSS_LINKS_JSON.read_text(encoding="utf-8"))
-    sites = payload.get("sites")
+    if not isinstance(payload, dict):
+        raise ValueError("fleet-cross-links.json must be an object")
+    return payload
+
+
+@lru_cache(maxsize=1)
+def fleet_section_label() -> str:
+    label = str(_fleet_cross_links_payload().get("section_label", "")).strip()
+    if not label:
+        raise ValueError("fleet-cross-links.json needs section_label")
+    return label
+
+
+@lru_cache(maxsize=1)
+def _fleet_sites() -> tuple[tuple[str, str, str], ...]:
+    sites = _fleet_cross_links_payload().get("sites")
     if not isinstance(sites, list):
         raise ValueError("fleet-cross-links.json must contain a sites array")
     out: list[tuple[str, str, str]] = []
@@ -140,12 +155,11 @@ def render_footer(
     Pass ``brand_note`` for a single escaped paragraph (hub, bantuan, events).
     Pass ``brand_note_parts`` (two or more strings) to insert
     ``<br class="site-footer-note-break" />`` between escaped sentences (AI).
-    Pass ``fleet_site`` (hub, ai, events, or bantuan) to append crawlable
-    sister-site links before Contact.
+    Pass ``fleet_site`` (hub, ai, events, or bantuan) to emit a separate
+    sister-site nav row below the main footer grid (label from
+    ``fleet-cross-links.json``).
     """
     items = list(explore_items)
-    if fleet_site is not None:
-        items.extend(fleet_cross_link_items(fleet_site))
     if not any(item.href == CONTACT_HREF for item in items):
         items.append(NavItem("contact", CONTACT_HREF, CONTACT_LABEL))
 
@@ -157,6 +171,20 @@ def render_footer(
         )
 
     explore = "\n          ".join(link(item) for item in items)
+    fleet_block = ""
+    if fleet_site is not None:
+        fleet_items = fleet_cross_link_items(fleet_site)
+        fleet_links = "\n          ".join(link(item) for item in fleet_items)
+        section = esc(fleet_section_label())
+        fleet_block = f"""
+    <div class="site-footer-fleet">
+      <nav aria-label="{section}" class="site-footer-fleet-nav">
+        <h2>{section}</h2>
+        <ul>
+          {fleet_links}
+        </ul>
+      </nav>
+    </div>"""
     note_html = format_footer_note(brand_note, brand_note_parts)
     if credit_html is None:
         credit_html = (
@@ -176,7 +204,7 @@ def render_footer(
           {explore}
         </ul>
       </nav>
-    </div>
+    </div>{fleet_block}
     <div class="site-footer-bottom">
       <p>{credit_html}</p>
     </div>
