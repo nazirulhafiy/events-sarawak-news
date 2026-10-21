@@ -1024,7 +1024,12 @@ html[data-theme="dark"] .site-footer {
   grid-template-columns: minmax(0, 1.5fr) minmax(180px, 1fr);
 }
 
-.site-footer-summary,
+.site-footer-summary {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+}
+
 .site-footer-nav { padding: 28px; }
 
 .site-footer-nav {
@@ -1047,29 +1052,28 @@ html[data-theme="dark"] .site-footer {
   line-height: 1.6;
 }
 
-.site-footer-nav h2 {
+.site-footer-nav h2,
+.site-footer-fleet-nav h2 {
   margin: 0 0 12px;
   color: var(--ink);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: .08em;
+  line-height: 1.4;
+  padding-top: 2px;
   text-transform: uppercase;
 }
 
-.site-footer-categories-title {
-  position: relative;
-  margin-top: 34px;
-  padding-top: 18px;
-  border-top: 0;
+.site-footer-categories {
+  margin: 34px -28px 0;
+  padding: 0 28px;
+  border-top: 1px solid var(--line);
 }
 
-.site-footer-categories-title::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -28px;
-  left: -28px;
-  border-top: 1px solid var(--line);
+.site-footer-nav h2.site-footer-categories-title {
+  margin: 0 0 12px;
+  padding: 30px 0 0;
+  border: 0;
 }
 
 .site-footer-nav ul {
@@ -1091,6 +1095,28 @@ html[data-theme="dark"] .site-footer {
 }
 
 .site-footer-nav .site-footer-link:hover {
+  color: var(--sarawak-red);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--sarawak-red);
+}
+
+.site-footer-fleet-nav {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.site-footer-fleet-nav ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer-fleet-nav .site-footer-link:hover,
+.site-footer-fleet-nav .site-footer-link:focus-visible {
   color: var(--sarawak-red);
   font-weight: 700;
   text-decoration: underline;
@@ -1260,9 +1286,14 @@ html[data-theme="dark"] .site-footer {
     border-left: 0;
   }
 
-  .site-footer-categories-title::before {
-    right: -18px;
-    left: -18px;
+  .site-footer-categories {
+    margin-left: -18px;
+    margin-right: -18px;
+    padding: 0 18px;
+  }
+
+  .site-footer-nav h2.site-footer-categories-title {
+    padding-top: 24px;
   }
 
   .site-footer-bottom { padding: 14px 18px; }

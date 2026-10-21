@@ -1,4 +1,5 @@
 {
+  "section_label": "Sarawak News",
   "sites": [
     { "id": "hub", "href": "https://sarawak.news/", "label": "Sarawak.News" },
     { "id": "ai", "href": "https://ai.sarawak.news/", "label": "AI.Sarawak.News" },

@@ -45,13 +45,15 @@ NOTE = "Dates subject to change, check with organisers."
 FOOTER_NOTE = "An independent listing of events across Sarawak."
 # Site title, tagline, description, and About lead live only in data/site.json.
 SITE_COPY_FIELDS = ("title", "tagline", "description", "about_lead")
-FOOTER_CATEGORIES = """        <h2 class="site-footer-categories-title">Categories</h2>
+FOOTER_CATEGORIES = """        <div class="site-footer-categories">
+        <h2 class="site-footer-categories-title">Categories</h2>
         <ul>
           <li><a class="site-footer-link" href="/?event_type=festival">Festival</a></li>
           <li><a class="site-footer-link" href="/?event_type=sports">Sports</a></li>
           <li><a class="site-footer-link" href="/?event_type=cultural">Cultural</a></li>
           <li><a class="site-footer-link" href="/?event_type=concert">Concert</a></li>
         </ul>
+        </div>
 """
 FOOTER_CREDIT = (
     'Built by <a class="site-footer-link site-footer-credit-link" href="https://hafiy.my" '
