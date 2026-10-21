@@ -84,6 +84,20 @@ class RenderTests(unittest.TestCase):
             '<a class="site-footer-link" href="mailto:contact@sarawak.news">Contact</a>',
             self.html,
         )
+        self.assertIn('<a class="site-footer-link" href="https://sarawak.news/">', self.html)
+        self.assertIn(
+            '<a class="site-footer-link" href="https://ai.sarawak.news/">',
+            self.html,
+        )
+        self.assertIn(
+            '<a class="site-footer-link" href="https://bantuan.sarawak.news/">',
+            self.html,
+        )
+        self.assertNotIn(
+            '<a class="site-footer-link" href="https://events.sarawak.news/">',
+            self.html,
+        )
+        self.assertNotIn("nofollow", self.html)
         for kind, label in (
             ("festival", "Festival"),
             ("sports", "Sports"),
@@ -291,8 +305,11 @@ class RenderTests(unittest.TestCase):
         self.assertIn("&lt;i&gt;", card)
         self.assertNotIn("event-place-label\"><i>", card)
 
-    def test_no_custom_domain_or_hub_link(self):
-        self.assertNotIn('href="https://sarawak.news', self.html)
+    def test_footer_includes_crawlable_hub_cross_link(self):
+        self.assertIn(
+            '<a class="site-footer-link" href="https://sarawak.news/">',
+            self.html,
+        )
 
     def test_hidden_panels_not_overridden_by_css(self):
         css = (build.SITE / "events.css").read_text()
@@ -349,7 +366,10 @@ class RenderTests(unittest.TestCase):
                 self.assertIn('content="index,follow"', head)
                 self.assertNotIn("noindex", page)
                 self.assertIn(f'<link rel="canonical" href="{canonical}" />', head)
-                self.assertNotIn('href="https://sarawak.news', page)
+                self.assertIn(
+                    '<a class="site-footer-link" href="https://sarawak.news/">',
+                    page,
+                )
                 self.assertIn('src="icons/nav-mark-transparent.svg"', page)
                 self.assertIn('src="icons/nav-mark-transparent-dark.svg"', page)
                 copy = build.load_site()

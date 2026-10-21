@@ -329,6 +329,7 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
             NavItem("about", "about.html", "About"),
         ),
         credit_html=FOOTER_CREDIT,
+        fleet_site="events",
     )
     # Events Categories block is site-specific; kit footer is Explore + Contact only.
     explore_close = "        </ul>\n      </nav>"
