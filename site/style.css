@@ -1064,22 +1064,9 @@ html[data-theme="dark"] .site-footer {
   text-transform: uppercase;
 }
 
-.site-footer-categories-title {
-  position: relative;
-  margin-top: 34px;
-  border-top: 0;
-}
-
 .site-footer-nav h2.site-footer-categories-title {
-  padding-top: 28px;
-}
-
-.site-footer-categories-title::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -28px;
-  left: -28px;
+  margin: 34px -28px 12px;
+  padding: 28px 28px 0;
   border-top: 1px solid var(--line);
 }
 
@@ -1293,13 +1280,9 @@ html[data-theme="dark"] .site-footer {
     border-left: 0;
   }
 
-  .site-footer-categories-title::before {
-    right: -18px;
-    left: -18px;
-  }
-
   .site-footer-nav h2.site-footer-categories-title {
-    padding-top: 22px;
+    margin: 34px -18px 12px;
+    padding: 22px 18px 0;
   }
 
   .site-footer-bottom { padding: 14px 18px; }
