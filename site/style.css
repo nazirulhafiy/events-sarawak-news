@@ -135,16 +135,6 @@ html[data-theme="dark"] .bar.is-scrolled {
   box-shadow: 0 1px 0 var(--line), 0 6px 16px rgb(0 0 0 / 35%);
 }
 
-.bar::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 1px;
-  background: var(--line);
-}
-
 .brand-lockup,
 .bar-rule-tail {
   align-self: stretch;
