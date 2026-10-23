@@ -1061,7 +1061,8 @@ html[data-theme="dark"] .site-footer {
 }
 
 .site-footer-nav h2,
-.site-footer-fleet-nav h2 {
+.site-footer-fleet-nav h2,
+.site-footer-grid-categories h2 {
   margin: 0 0 12px;
   color: var(--ink);
   font-size: 11px;
@@ -1074,12 +1075,12 @@ html[data-theme="dark"] .site-footer {
 
 .site-footer-nav h2.site-footer-categories-title,
 .site-footer-grid-categories h2.site-footer-categories-title {
-  margin: 0 0 12px;
   padding: 2px 0 0;
   border: 0;
 }
 
-.site-footer-nav ul {
+.site-footer-nav ul,
+.site-footer-grid-categories ul {
   display: grid;
   gap: 7px;
   margin: 0;
@@ -1097,7 +1098,8 @@ html[data-theme="dark"] .site-footer {
   text-decoration: none;
 }
 
-.site-footer-nav .site-footer-link:hover {
+.site-footer-nav .site-footer-link:hover,
+.site-footer-grid-categories .site-footer-link:hover {
   color: var(--sarawak-red);
   font-weight: 700;
   text-decoration: underline;
