@@ -1046,20 +1046,24 @@ html[data-theme="dark"] .site-footer {
 }
 
 .site-footer-grid-stack-right .site-footer-grid-categories {
-  margin: 34px 0 0;
+  margin: 0;
   padding: 0 28px 28px;
   border-top: 1px solid var(--line);
   box-sizing: border-box;
 }
 
+.site-footer-grid-stack-right .site-footer-grid-explore > ul:first-of-type {
+  margin-bottom: 0;
+}
+
 .site-footer-grid-stack-right .site-footer-grid-categories h2.site-footer-categories-title {
-  padding-top: 30px;
+  padding-top: 22px;
 }
 
 .site-footer-nav { padding: 0; }
 
 .site-footer-main .site-footer-grid-explore.site-footer-nav {
-  padding: 28px;
+  padding: 28px 28px 0;
 }
 
 .site-footer-main .site-footer-grid-stack-right .site-footer-grid-categories {
@@ -1332,12 +1336,12 @@ html[data-theme="dark"] .site-footer {
   .site-footer-grid-categories { order: 4; }
 
   .site-footer-grid-stack-right .site-footer-grid-categories {
-    margin: 34px 0 0;
+    margin: 0;
     padding: 0 18px 22px;
   }
 
   .site-footer-grid-stack-right .site-footer-grid-categories h2.site-footer-categories-title {
-    padding-top: 24px;
+    padding-top: 22px;
   }
 
   .site-footer-grid-explore {
@@ -1346,7 +1350,7 @@ html[data-theme="dark"] .site-footer {
   }
 
   .site-footer-main .site-footer-grid-explore.site-footer-nav {
-    padding: 22px 18px;
+    padding: 22px 18px 0;
   }
 
   .site-footer-main .site-footer-grid-stack-right .site-footer-grid-categories {
