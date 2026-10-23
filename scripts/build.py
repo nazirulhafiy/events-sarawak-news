@@ -113,17 +113,23 @@ def restructure_events_footer(footer: str) -> str:
         categories_inner = categories_inner[len('<div class="site-footer-categories">'):]
     if categories_inner.endswith("</div>"):
         categories_inner = categories_inner[: -len("</div>")].strip()
+    explore_nav = explore_nav.replace(
+        'class="site-footer-nav"', 'class="site-footer-nav site-footer-grid-explore"', 1
+    )
     grid_main = f"""<div class="site-footer-main">
-      <div class="site-footer-summary site-footer-grid-brand">
-        {brand_note.group(0).strip()}
+      <div class="site-footer-grid-stack site-footer-grid-stack-left">
+        <div class="site-footer-summary site-footer-grid-brand">
+          {brand_note.group(0).strip()}
+        </div>
+        <div class="site-footer-grid-fleet">
+          {fleet_html}
+        </div>
       </div>
-      {explore_nav.replace('class="site-footer-nav"', 'class="site-footer-nav site-footer-grid-explore"', 1)}
-      <div class="site-footer-grid-rule" role="presentation"></div>
-      <div class="site-footer-grid-fleet">
-        {fleet_html}
-      </div>
-      <div class="site-footer-categories site-footer-grid-categories">
-        {categories_inner}
+      <div class="site-footer-grid-stack site-footer-grid-stack-right">
+        {explore_nav}
+        <div class="site-footer-categories site-footer-grid-categories">
+          {categories_inner}
+        </div>
       </div>
     </div>
     <div class="site-footer-bottom">"""
