@@ -83,6 +83,7 @@ class RenderTests(unittest.TestCase):
         self.assertIn('site-footer-grid-brand-cell', self.html)
         self.assertIn('site-footer-grid-stack-left', self.html)
         self.assertIn('site-footer-grid-stack-right', self.html)
+        self.assertIn('class="site-footer-grid-explore-divider"', self.html)
         self.assertNotIn('site-footer-grid-rule', self.html)
         self.assertIn('<h2>Hub</h2>', self.html)
         self.assertIn('aria-label="Hub"', self.html)
