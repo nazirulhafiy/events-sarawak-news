@@ -129,6 +129,7 @@ def restructure_events_footer(footer: str) -> str:
       </div>
       <div class="site-footer-grid-stack site-footer-grid-stack-right">
         {explore_nav}
+        <hr class="site-footer-grid-explore-divider" aria-hidden="true" />
         <div class="site-footer-categories site-footer-grid-categories">
           {categories_inner}
         </div>
