@@ -118,11 +118,13 @@ def restructure_events_footer(footer: str) -> str:
     )
     grid_main = f"""<div class="site-footer-main">
       <div class="site-footer-grid-stack site-footer-grid-stack-left">
-        <div class="site-footer-summary site-footer-grid-brand">
-          {brand_note.group(0).strip()}
-        </div>
-        <div class="site-footer-grid-fleet">
-          {fleet_html}
+        <div class="site-footer-summary site-footer-grid-summary-left">
+          <div class="site-footer-grid-brand">
+            {brand_note.group(0).strip()}
+          </div>
+          <div class="site-footer-grid-fleet">
+            {fleet_html}
+          </div>
         </div>
       </div>
       <div class="site-footer-grid-stack site-footer-grid-stack-right">

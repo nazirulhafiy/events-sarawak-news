@@ -80,6 +80,7 @@ class RenderTests(unittest.TestCase):
 
     def test_footer_categories_and_card_type_data(self):
         self.assertIn('site-footer-categories site-footer-grid-categories', self.html)
+        self.assertIn('site-footer-grid-summary-left', self.html)
         self.assertIn('site-footer-grid-stack-left', self.html)
         self.assertIn('site-footer-grid-stack-right', self.html)
         self.assertNotIn('site-footer-grid-rule', self.html)
