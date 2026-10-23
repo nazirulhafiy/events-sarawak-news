@@ -80,12 +80,12 @@ _FOOTER_EXPLORE_NAV_RE = re.compile(
     r'<nav aria-label="Explore" class="site-footer-nav">.*?</nav>',
     re.DOTALL,
 )
-FLEET_SECTION_TITLE = "News Hub"
+FLEET_SECTION_TITLE = "Hub"
 e = html.escape
 
 
 def events_fleet_nav_html(fleet_html: str) -> str:
-    """Events-only fleet block title (kit still emits the shared Sarawak News label)."""
+    """Events-only fleet block title (kit still emits the shared fleet section label)."""
     title = e(FLEET_SECTION_TITLE)
     fleet_html = re.sub(r'aria-label="[^"]*"', f'aria-label="{title}"', fleet_html, count=1)
     fleet_html = re.sub(r"<h2>.*?</h2>", f"<h2>{title}</h2>", fleet_html, count=1)

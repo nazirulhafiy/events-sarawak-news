@@ -81,8 +81,8 @@ class RenderTests(unittest.TestCase):
     def test_footer_categories_and_card_type_data(self):
         self.assertIn('site-footer-categories site-footer-grid-categories', self.html)
         self.assertIn('site-footer-grid-rule', self.html)
-        self.assertIn('<h2>News Hub</h2>', self.html)
-        self.assertIn('aria-label="News Hub"', self.html)
+        self.assertIn('<h2>Hub</h2>', self.html)
+        self.assertIn('aria-label="Hub"', self.html)
         self.assertNotIn('<h2>Sarawak News</h2>', self.html)
         self.assertIn('class="site-footer-categories-title">Categories</h2>', self.html)
         self.assertIn(
