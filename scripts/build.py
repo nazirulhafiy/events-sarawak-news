@@ -80,7 +80,16 @@ _FOOTER_EXPLORE_NAV_RE = re.compile(
     r'<nav aria-label="Explore" class="site-footer-nav">.*?</nav>',
     re.DOTALL,
 )
+FLEET_SECTION_TITLE = "News Hub"
 e = html.escape
+
+
+def events_fleet_nav_html(fleet_html: str) -> str:
+    """Events-only fleet block title (kit still emits the shared Sarawak News label)."""
+    title = e(FLEET_SECTION_TITLE)
+    fleet_html = re.sub(r'aria-label="[^"]*"', f'aria-label="{title}"', fleet_html, count=1)
+    fleet_html = re.sub(r"<h2>.*?</h2>", f"<h2>{title}</h2>", fleet_html, count=1)
+    return fleet_html
 
 
 def restructure_events_footer(footer: str) -> str:
@@ -97,7 +106,7 @@ def restructure_events_footer(footer: str) -> str:
         raise SystemExit("kit footer missing brand, fleet, Explore, or Categories for Events grid restructure")
     explore_nav = explore_match.group(0).strip()
     explore_nav = _FOOTER_CATEGORIES_BLOCK_RE.sub("", explore_nav).strip()
-    fleet_html = fleet.group(0).strip()
+    fleet_html = events_fleet_nav_html(fleet.group(0).strip())
     categories_html = categories.group(0).strip()
     categories_inner = categories_html
     if categories_inner.startswith('<div class="site-footer-categories">'):
