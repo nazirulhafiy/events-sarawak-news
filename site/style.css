@@ -1065,9 +1065,9 @@ html[data-theme="dark"] .site-footer {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 28px 28px 0;
+  padding: 28px 28px 8px;
   margin: 0;
-  border-bottom: 0;
+  border-bottom: 1px solid var(--line);
   box-sizing: border-box;
 }
 
@@ -1079,7 +1079,7 @@ html[data-theme="dark"] .site-footer {
 .site-footer-main .site-footer-grid-stack-right .site-footer-grid-explore > ul:first-of-type {
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 0;
 }
 
 .site-footer-main .site-footer-grid-stack-right .site-footer-grid-explore .site-footer-link {
