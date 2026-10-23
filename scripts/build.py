@@ -60,7 +60,65 @@ FOOTER_CREDIT = (
     'target="_blank" rel="noopener noreferrer">hafiy.my</a>, an independent publication. '
     "Not affiliated with the Sarawak Government."
 )
+_FOOTER_MAIN_RE = re.compile(
+    r'<div class="site-footer-main">(.*)</div>\s*<div class="site-footer-bottom">',
+    re.DOTALL,
+)
+_FOOTER_BRAND_NOTE_RE = re.compile(
+    r'<p class="site-footer-brand">.*?</p>\s*<p class="site-footer-note">.*?</p>',
+    re.DOTALL,
+)
+_FOOTER_FLEET_RE = re.compile(
+    r'\s*<nav[^>]*class="site-footer-fleet-nav"[^>]*>.*?</nav>',
+    re.DOTALL,
+)
+_FOOTER_CATEGORIES_BLOCK_RE = re.compile(
+    r'\s*<div class="site-footer-categories">.*?</div>\s*',
+    re.DOTALL,
+)
+_FOOTER_EXPLORE_NAV_RE = re.compile(
+    r'<nav aria-label="Explore" class="site-footer-nav">.*?</nav>',
+    re.DOTALL,
+)
 e = html.escape
+
+
+def restructure_events_footer(footer: str) -> str:
+    """Events-only 2×2 footer grid: brand | Explore; fleet | Categories."""
+    match = _FOOTER_MAIN_RE.search(footer)
+    if not match:
+        raise SystemExit("kit footer missing site-footer-main for Events grid restructure")
+    inner = match.group(1)
+    brand_note = _FOOTER_BRAND_NOTE_RE.search(inner)
+    fleet = _FOOTER_FLEET_RE.search(inner)
+    categories = _FOOTER_CATEGORIES_BLOCK_RE.search(inner)
+    explore_match = _FOOTER_EXPLORE_NAV_RE.search(inner)
+    if not brand_note or not fleet or not categories or not explore_match:
+        raise SystemExit("kit footer missing brand, fleet, Explore, or Categories for Events grid restructure")
+    explore_nav = explore_match.group(0).strip()
+    explore_nav = _FOOTER_CATEGORIES_BLOCK_RE.sub("", explore_nav).strip()
+    fleet_html = fleet.group(0).strip()
+    categories_html = categories.group(0).strip()
+    categories_inner = categories_html
+    if categories_inner.startswith('<div class="site-footer-categories">'):
+        categories_inner = categories_inner[len('<div class="site-footer-categories">'):]
+    if categories_inner.endswith("</div>"):
+        categories_inner = categories_inner[: -len("</div>")].strip()
+    grid_main = f"""<div class="site-footer-main">
+      <div class="site-footer-summary site-footer-grid-brand">
+        {brand_note.group(0).strip()}
+      </div>
+      {explore_nav.replace('class="site-footer-nav"', 'class="site-footer-nav site-footer-grid-explore"', 1)}
+      <div class="site-footer-grid-rule" role="presentation"></div>
+      <div class="site-footer-grid-fleet">
+        {fleet_html}
+      </div>
+      <div class="site-footer-categories site-footer-grid-categories">
+        {categories_inner}
+      </div>
+    </div>
+    <div class="site-footer-bottom">"""
+    return footer[: match.start()] + grid_main + footer[match.end() :]
 
 
 def analytics_registry() -> AnalyticsRegistry:
@@ -340,6 +398,7 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
     footer = footer.replace(
         explore_close, f"        </ul>\n{FOOTER_CATEGORIES}      </nav>", 1
     )
+    footer = restructure_events_footer(footer)
     return (
         render_head(
             title=e(title),
