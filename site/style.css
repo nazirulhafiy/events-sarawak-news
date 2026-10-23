@@ -1010,9 +1010,16 @@ html[data-theme="dark"] .site-footer {
   align-self: start;
 }
 
+.site-footer-grid-stack-left {
+  overflow: hidden;
+}
+
 .site-footer-grid-stack-right {
   border-left: 1px solid var(--line);
   height: fit-content;
+  position: relative;
+  z-index: 1;
+  background: inherit;
 }
 
 .site-footer-summary {
@@ -1031,8 +1038,6 @@ html[data-theme="dark"] .site-footer {
 
 .site-footer-grid-fleet {
   margin: 22px 0 0;
-  margin-left: -28px;
-  margin-right: -28px;
   padding: 22px 28px 0;
   border-top: 1px solid var(--line);
   box-sizing: border-box;
@@ -1066,14 +1071,19 @@ html[data-theme="dark"] .site-footer {
   box-sizing: border-box;
 }
 
+.site-footer-main .site-footer-grid-stack-right .site-footer-grid-explore > h2 {
+  margin: 0 0 12px;
+  padding-top: 2px;
+}
+
 .site-footer-main .site-footer-grid-stack-right .site-footer-grid-explore > ul:first-of-type {
   margin: 0;
-  padding: 0 0 0;
+  padding: 0;
   border-bottom: 1px solid var(--line);
 }
 
 .site-footer-main .site-footer-grid-stack-right .site-footer-grid-explore .site-footer-link {
-  line-height: 1.2;
+  line-height: inherit;
 }
 
 .site-footer-main .site-footer-grid-stack-right .site-footer-grid-explore > ul > li:last-child {
