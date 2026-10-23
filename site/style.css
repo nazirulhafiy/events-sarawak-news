@@ -1283,13 +1283,21 @@ html[data-theme="dark"] .site-footer {
     flex-direction: column;
   }
 
-  .site-footer-grid-brand { padding: 22px 18px 0; }
+  .site-footer-grid-brand {
+    order: 1;
+    padding: 22px 18px 0;
+  }
 
   .site-footer-grid-rule { display: none; }
 
   .site-footer-grid-fleet {
+    order: 2;
     padding: 0 18px 0;
   }
+
+  .site-footer-grid-explore { order: 3; }
+
+  .site-footer-grid-categories { order: 4; }
 
   .site-footer-grid-fleet .site-footer-fleet-nav {
     margin: 22px -18px 0;
