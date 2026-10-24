@@ -45,98 +45,19 @@ NOTE = "Dates subject to change, check with organisers."
 FOOTER_NOTE = "An independent listing of events across Sarawak."
 # Site title, tagline, description, and About lead live only in data/site.json.
 SITE_COPY_FIELDS = ("title", "tagline", "description", "about_lead")
-FOOTER_CATEGORIES = """        <div class="site-footer-categories">
-        <h2 class="site-footer-categories-title">Categories</h2>
+FOOTER_CATEGORIES_INNER = """<h2 class="site-footer-categories-title">Categories</h2>
         <ul>
           <li><a class="site-footer-link" href="/?event_type=festival">Festival</a></li>
           <li><a class="site-footer-link" href="/?event_type=sports">Sports</a></li>
           <li><a class="site-footer-link" href="/?event_type=cultural">Cultural</a></li>
           <li><a class="site-footer-link" href="/?event_type=concert">Concert</a></li>
-        </ul>
-        </div>
-"""
+        </ul>"""
 FOOTER_CREDIT = (
     'Built by <a class="site-footer-link site-footer-credit-link" href="https://hafiy.my" '
     'target="_blank" rel="noopener noreferrer">hafiy.my</a>, an independent publication. '
     "Not affiliated with the Sarawak Government."
 )
-_FOOTER_MAIN_RE = re.compile(
-    r'<div class="site-footer-main">(.*)</div>\s*<div class="site-footer-bottom">',
-    re.DOTALL,
-)
-_FOOTER_BRAND_NOTE_RE = re.compile(
-    r'<p class="site-footer-brand">.*?</p>\s*<p class="site-footer-note">.*?</p>',
-    re.DOTALL,
-)
-_FOOTER_FLEET_RE = re.compile(
-    r'\s*<nav[^>]*class="site-footer-fleet-nav"[^>]*>.*?</nav>',
-    re.DOTALL,
-)
-_FOOTER_CATEGORIES_BLOCK_RE = re.compile(
-    r'\s*<div class="site-footer-categories">.*?</div>\s*',
-    re.DOTALL,
-)
-_FOOTER_EXPLORE_NAV_RE = re.compile(
-    r'<nav aria-label="Explore" class="site-footer-nav">.*?</nav>',
-    re.DOTALL,
-)
-FLEET_SECTION_TITLE = "Hub"
 e = html.escape
-
-
-def events_fleet_nav_html(fleet_html: str) -> str:
-    """Events-only fleet block title (kit still emits the shared fleet section label)."""
-    title = e(FLEET_SECTION_TITLE)
-    fleet_html = re.sub(r'aria-label="[^"]*"', f'aria-label="{title}"', fleet_html, count=1)
-    fleet_html = re.sub(r"<h2>.*?</h2>", f"<h2>{title}</h2>", fleet_html, count=1)
-    return fleet_html
-
-
-def restructure_events_footer(footer: str) -> str:
-    """Events-only 2×2 footer grid: brand | Explore; fleet | Categories."""
-    match = _FOOTER_MAIN_RE.search(footer)
-    if not match:
-        raise SystemExit("kit footer missing site-footer-main for Events grid restructure")
-    inner = match.group(1)
-    brand_note = _FOOTER_BRAND_NOTE_RE.search(inner)
-    fleet = _FOOTER_FLEET_RE.search(inner)
-    categories = _FOOTER_CATEGORIES_BLOCK_RE.search(inner)
-    explore_match = _FOOTER_EXPLORE_NAV_RE.search(inner)
-    if not brand_note or not fleet or not categories or not explore_match:
-        raise SystemExit("kit footer missing brand, fleet, Explore, or Categories for Events grid restructure")
-    explore_nav = explore_match.group(0).strip()
-    explore_nav = _FOOTER_CATEGORIES_BLOCK_RE.sub("", explore_nav).strip()
-    fleet_html = events_fleet_nav_html(fleet.group(0).strip())
-    categories_html = categories.group(0).strip()
-    categories_inner = categories_html
-    if categories_inner.startswith('<div class="site-footer-categories">'):
-        categories_inner = categories_inner[len('<div class="site-footer-categories">'):]
-    if categories_inner.endswith("</div>"):
-        categories_inner = categories_inner[: -len("</div>")].strip()
-    explore_nav = explore_nav.replace(
-        'class="site-footer-nav"', 'class="site-footer-nav site-footer-grid-explore"', 1
-    )
-    grid_main = f"""<div class="site-footer-main">
-      <div class="site-footer-grid-stack site-footer-grid-stack-left">
-        <div class="site-footer-summary site-footer-grid-brand-cell">
-          <div class="site-footer-grid-brand">
-            {brand_note.group(0).strip()}
-          </div>
-        </div>
-        <div class="site-footer-grid-fleet">
-          {fleet_html}
-        </div>
-      </div>
-      <div class="site-footer-grid-stack site-footer-grid-stack-right">
-        {explore_nav}
-        <hr class="site-footer-grid-explore-divider" aria-hidden="true" />
-        <div class="site-footer-categories site-footer-grid-categories">
-          {categories_inner}
-        </div>
-      </div>
-    </div>
-    <div class="site-footer-bottom">"""
-    return footer[: match.start()] + grid_main + footer[match.end() :]
 
 
 def analytics_registry() -> AnalyticsRegistry:
@@ -408,15 +329,10 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
         ),
         credit_html=FOOTER_CREDIT,
         fleet_site="events",
+        layout="column_stacks",
+        fleet_section_label="Hub",
+        extra_nav_right=FOOTER_CATEGORIES_INNER,
     )
-    # Events Categories block is site-specific; kit footer is Explore + Contact only.
-    explore_close = "        </ul>\n      </nav>"
-    if explore_close not in footer:
-        raise SystemExit("kit footer missing Explore nav close for Categories inject")
-    footer = footer.replace(
-        explore_close, f"        </ul>\n{FOOTER_CATEGORIES}      </nav>", 1
-    )
-    footer = restructure_events_footer(footer)
     return (
         render_head(
             title=e(title),
