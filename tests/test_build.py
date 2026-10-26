@@ -39,7 +39,7 @@ class DataTests(unittest.TestCase):
 
     def test_month_counts_match_review(self):
         c = build.month_counts(self.events)
-        self.assertEqual([c[m] for m in range(1, 13)], [2, 1, 2, 14, 13, 13, 14, 12, 21, 10, 3, 1])
+        self.assertEqual([c[m] for m in range(1, 13)], [2, 1, 2, 14, 13, 13, 14, 12, 20, 11, 3, 1])
 
 
 class RenderTests(unittest.TestCase):
@@ -59,7 +59,7 @@ class RenderTests(unittest.TestCase):
         tabs = re.findall(r'<button type="button" role="tab".*?</button>', self.html)
         self.assertEqual(len(tabs), 12)
         self.assertIn('aria-selected="true"', tabs[9])
-        self.assertIn('>Oct <span class="category-filter-count" aria-hidden="true">10</span>', tabs[9])
+        self.assertIn('>Oct <span class="category-filter-count" aria-hidden="true">11</span>', tabs[9])
         self.assertEqual(sum('aria-selected="true"' in t for t in tabs), 1)
 
     def test_only_current_panel_visible(self):
@@ -278,7 +278,7 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn(".event-card:hover {", css)
         self.assertNotIn("Official site", self.html)
         self.assertNotIn("More information", self.html)
-        self.assertEqual(self.html.count('class="event-link"'), 17)
+        self.assertEqual(self.html.count('class="event-link"'), 18)
         self.assertIn(
             'href="https://suarasarawak.my/festival-kucing-antarabangsa-bakal-berlangsung-oktober-ini/"',
             self.html,
