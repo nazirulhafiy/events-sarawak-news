@@ -40,12 +40,12 @@ class SeedData(unittest.TestCase):
         self.events = L.load(L.EVENTS)
 
     def test_all_114_seed_events_valid(self):
-        self.assertEqual(len(self.events), 116)
+        self.assertEqual(len(self.events), 117)
         self.assertEqual(L.validate_collection(self.events), [])
         statuses = {e["status"] for e in self.events}
         self.assertEqual(statuses, {"published", "cancelled"})
         self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 106)
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 10)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 11)
 
     def test_only_schema_fields(self):
         for e in self.events:
@@ -91,8 +91,12 @@ class SeedData(unittest.TestCase):
                 "https://utusansarawak.com.my/industri-balau-terus-diperkasa-jadi-bank-ekonomi-masyarakat-dalat/",
             "krian-fest-nature-challenge-edisi-ke-4-2026":
                 "https://utusansarawak.com.my/pesta-saratok-2026-dan-krian-fest-nature-challenge-kembali-meriahkan-kriansaratok/",
+            "kuching-marathon-2026":
+                "https://dayakdaily.com/kuching-marathon-2026-on-sept-27-cancelled-as-haze-raises-health-concerns/",
             "serian-international-cross-country-half-marathon-run-2026":
                 "https://malaysiarunner.com/event/68/Serian%20Eco%20Run%205.0%202026%20%28Early%20Bird%29",
+            "sri-maha-mariamman-temple-maha-kumbhabhishegam-2026":
+                "https://dayakdaily.com/sri-maha-mariamman-temple-in-kuching-to-hold-consecration-ceremony-oct-27-30/",
             "youth-day-limbang-motor-day-2026":
                 "https://limbang.sarawak.gov.my/web/subpage/news_view/941",
         })
@@ -397,7 +401,7 @@ class Pipeline(unittest.TestCase):
         publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
         events, rest, ids = publish.publish(copy.deepcopy(L.load(L.EVENTS)), queue)
         self.assertEqual(ids, ["kuching-lantern-walk-2026"])
-        self.assertEqual(len(events), 117)
+        self.assertEqual(len(events), 118)
         self.assertEqual([r["id"] for r in rest], ["miri-kite-day-2026"])
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["status"], "published")
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["info_url"],
