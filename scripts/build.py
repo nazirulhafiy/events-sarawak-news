@@ -85,10 +85,18 @@ def render_fleet_network_section(fleet_site: str = FLEET_SITE_ID) -> str:
     </section>"""
 
 
-def sitemap_lastmod(events: list[dict], now: dt.datetime | None = None) -> str:
-    """Newest published discovery date, else build-day fallback."""
+def sitemap_lastmod(events: list[dict] | None = None, now: dt.datetime | None = None) -> str:
+    """Newest published ``discovered_at`` from data (internal field), else build day.
+
+    ``load_events()`` strips internal fields, so this reads ``data/events.json``
+    directly for lastmod. The optional ``events`` arg is ignored for dates.
+    """
+    del events  # public rows have no discovered_at; use raw file
     dates: list[str] = []
-    for event in events:
+    raw = json.loads(DATA.read_text(encoding="utf-8"))
+    for event in raw:
+        if event.get("status") != "published":
+            continue
         discovered = event.get("discovered_at")
         if isinstance(discovered, str) and len(discovered) >= 10:
             dates.append(discovered[:10])
