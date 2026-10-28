@@ -26,8 +26,13 @@ from kit.python.analytics_loader import (  # noqa: E402
     render_analytics_loader as kit_render_analytics_loader,
 )
 from kit.python.analytics_registry import AnalyticsRegistry, load_analytics  # noqa: E402
-from kit.python.shell import NavItem, render_back_to_top, render_footer as kit_render_footer  # noqa: E402
-from kit.python.shell import render_header as kit_render_header  # noqa: E402
+from kit.python.shell import (  # noqa: E402
+    NavItem,
+    fleet_cross_link_items,
+    render_back_to_top,
+    render_footer as kit_render_footer,
+    render_header as kit_render_header,
+)
 
 DATA = ROOT / "data" / "events.json"
 SITE_CONFIG = ROOT / "data" / "site.json"
@@ -57,7 +62,48 @@ FOOTER_CREDIT = (
     'target="_blank" rel="noopener noreferrer">hafiy.my</a>, an independent publication. '
     "Not affiliated with the Sarawak Government."
 )
+FLEET_SITE_ID = "events"
 e = html.escape
+
+
+def render_fleet_network_section(fleet_site: str = FLEET_SITE_ID) -> str:
+    """Crawlable main-content links to other fleet sites (excludes self)."""
+    items = []
+    for link in fleet_cross_link_items(fleet_site):
+        href = link.href if link.href.endswith("/") else f"{link.href}/"
+        about = f"{href}about.html"
+        items.append(
+            f'      <li><a href="{e(href)}">{e(link.label)}</a>'
+            f' · <a href="{e(about)}">About</a></li>'
+        )
+    return f"""    <section class="about-section" aria-labelledby="about-network">
+      <h2 id="about-network">Related sites</h2>
+      <p>Also on this network:</p>
+      <ul>
+{chr(10).join(items)}
+      </ul>
+    </section>"""
+
+
+def sitemap_lastmod(events: list[dict] | None = None, now: dt.datetime | None = None) -> str:
+    """Newest published ``discovered_at`` from data (internal field), else build day.
+
+    ``load_events()`` strips internal fields, so this reads ``data/events.json``
+    directly for lastmod. The optional ``events`` arg is ignored for dates.
+    """
+    del events  # public rows have no discovered_at; use raw file
+    dates: list[str] = []
+    raw = json.loads(DATA.read_text(encoding="utf-8"))
+    for event in raw:
+        if event.get("status") != "published":
+            continue
+        discovered = event.get("discovered_at")
+        if isinstance(discovered, str) and len(discovered) >= 10:
+            dates.append(discovered[:10])
+    if dates:
+        return max(dates)
+    now = now or dt.datetime.now(MYT)
+    return now.astimezone(MYT).date().isoformat()
 
 
 def analytics_registry() -> AnalyticsRegistry:
@@ -367,6 +413,7 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     <header class="brief">
       <h1>{e(site["tagline"])}</h1>
       <p class="brief-deck">{e(site["description"])}</p>
+      <p class="brief-about"><a href="about.html">About this listing</a></p>
       {updated_html(now)}
     </header>
     <section class="category-filter month-filter" aria-labelledby="month-filter-title">
@@ -395,6 +442,7 @@ def render_about(events: list[dict], now: dt.datetime | None = None, page: str =
       <p>When a date has not been fixed, the listing shows it as TBC.</p>
       <p><strong>{NOTE}</strong> Events can be moved, postponed or cancelled at short notice.</p>
       <p>This is an independent site and is not affiliated with the Sarawak Government.</p>
+{render_fleet_network_section()}
     </div>
   </main>
 """
@@ -405,9 +453,9 @@ def render_robots() -> str:
     return f"User-agent: *\nAllow: /\nSitemap: {SITE_ORIGIN}/sitemap.xml\n"
 
 
-def render_sitemap(now: dt.datetime | None = None) -> str:
-    now = now or dt.datetime.now(MYT)
-    lastmod = now.astimezone(MYT).date().isoformat()
+def render_sitemap(events: list[dict] | None = None, now: dt.datetime | None = None) -> str:
+    events = events if events is not None else load_events()
+    lastmod = sitemap_lastmod(events, now)
     urls = (f"{SITE_ORIGIN}/", f"{SITE_ORIGIN}/about.html")
     entries = "\n".join(
         f"  <url>\n    <loc>{e(url)}</loc>\n    <lastmod>{lastmod}</lastmod>\n  </url>"
@@ -430,7 +478,7 @@ def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:
     (out / "about.html").write_text(render_about(events, now), encoding="utf-8")
     (out / "404.html").write_text(render_about(events, now, page="404"), encoding="utf-8")
     (out / "robots.txt").write_text(render_robots(), encoding="utf-8")
-    (out / "sitemap.xml").write_text(render_sitemap(now), encoding="utf-8")
+    (out / "sitemap.xml").write_text(render_sitemap(events, now), encoding="utf-8")
     (out / "CNAME").write_text((ROOT / "CNAME").read_text(encoding="utf-8"), encoding="utf-8")
     return out
 

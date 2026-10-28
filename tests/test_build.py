@@ -359,8 +359,18 @@ class RenderTests(unittest.TestCase):
             sitemap = (out / "sitemap.xml").read_text(encoding="utf-8")
             self.assertIn("<loc>https://events.sarawak.news/</loc>", sitemap)
             self.assertIn("<loc>https://events.sarawak.news/about.html</loc>", sitemap)
-            self.assertIn("<lastmod>2026-10-15</lastmod>", sitemap)
+            self.assertEqual(sitemap.count("<url>"), 2)
+            expected_lastmod = build.sitemap_lastmod(self.events, self.now)
+            self.assertIn(f"<lastmod>{expected_lastmod}</lastmod>", sitemap)
             self.assertNotIn("404.html", sitemap)
+            index = (out / "index.html").read_text(encoding="utf-8")
+            about = (out / "about.html").read_text(encoding="utf-8")
+            self.assertIn('href="about.html">About this listing</a>', index)
+            self.assertIn('id="about-network"', about)
+            self.assertIn('href="https://sarawak.news/"', about)
+            self.assertIn('href="https://ai.sarawak.news/"', about)
+            self.assertIn('href="https://bantuan.sarawak.news/"', about)
+            self.assertNotIn("pcds2030", about.lower())
             canonicals = {
                 "index.html": "https://events.sarawak.news/",
                 "about.html": "https://events.sarawak.news/about.html",
