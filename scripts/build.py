@@ -411,7 +411,6 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     <header class="brief">
       <h1>{e(site["tagline"])}</h1>
       <p class="brief-deck">{e(site["description"])}</p>
-      <p class="brief-about"><a href="about.html">About this listing</a></p>
       {updated_html(now)}
     </header>
     <section class="category-filter month-filter" aria-labelledby="month-filter-title">
