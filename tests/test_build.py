@@ -367,9 +367,12 @@ class RenderTests(unittest.TestCase):
             about = (out / "about.html").read_text(encoding="utf-8")
             self.assertIn('href="about.html">About this listing</a>', index)
             self.assertIn('id="about-network"', about)
-            self.assertIn('href="https://sarawak.news/"', about)
-            self.assertIn('href="https://ai.sarawak.news/"', about)
-            self.assertIn('href="https://bantuan.sarawak.news/"', about)
+            network = about.split('id="about-network"', 1)[1].split("</ul>", 1)[0]
+            self.assertIn('href="https://sarawak.news/"', network)
+            self.assertIn('href="https://ai.sarawak.news/"', network)
+            self.assertIn('href="https://bantuan.sarawak.news/"', network)
+            self.assertNotIn("about.html", network)
+            self.assertNotIn(" · <a href=", network)
             self.assertNotIn("pcds2030", about.lower())
             canonicals = {
                 "index.html": "https://events.sarawak.news/",
