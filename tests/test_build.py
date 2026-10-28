@@ -365,7 +365,8 @@ class RenderTests(unittest.TestCase):
             self.assertNotIn("404.html", sitemap)
             index = (out / "index.html").read_text(encoding="utf-8")
             about = (out / "about.html").read_text(encoding="utf-8")
-            self.assertIn('href="about.html">About this listing</a>', index)
+            self.assertNotIn("brief-about", index)
+            self.assertNotIn("About this listing", index)
             self.assertIn('id="about-network"', about)
             network = about.split('id="about-network"', 1)[1].split("</ul>", 1)[0]
             self.assertIn('href="https://sarawak.news/"', network)
