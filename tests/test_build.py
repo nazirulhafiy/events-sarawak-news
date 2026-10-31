@@ -162,6 +162,25 @@ class RenderTests(unittest.TestCase):
         self.assertIn("G-P7Y5Z19Q46", about_head)
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", about_head)
 
+    def test_internal_query_accepts_one_trailing_stray(self):
+        """Mirror the loader regex: 1, or 1 + one of ` . ) ]."""
+        from urllib.parse import parse_qs
+
+        loader = build.render_analytics_loader()
+        self.assertIn("/^1[`.)\\]]?$/.test(q.get('internal')||'')", loader)
+        pattern = re.compile(r"^1[`.)\]]?$")
+        accept = ("1", "1`", "1.", "1)", "1]")
+        reject = ("10", "1x", "1``", "2", "1 ", "", "11", "1[")
+        for value in accept:
+            self.assertTrue(pattern.fullmatch(value), value)
+        for value in reject:
+            self.assertIsNone(pattern.fullmatch(value), value)
+        # URLSearchParams decoding used by the loader (?internal=1%60 → 1`).
+        self.assertEqual(parse_qs("internal=1%60")["internal"][0], "1`")
+        self.assertTrue(pattern.fullmatch(parse_qs("internal=1%60")["internal"][0]))
+        self.assertTrue(pattern.fullmatch(parse_qs("internal=1.")["internal"][0]))
+        self.assertIsNone(pattern.fullmatch(parse_qs("internal=10")["internal"][0]))
+
     def test_site_ga_must_match_analytics_registry(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

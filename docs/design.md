@@ -84,7 +84,7 @@ GitHub Pages from `nazirulhafiy/events-sarawak-news` (`main`), deployed by `.git
 - Registry: `data/analytics.json` (kit shape v1). `scripts/build.py` emits the shared kit loader (`data-sn-analytics-loader`). GA4 and the Cloudflare beacon load only on `events.sarawak.news` / `www.events.sarawak.news`.
 - GA4 property **Sarawak Events**, measurement ID also kept in `data/site.json` as `ga4_measurement_id`; the build requires that value to match the registry.
 - Cloudflare Web Analytics beacon (zone sarawak.news, shared).
-- Internal traffic: `?internal=1` sets a long-lived first-party cookie from the registry; `?internal=0` clears it. While set, gtag config includes `traffic_type: 'internal'` and the Cloudflare beacon is not loaded. Agents and screenshot checks should open the live site with `?internal=1`.
+- Internal traffic: `?internal=1` sets a long-lived first-party cookie from the registry; the same set path also accepts `1` followed by exactly one trailing `` ` ``, `.`, `)`, or `]` (for example `?internal=1%60` or `?internal=1.`; values such as `10`, `1x`, two trailing backticks, or `2` do not match). `?internal=0` clears it. While set, gtag config includes `traffic_type: 'internal'` and the Cloudflare beacon is not loaded. Agents and screenshot checks should open the live site with `?internal=1`.
 
 <!-- BEGIN GENERATED: analytics -->
 | Field | Value |
