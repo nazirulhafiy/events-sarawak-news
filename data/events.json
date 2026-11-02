@@ -1655,12 +1655,12 @@
     "summary": "The 11th edition of Kuching's AIMS-recognised road race with full, half, 10km and 5km categories.",
     "event_type": "sports",
     "official_url": null,
+    "info_url": "https://dayakdaily.com/kuching-marathon-2026-on-sept-27-cancelled-as-haze-raises-health-concerns/",
     "source_url": "https://mtcp.sarawak.gov.my/",
     "source_name": "Seed: Sarawak 2026 Calendar of Tourism Events (MTCP)",
     "discovered_at": "2026-10-15T00:00:00+08:00",
     "status": "cancelled",
-    "review_note": "Cancelled 2026-09-27 due to haze (DayakDaily 25 Sep 2026; Borneo Post 25 Sep 2026). Source: https://dayakdaily.com/kuching-marathon-2026-on-sept-27-cancelled-as-haze-raises-health-concerns/",
-    "info_url": "https://dayakdaily.com/kuching-marathon-2026-on-sept-27-cancelled-as-haze-raises-health-concerns/"
+    "review_note": "Cancelled 2026-09-27 due to haze (DayakDaily 25 Sep 2026; Borneo Post 25 Sep 2026). Source: https://dayakdaily.com/kuching-marathon-2026-on-sept-27-cancelled-as-haze-raises-health-concerns/"
   },
   {
     "id": "pesta-belawai-2026",
@@ -2000,6 +2000,25 @@
     "discovered_at": "2026-10-15T00:00:00+08:00",
     "status": "published",
     "review_note": "Corrected from MTCP seed name/date (Serian International Cross Country Half Marathon Run, 25 Oct). Registration: Serian Eco Run 5.0 on 8 Nov 2026, same Tebedu venue."
+  },
+  {
+    "id": "sarawak-esports-expo-2026",
+    "name": "Sarawak Esports Expo 2026",
+    "start_date": "2026-11-13",
+    "end_date": "2026-11-15",
+    "date_tbc": false,
+    "month": 11,
+    "venue": "Sarawak Sports Village",
+    "town": "Kuching",
+    "division": "Kuching",
+    "summary": "Three-day public esports expo (SAREX26) with six tournament categories, workshops, forums and exhibition spaces, aiming for about 800 competitors and a RM50,000 prize pool.",
+    "event_type": "sports",
+    "official_url": null,
+    "info_url": "https://dayakdaily.com/rm50000-prize-pool-awaits-800-competitors-at-sarawak-esports-expo-2026-on-nov-13-15/",
+    "source_url": "https://dayakdaily.com/rm50000-prize-pool-awaits-800-competitors-at-sarawak-esports-expo-2026-on-nov-13-15/",
+    "source_name": "DayakDaily",
+    "discovered_at": "2026-11-02T12:10:00+08:00",
+    "status": "published"
   },
   {
     "id": "santubong-international-trail-run-2026",
