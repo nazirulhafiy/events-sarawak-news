@@ -19,7 +19,7 @@
 
 Hosted on **GitHub Pages** from `nazirulhafiy/events-sarawak-news` (`main`). Production deploys via `.github/workflows/build.yml` (`actions/deploy-pages@v4` to the `github-pages` environment). Migrated from Cloudflare Pages on **15 October 2026** (no `wrangler pages deploy`).
 
-Published events: 107 (content audit 2026-11-02).
+Published events: 115 (content audit 2026-11-09).
 
 ```
 python3 scripts/validate.py              # schema check
