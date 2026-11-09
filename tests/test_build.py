@@ -162,6 +162,24 @@ class RenderTests(unittest.TestCase):
         self.assertIn("G-P7Y5Z19Q46", about_head)
         self.assertIn("static.cloudflareinsights.com/beacon.min.js", about_head)
 
+    def test_404_is_branded_not_about(self):
+        page = build.render_404(self.events, self.now)
+        head, _, _ = page.partition("</head>")
+        copy = build.load_site()
+        self.assertIn("<h1>Page not found</h1>", page)
+        self.assertIn(f"<title>Page not found · {copy['title']}</title>", page)
+        self.assertNotIn("About · Events Sarawak", page)
+        self.assertNotIn("<h1>About ", page)
+        self.assertIn('content="noindex"', head)
+        self.assertIn('href="/style.css"', head)
+        self.assertIn('src="/icons/nav-mark-transparent.svg"', page)
+        self.assertIn('href="/">Back to home</a>', page)
+        self.assertIn(
+            "The page you&#x27;re looking for doesn&#x27;t exist or has moved.",
+            page,
+        )
+        self.assertIn(build.ANALYTICS_LOADER_ATTR, head)
+
     def test_internal_query_accepts_one_trailing_stray(self):
         """Mirror the loader regex: 1, or 1 + one of ` . ) ]."""
         from urllib.parse import parse_qs
@@ -397,7 +415,6 @@ class RenderTests(unittest.TestCase):
             canonicals = {
                 "index.html": "https://events.sarawak.news/",
                 "about.html": "https://events.sarawak.news/about.html",
-                "404.html": "https://events.sarawak.news/404.html",
             }
             for name, canonical in canonicals.items():
                 page = (out / name).read_text(encoding="utf-8")
@@ -418,6 +435,45 @@ class RenderTests(unittest.TestCase):
                 copy = build.load_site()
                 self.assertIn(f'class="brand-text">{copy["title"]}</span>', page)
                 self.assertNotIn("nav-mark-on-black", page)
+
+            not_found = (out / "404.html").read_text(encoding="utf-8")
+            nf_head, _, _ = not_found.partition("</head>")
+            copy = build.load_site()
+            self.assertTrue((out / "404.html").exists())
+            self.assertIn("<h1>Page not found</h1>", not_found)
+            self.assertIn(f"<title>Page not found · {copy['title']}</title>", not_found)
+            self.assertNotIn("About · Events Sarawak", not_found)
+            self.assertNotIn("<h1>About ", not_found)
+            self.assertIn('content="noindex"', nf_head)
+            self.assertNotIn("index,follow", nf_head)
+            self.assertIn(
+                '<link rel="canonical" href="https://events.sarawak.news/404.html" />',
+                nf_head,
+            )
+            self.assertIn(build.ANALYTICS_LOADER_ATTR, nf_head)
+            self.assertIn("G-P7Y5Z19Q46", nf_head)
+            self.assertIn("sn_internal", nf_head)
+            self.assertIn("static.cloudflareinsights.com/beacon.min.js", nf_head)
+            self.assertIn('href="/style.css"', nf_head)
+            self.assertIn('href="/events.css"', nf_head)
+            self.assertIn('src="/app.js"', nf_head)
+            self.assertIn('src="/events.js"', nf_head)
+            self.assertIn('href="/fonts/Geist-Variable.woff2"', nf_head)
+            self.assertIn('src="/icons/nav-mark-transparent.svg"', not_found)
+            self.assertIn('src="/icons/nav-mark-transparent-dark.svg"', not_found)
+            self.assertIn('href="/"', not_found)
+            self.assertIn('href="/about.html"', not_found)
+            self.assertIn("Back to home", not_found)
+            self.assertIn(
+                "The page you&#x27;re looking for doesn&#x27;t exist or has moved.",
+                not_found,
+            )
+            self.assertNotIn('aria-current="page"', not_found)
+            self.assertIn(
+                '<a class="site-footer-link" href="https://sarawak.news/">',
+                not_found,
+            )
+            self.assertIn(f'class="brand-text">{copy["title"]}</span>', not_found)
 
 
 if __name__ == "__main__":

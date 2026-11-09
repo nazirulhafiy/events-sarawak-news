@@ -1,7 +1,8 @@
 """Build the static events.sarawak.news site into dist/.
 
-Reads data/events-2026.json, renders dist/index.html (all twelve month
-panels pre-rendered, current MYT month visible) and dist/about.html, and
+Reads data/events.json, renders dist/index.html (all twelve month panels
+pre-rendered, current MYT month visible), dist/about.html, and a branded
+dist/404.html (absolute asset/nav paths for GitHub Pages nested URLs), and
 copies site/ assets. No dependencies beyond the standard library.
 """
 from __future__ import annotations
@@ -306,14 +307,24 @@ def canonical_url(page: str) -> str:
     raise SystemExit(f"unknown page {page}")
 
 
-def render_head(*, title: str, desc: str, canonical: str, site_name: str, analytics: str) -> str:
+def render_head(
+    *,
+    title: str,
+    desc: str,
+    canonical: str,
+    site_name: str,
+    analytics: str,
+    robots: str = "index,follow",
+    absolute_assets: bool = False,
+) -> str:
+    root = "/" if absolute_assets else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="{desc}" />
-  <meta name="robots" content="index,follow" />
+  <meta name="robots" content="{robots}" />
   <link rel="canonical" href="{canonical}" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="{title}" />
@@ -336,11 +347,11 @@ def render_head(*, title: str, desc: str, canonical: str, site_name: str, analyt
     }} catch (error) {{}}
   </script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗓️</text></svg>" />
-  <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="events.css" />
-  <script src="app.js" defer></script>
-  <script src="events.js" defer></script>
+  <link rel="preload" href="{root}fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="{root}style.css" />
+  <link rel="stylesheet" href="{root}events.css" />
+  <script src="{root}app.js" defer></script>
+  <script src="{root}events.js" defer></script>
   {analytics}
 </head>
 <body>
@@ -352,24 +363,35 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
     site = load_site() if site is None else site
     registry = analytics_registry()
     assert_site_ga_matches_registry(registry)
-    active = "home" if page == "home" else "about"
+    absolute = page == "404"
+    # 404 must not mark Home or About as current (GitHub Pages serves it at any miss).
+    if page == "home":
+        active = "home"
+    elif page == "about":
+        active = "about"
+    else:
+        active = ""
     brand = site["title"]
+    home_href = "/" if absolute else "./"
+    about_href = "/about.html" if absolute else "about.html"
+    mark_dir = "/icons" if absolute else "icons"
     header = kit_render_header(
         brand_title=brand,
-        brand_href="./",
+        brand_href=home_href,
         active=active,
         nav_items=(
-            NavItem("home", "./", "Home"),
-            NavItem("about", "about.html", "About"),
+            NavItem("home", home_href, "Home"),
+            NavItem("about", about_href, "About"),
         ),
+        mark_dir=mark_dir,
     )
     footer = kit_render_footer(
         brand_title=brand,
         brand_note=FOOTER_NOTE,
         active=active,
         explore_items=(
-            NavItem("home", "./", "Home"),
-            NavItem("about", "about.html", "About"),
+            NavItem("home", home_href, "Home"),
+            NavItem("about", about_href, "About"),
         ),
         credit_html=FOOTER_CREDIT,
         fleet_site="events",
@@ -377,6 +399,7 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
         fleet_section_label="Hub",
         extra_nav_right=FOOTER_CATEGORIES_INNER,
     )
+    robots = "noindex" if page == "404" else "index,follow"
     return (
         render_head(
             title=e(title),
@@ -384,6 +407,8 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
             canonical=e(canonical_url(page)),
             site_name=e(brand),
             analytics=render_analytics_loader(registry),
+            robots=robots,
+            absolute_assets=absolute,
         )
         + header
         + "\n"
@@ -426,7 +451,7 @@ def render_index(events: list[dict], now: dt.datetime | None = None) -> str:
     return shell("home", "Events Sarawak", meta_desc, main, site)
 
 
-def render_about(events: list[dict], now: dt.datetime | None = None, page: str = "about") -> str:
+def render_about(events: list[dict], now: dt.datetime | None = None) -> str:
     site = load_site()
     about_meta = f"About {site['title']}, an independent listing of events across Sarawak."
     main = f"""  <main id="content">
@@ -443,7 +468,24 @@ def render_about(events: list[dict], now: dt.datetime | None = None, page: str =
     </div>
   </main>
 """
-    return shell(page, "About · Events Sarawak", about_meta, main, site)
+    return shell("about", "About · Events Sarawak", about_meta, main, site)
+
+
+def render_404(events: list[dict] | None = None, now: dt.datetime | None = None) -> str:
+    """Branded GitHub Pages 404: absolute CSS/JS/nav paths, noindex, site chrome."""
+    del events, now  # Signature mirrors other page renderers; content is static.
+    site = load_site()
+    title = f"Page not found · {site['title']}"
+    meta = "The page you're looking for doesn't exist or has moved."
+    main = f"""  <main id="content">
+    <header class="brief">
+      <h1>Page not found</h1>
+      <p class="brief-deck">{e(meta)}</p>
+      <p><a href="/">Back to home</a></p>
+    </header>
+  </main>
+"""
+    return shell("404", title, meta, main, site)
 
 
 def render_robots() -> str:
@@ -473,7 +515,7 @@ def build(out: Path = DIST, now: dt.datetime | None = None) -> Path:
     shutil.copytree(SITE, out)
     (out / "index.html").write_text(render_index(events, now), encoding="utf-8")
     (out / "about.html").write_text(render_about(events, now), encoding="utf-8")
-    (out / "404.html").write_text(render_about(events, now, page="404"), encoding="utf-8")
+    (out / "404.html").write_text(render_404(events, now), encoding="utf-8")
     (out / "robots.txt").write_text(render_robots(), encoding="utf-8")
     (out / "sitemap.xml").write_text(render_sitemap(events, now), encoding="utf-8")
     (out / "CNAME").write_text((ROOT / "CNAME").read_text(encoding="utf-8"), encoding="utf-8")
