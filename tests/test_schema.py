@@ -40,11 +40,11 @@ class SeedData(unittest.TestCase):
         self.events = L.load(L.EVENTS)
 
     def test_all_114_seed_events_valid(self):
-        self.assertEqual(len(self.events), 118)
+        self.assertEqual(len(self.events), 126)
         self.assertEqual(L.validate_collection(self.events), [])
         statuses = {e["status"] for e in self.events}
         self.assertEqual(statuses, {"published", "cancelled"})
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 107)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 115)
         self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 11)
 
     def test_only_schema_fields(self):
@@ -101,6 +101,18 @@ class SeedData(unittest.TestCase):
                 "https://dayakdaily.com/sri-maha-mariamman-temple-in-kuching-to-hold-consecration-ceremony-oct-27-30/",
             "youth-day-limbang-motor-day-2026":
                 "https://limbang.sarawak.gov.my/web/subpage/news_view/941",
+            "borneo-indigenous-festival-2026":
+                "https://dayakdaily.com/from-longhouses-to-the-city-borneo-indigenous-festival-2026-to-showcase-swaks-diverse-cultural-heritage/",
+            "manggung-di-muara-2026":
+                "https://suarasarawak.my/manggung-di-muara-bawa-dimensi-baharu/",
+            "mount-singai-eco-run-3-0-2026":
+                "https://www.tvsarawak.my/2026/10/30/top-events-happening-across-sarawak-in-november-2026/",
+            "sempurna-waktu-ir-radzi-live-in-concert-2026":
+                "https://www.sarawaktribune.com/ir-radzi-to-stage-sempurna-waktu-concert-on-nov-21/",
+            "rsawit-international-marathon-2026":
+                "https://ukas.sarawak.gov.my/web/subpage/news_view/44532",
+            "linge-belawan-an-immersive-exhibition-2026":
+                "https://www.theborneopost.com/2026/10/17/kayan-oral-epic-belawan-to-come-alive-in-immersive-kuching-exhibition/",
         })
         by_id = {e["id"]: e for e in self.events}
         self.assertIsNone(by_id["kuching-international-cat-festival-2026"]["official_url"])
@@ -403,7 +415,7 @@ class Pipeline(unittest.TestCase):
         publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
         events, rest, ids = publish.publish(copy.deepcopy(L.load(L.EVENTS)), queue)
         self.assertEqual(ids, ["kuching-lantern-walk-2026"])
-        self.assertEqual(len(events), 119)
+        self.assertEqual(len(events), 127)
         self.assertEqual([r["id"] for r in rest], ["miri-kite-day-2026"])
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["status"], "published")
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["info_url"],
