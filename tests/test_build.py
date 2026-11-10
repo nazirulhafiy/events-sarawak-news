@@ -434,6 +434,10 @@ class RenderTests(unittest.TestCase):
                 self.assertIn('src="icons/nav-mark-transparent-dark.svg"', page)
                 copy = build.load_site()
                 self.assertIn(f'class="brand-text">{copy["title"]}</span>', page)
+                self.assertIn(
+                    '<span class="site-beta" aria-label="Beta">BETA</span>',
+                    page,
+                )
                 self.assertNotIn("nav-mark-on-black", page)
 
             not_found = (out / "404.html").read_text(encoding="utf-8")
@@ -474,6 +478,10 @@ class RenderTests(unittest.TestCase):
                 not_found,
             )
             self.assertIn(f'class="brand-text">{copy["title"]}</span>', not_found)
+            self.assertIn(
+                '<span class="site-beta" aria-label="Beta">BETA</span>',
+                not_found,
+            )
 
 
 if __name__ == "__main__":
