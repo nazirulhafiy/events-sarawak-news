@@ -51,6 +51,11 @@ NOTE = "Dates subject to change, check with organisers."
 BETA_BADGE_HTML = (
     '<span class="site-beta" aria-label="Beta">BETA</span>'
 )
+# Hub fleet links that get a restrained BETA chip (not Sarawak / AI).
+FOOTER_HUB_BETA_HREFS = (
+    "https://events.sarawak.news/",
+    "https://bantuan.sarawak.news/",
+)
 FOOTER_NOTE = "An independent listing of events across Sarawak."
 # Site title, tagline, description, and About lead live only in data/site.json.
 SITE_COPY_FIELDS = ("title", "tagline", "description", "about_lead")
@@ -68,6 +73,22 @@ FOOTER_CREDIT = (
 )
 FLEET_SITE_ID = "events"
 e = html.escape
+
+
+def inject_footer_hub_beta(footer_html: str) -> str:
+    """Append BETA after Events/Bantuan Hub fleet anchors (kit markup unchanged).
+
+    On this site the Events self-link is omitted from the fleet, so only Bantuan
+    receives a chip; Sarawak and AI stay untagged.
+    """
+    out = footer_html
+    for href in FOOTER_HUB_BETA_HREFS:
+        pattern = (
+            rf'(<a class="site-footer-link" href="{re.escape(href)}"[^>]*>'
+            rf"[^<]*</a>)"
+        )
+        out, _n = re.subn(pattern, rf"\1{BETA_BADGE_HTML}", out, count=1)
+    return out
 
 
 def render_fleet_network_section(fleet_site: str = FLEET_SITE_ID) -> str:
@@ -394,19 +415,21 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
         f"</a>{BETA_BADGE_HTML}</span>\n    <nav class=\"site-nav\"",
         1,
     )
-    footer = kit_render_footer(
-        brand_title=brand,
-        brand_note=FOOTER_NOTE,
-        active=active,
-        explore_items=(
-            NavItem("home", home_href, "Home"),
-            NavItem("about", about_href, "About"),
-        ),
-        credit_html=FOOTER_CREDIT,
-        fleet_site="events",
-        layout="column_stacks",
-        fleet_section_label="Hub",
-        extra_nav_right=FOOTER_CATEGORIES_INNER,
+    footer = inject_footer_hub_beta(
+        kit_render_footer(
+            brand_title=brand,
+            brand_note=FOOTER_NOTE,
+            active=active,
+            explore_items=(
+                NavItem("home", home_href, "Home"),
+                NavItem("about", about_href, "About"),
+            ),
+            credit_html=FOOTER_CREDIT,
+            fleet_site="events",
+            layout="column_stacks",
+            fleet_section_label="Hub",
+            extra_nav_right=FOOTER_CATEGORIES_INNER,
+        )
     )
     robots = "noindex" if page == "404" else "index,follow"
     return (
