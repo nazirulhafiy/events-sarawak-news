@@ -1,6 +1,11 @@
-/* Restrained BETA label beside the header brand (events-only; kit header unchanged). */
+/* Restrained BETA label beside the header brand (events-only; kit header unchanged).
+   Absolutely positioned so `.brand-lockup` width stays the wordmark: the red
+   `.brand-lockup::after` rule and the yellow/black `.bar-rule-tail` start do not shift. */
 .brand-lockup .site-beta {
-  flex: 0 0 auto;
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  z-index: 2;
   margin-left: 0.42em;
   padding: 0.14em 0.36em 0.12em;
   border: 1px solid var(--line);
@@ -12,6 +17,8 @@
   line-height: 1.1;
   white-space: nowrap;
   user-select: none;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .month-filter { margin-bottom: 10px; }
