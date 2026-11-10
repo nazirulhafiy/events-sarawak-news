@@ -1,12 +1,6 @@
-/* Restrained BETA label beside the header brand (events-only; kit header unchanged).
-   Absolutely positioned so `.brand-lockup` width stays the wordmark: the red
-   `.brand-lockup::after` rule and the yellow/black `.bar-rule-tail` start do not shift. */
-.brand-lockup .site-beta {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  z-index: 2;
-  margin-left: 0.42em;
+/* Restrained BETA chip (events-only; kit shell unchanged). Shared visual for
+   header brand and Hub footer fleet (Events / Bantuan only). */
+.site-beta {
   padding: 0.14em 0.36em 0.12em;
   border: 1px solid var(--line);
   border-radius: 3px;
@@ -17,8 +11,29 @@
   line-height: 1.1;
   white-space: nowrap;
   user-select: none;
-  transform: translateY(-50%);
   pointer-events: none;
+}
+
+/* Absolutely positioned so `.brand-lockup` width stays the wordmark: the red
+   `.brand-lockup::after` rule and the yellow/black `.bar-rule-tail` start do not shift. */
+.brand-lockup .site-beta {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  z-index: 2;
+  margin-left: 0.42em;
+  transform: translateY(-50%);
+}
+
+/* Inline beside Hub fleet link labels; keep chip size close to the header badge. */
+.site-footer-fleet-nav li:has(> .site-beta) {
+  display: flex;
+  align-items: center;
+  gap: 0.42em;
+}
+
+.site-footer-fleet-nav .site-beta {
+  font-size: 9px;
 }
 
 .month-filter { margin-bottom: 10px; }

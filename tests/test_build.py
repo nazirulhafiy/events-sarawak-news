@@ -100,13 +100,27 @@ class RenderTests(unittest.TestCase):
             self.html,
         )
         self.assertIn(
-            '<a class="site-footer-link" href="https://bantuan.sarawak.news/">',
+            '<a class="site-footer-link" href="https://bantuan.sarawak.news/">'
+            f"Bantuan</a>{build.BETA_BADGE_HTML}",
             self.html,
         )
         self.assertNotIn(
             '<a class="site-footer-link" href="https://events.sarawak.news/">',
             self.html,
         )
+        # Hub BETA only on Events/Bantuan when present — not Sarawak or AI.
+        self.assertNotIn(
+            '<a class="site-footer-link" href="https://sarawak.news/">'
+            f"Sarawak</a>{build.BETA_BADGE_HTML}",
+            self.html,
+        )
+        self.assertNotIn(
+            '<a class="site-footer-link" href="https://ai.sarawak.news/">'
+            f"AI</a>{build.BETA_BADGE_HTML}",
+            self.html,
+        )
+        # Header brand BETA + Hub Bantuan BETA (Events self-link omitted).
+        self.assertEqual(self.html.count(build.BETA_BADGE_HTML), 2)
         self.assertNotIn("nofollow", self.html)
         for kind, label in (
             ("festival", "Festival"),
@@ -438,6 +452,12 @@ class RenderTests(unittest.TestCase):
                     '<span class="site-beta" aria-label="Beta">BETA</span>',
                     page,
                 )
+                self.assertIn(
+                    '<a class="site-footer-link" href="https://bantuan.sarawak.news/">'
+                    f"Bantuan</a>{build.BETA_BADGE_HTML}",
+                    page,
+                )
+                self.assertEqual(page.count(build.BETA_BADGE_HTML), 2)
                 self.assertNotIn("nav-mark-on-black", page)
 
             not_found = (out / "404.html").read_text(encoding="utf-8")
@@ -482,6 +502,14 @@ class RenderTests(unittest.TestCase):
                 '<span class="site-beta" aria-label="Beta">BETA</span>',
                 not_found,
             )
+            self.assertIn(
+                '<a class="site-footer-link" href="https://bantuan.sarawak.news/">'
+                f"Bantuan</a>{build.BETA_BADGE_HTML}",
+                not_found,
+            )
+            self.assertEqual(not_found.count(build.BETA_BADGE_HTML), 2)
+            css = (out / "events.css").read_text(encoding="utf-8")
+            self.assertIn(".site-footer-fleet-nav .site-beta", css)
 
 
 if __name__ == "__main__":
