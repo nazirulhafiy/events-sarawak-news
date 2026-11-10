@@ -48,6 +48,9 @@ M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"
 FULL = ["January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"]
 NOTE = "Dates subject to change, check with organisers."
+BETA_BADGE_HTML = (
+    '<span class="site-beta" aria-label="Beta">BETA</span>'
+)
 FOOTER_NOTE = "An independent listing of events across Sarawak."
 # Site title, tagline, description, and About lead live only in data/site.json.
 SITE_COPY_FIELDS = ("title", "tagline", "description", "about_lead")
@@ -384,6 +387,12 @@ def shell(page: str, title: str, desc: str, main: str, site: dict[str, str] | No
             NavItem("about", about_href, "About"),
         ),
         mark_dir=mark_dir,
+    )
+    # Site-local BETA badge beside the kit brand link (not in kit; events-only).
+    header = header.replace(
+        "</a></span>\n    <nav class=\"site-nav\"",
+        f"</a>{BETA_BADGE_HTML}</span>\n    <nav class=\"site-nav\"",
+        1,
     )
     footer = kit_render_footer(
         brand_title=brand,
