@@ -189,5 +189,24 @@
     "source_name": "JomRun",
     "discovered_at": "2026-11-16T11:07:00+08:00",
     "status": "pending"
+  },
+  {
+    "id": "hari-profesion-teknikal-negara-hptn-2026",
+    "name": "Hari Profesion Teknikal Negara (HPTN) 2026",
+    "start_date": "2026-12-01",
+    "end_date": "2026-12-02",
+    "date_tbc": false,
+    "month": 12,
+    "venue": "Borneo Convention Centre Kuching (BCCK)",
+    "town": "Kuching",
+    "division": "Kuching",
+    "summary": "National technical-profession event held in Sarawak for the first time, with public talks, exhibition booths, a career carnival, STEM activities and food stalls; free registration on the day.",
+    "event_type": "festival",
+    "official_url": "https://hptn.jkr.gov.my/",
+    "info_url": "https://www.theborneopost.com/2026/10/27/hptn-2026-heads-to-sarawak-in-december/",
+    "source_url": "https://ukas.sarawak.gov.my/web/subpage/news_view/49167",
+    "source_name": "UKAS",
+    "discovered_at": "2026-11-16T11:57:00+08:00",
+    "status": "pending"
   }
 ]
