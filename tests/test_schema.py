@@ -40,11 +40,11 @@ class SeedData(unittest.TestCase):
         self.events = L.load(L.EVENTS)
 
     def test_all_114_seed_events_valid(self):
-        self.assertEqual(len(self.events), 126)
+        self.assertEqual(len(self.events), 137)
         self.assertEqual(L.validate_collection(self.events), [])
         statuses = {e["status"] for e in self.events}
         self.assertEqual(statuses, {"published", "cancelled"})
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 115)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 126)
         self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 11)
 
     def test_only_schema_fields(self):
@@ -113,6 +113,12 @@ class SeedData(unittest.TestCase):
                 "https://ukas.sarawak.gov.my/web/subpage/news_view/44532",
             "linge-belawan-an-immersive-exhibition-2026":
                 "https://www.theborneopost.com/2026/10/17/kayan-oral-epic-belawan-to-come-alive-in-immersive-kuching-exhibition/",
+            "batu-lintang-international-islamic-arts-festival-bliiaf-2026":
+                "https://www.sarawaktribune.com/bliiaf-2026-set-for-nov-20-23/",
+            "swinburne-sarawak-good-design-week-2026":
+                "https://www.sarawaktribune.com/swinburne-sarawak-hosts-international-good-design-week-2026/",
+            "hari-profesion-teknikal-negara-hptn-2026":
+                "https://www.theborneopost.com/2026/10/27/hptn-2026-heads-to-sarawak-in-december/",
         })
         by_id = {e["id"]: e for e in self.events}
         self.assertIsNone(by_id["kuching-international-cat-festival-2026"]["official_url"])
@@ -133,10 +139,29 @@ class SeedData(unittest.TestCase):
             "sarawak-regatta-2026": "https://regatta.sarawaktourism.com/",
             "borneo-jazz-festival-2026": "https://jazzborneo.com/",
             "santubong-international-trail-run-2026": "https://www.santubongtrail.com/",
+            "mercedes-benz-br-jaya-run-miri-2026":
+                "https://www.jomrun.com/event/Mercedes-Benz-BR-Jaya-Run-2026-Miri",
+            "mercedes-benz-br-jaya-run-kuching-2026":
+                "https://www.jomrun.com/event/Mercedes-Benz-BR-Jaya-Run-2026-Kuching",
+            "12th-canada-hill-trail-challenge-2026":
+                "https://www.jomrun.com/event/12THCHTC2026",
+            "new-year-resolution-charity-run-2027":
+                "https://www.jomrun.com/event/New-Year-Resolution-Charity-Run-2027",
+            "og-night-rush-2027": "https://www.jomrun.com/event/OG-NIGHT-RUSH-2027",
+            "kuching-half-marathon-2027":
+                "https://www.jomrun.com/event/Kuching-Half-Marathon-2027-Powered-By-Ultron",
+            "iem-engineers-run-sarawak-2027":
+                "https://www.jomrun.com/event/IEM-Engineer's-Run-Sarawak-2026",
+            "nasi-lemak-new-year-run-2027":
+                "https://www.jomrun.com/event/Nasi-Lemak-New-Year-Run-2027",
         }
         for eid, url in kept.items():
             self.assertEqual(by_id[eid]["official_url"], url)
             self.assertIsNone(by_id[eid].get("info_url"))
+        self.assertEqual(
+            by_id["hari-profesion-teknikal-negara-hptn-2026"]["official_url"],
+            "https://hptn.jkr.gov.my/",
+        )
         for eid in (
             "lantern-festival-mukah-division-2026",
             "limbang-open-international-tug-of-war-2026",
@@ -415,7 +440,7 @@ class Pipeline(unittest.TestCase):
         publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
         events, rest, ids = publish.publish(copy.deepcopy(L.load(L.EVENTS)), queue)
         self.assertEqual(ids, ["kuching-lantern-walk-2026"])
-        self.assertEqual(len(events), 127)
+        self.assertEqual(len(events), 138)
         self.assertEqual([r["id"] for r in rest], ["miri-kite-day-2026"])
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["status"], "published")
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["info_url"],
