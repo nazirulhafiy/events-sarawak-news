@@ -40,11 +40,11 @@ class SeedData(unittest.TestCase):
         self.events = L.load(L.EVENTS)
 
     def test_all_114_seed_events_valid(self):
-        self.assertEqual(len(self.events), 137)
+        self.assertEqual(len(self.events), 142)
         self.assertEqual(L.validate_collection(self.events), [])
         statuses = {e["status"] for e in self.events}
         self.assertEqual(statuses, {"published", "cancelled"})
-        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 126)
+        self.assertEqual(sum(1 for e in self.events if e["status"] == "published"), 131)
         self.assertEqual(sum(1 for e in self.events if e["status"] == "cancelled"), 11)
 
     def test_only_schema_fields(self):
@@ -119,6 +119,16 @@ class SeedData(unittest.TestCase):
                 "https://www.sarawaktribune.com/swinburne-sarawak-hosts-international-good-design-week-2026/",
             "hari-profesion-teknikal-negara-hptn-2026":
                 "https://www.theborneopost.com/2026/10/27/hptn-2026-heads-to-sarawak-in-december/",
+            "hyper-freedom-festival-2026":
+                "https://dayakdaily.com/we-want-to-see-more-sarawakians-deputy-minister-calls-for-stronger-local-representation-in-creative-industry/",
+            "illuminare-christmas-charity-concert-2026":
+                "https://www.sarawaktribune.com/christmas-charity-concert-set-for-nov-29/",
+            "st-peters-church-christmas-village-2026":
+                "https://dayakdaily.com/st-peters-church-celebrates-christmas-with-inaugural-christmas-village-community-dinners/",
+            "authentic-sarawak-heritage-food-festival-2026":
+                "https://www.theborneopost.com/2026/11/23/inaugural-heritage-food-fest-out-to-highlight-sarawaks-diverse-halal-offerings/",
+            "kenyalang-chinese-new-year-festive-sale-2027":
+                "https://dayakdaily.com/kenyalang-cny-festival-sale-2027-to-host-310-stalls-applications-open-from-nov-16-27/",
         })
         by_id = {e["id"]: e for e in self.events}
         self.assertIsNone(by_id["kuching-international-cat-festival-2026"]["official_url"])
@@ -162,6 +172,17 @@ class SeedData(unittest.TestCase):
             by_id["hari-profesion-teknikal-negara-hptn-2026"]["official_url"],
             "https://hptn.jkr.gov.my/",
         )
+        self.assertEqual(
+            by_id["hyper-freedom-festival-2026"]["official_url"],
+            "https://www.hyperfreedomfest.com/",
+        )
+        self.assertEqual(
+            by_id["illuminare-christmas-charity-concert-2026"]["official_url"],
+            "https://www.cloudjoi.com/shows/7656-christmas-charity-concert/",
+        )
+        self.assertIsNone(by_id["st-peters-church-christmas-village-2026"]["official_url"])
+        self.assertIsNone(by_id["authentic-sarawak-heritage-food-festival-2026"]["official_url"])
+        self.assertIsNone(by_id["kenyalang-chinese-new-year-festive-sale-2027"]["official_url"])
         for eid in (
             "lantern-festival-mukah-division-2026",
             "limbang-open-international-tug-of-war-2026",
@@ -440,7 +461,7 @@ class Pipeline(unittest.TestCase):
         publish.set_status(queue, ["kuching-lantern-walk-2026"], "approved")
         events, rest, ids = publish.publish(copy.deepcopy(L.load(L.EVENTS)), queue)
         self.assertEqual(ids, ["kuching-lantern-walk-2026"])
-        self.assertEqual(len(events), 138)
+        self.assertEqual(len(events), 143)
         self.assertEqual([r["id"] for r in rest], ["miri-kite-day-2026"])
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["status"], "published")
         self.assertEqual(next(e for e in events if e["id"] == ids[0])["info_url"],
